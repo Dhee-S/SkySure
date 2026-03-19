@@ -13,9 +13,9 @@
 
 ## 📋 Overview
 
-SkySure is an **AI-powered parametric insurance platform** that automatically triggers weather-based payouts for gig economy workers—no claims, no paperwork, no waiting.
+*SkySure* is an AI-powered parametric insurance platform that delivers instant, weather-triggered payouts to gig economy workers—removing the need for claims, paperwork, or delays. By leveraging real-time environmental data, it ensures fast, transparent compensation during severe weather disruptions when workers need it most.
 
-Built with adversarial defense at its core, SkySure protects against coordinated fraud rings through multi-signal behavioral analysis.
+Designed for real-world resilience, SkySure integrates an adversarial fraud defense layer that uses multi-signal behavioral analysis and weighted risk scoring to detect and prevent coordinated exploitation. This enables a fully automated, zero-touch system that remains both scalable and financially robust.
 
 | Feature | Description |
 |---------|-------------|
