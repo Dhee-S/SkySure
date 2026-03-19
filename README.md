@@ -55,13 +55,13 @@ We never trust a single signal. Every payout decision validates through **7 beha
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
 │   📍 Device      │  📱 App      │  🌐 Network   │  👥 Social  │
-│   Intelligence   │  Behavior    │  Patterns     │  Graph        │
+│   Intelligence   │   Behavior    │     Patterns   │     Graph   │
 │                                                                 │
-│   • GPS + Altitude    • Session logs    • IP Velocity     • Ring│
+│   • GPS + Altitude   • Session logs   • IP Velocity    •  Ring  │
 │   • Satellite #      • Order rate     • VPN/Proxy      Detection│
-│   • Signal strength  • Engagement     • ASN patterns    • Shared│
-│   • Trajectory       • App crashes     • Geolocation    Devices │
-│                                    mismatch                     │
+│   • Signal strength  • Engagement     • ASN patterns   • Shared │ 
+│   • Trajectory       • App crashes    • Geolocation      Devices│
+│                                         mismatch                │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
