@@ -183,7 +183,7 @@ SkySure/
 Experience how SkySure automatically detects disruptions and triggers payouts in real-time.
 
 Watch our 2-minute project pitch with demo here:  
-👉 [Click to Watch Video](https://drive.google.com/file/d/1nwMz8KzwwADkAAMUl0Wal7VGpiebV6Sg/view?usp=drivesdk)
+👉 [Click to Watch Video](https://drive.google.com/file/d/16-0F9ubbzX5ePsyD0Ob7pX216txnkTaD/view?usp=drivesdk)
 
 ---
 
