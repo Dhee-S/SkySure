@@ -1,799 +1,599 @@
-import { useEffect, useState, useRef } from 'react';
-import { getRiders, logSimulation, logPayout, updateRiderPayouts } from '../mockStore';
-import { runBatchAnalysis, simulateWeather } from '../engine';
-import { fetchWeatherForCity } from '../weather';
-import { useToast } from '../App';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import {
+   Zap, Activity, ShieldAlert, MapPin,
+   Play, RotateCcw, ChevronDown, CheckCircle2,
+   AlertTriangle, Cpu, CloudRain, Wind, ShieldCheck,
+   Database, Fingerprint, Microscope, Info, Sun,
+   Droplets, RefreshCw, Briefcase, UserCheck, Clock,
+   X
+} from 'lucide-react';
+import { dataService } from '../data/dataService';
+import FraudCluster from '../components/FraudCluster';
+import '../styles/dashboard.css';
+import '../styles/Simulation.css';
 
-const SIGNAL_KEYS = ['heavyRain', 'orderDrop', 'riderInactive', 'abnormalDeliveryTime', 'lowOrderVolume', 'highWind', 'lowVisibility'];
-const SIGNAL_NAMES = {
-  heavyRain: 'Heavy Rain',
-  orderDrop: 'Order Drop',
-  riderInactive: 'Inactive',
-  abnormalDeliveryTime: 'Slow Delivery',
-  lowOrderVolume: 'Low Volume',
-  highWind: 'High Wind',
-  lowVisibility: 'Low Visibility',
+const TriggerCard = ({ label, name, value, unit, active, threshold, isStatus }) => {
+   const isBreached = isStatus ? active : (value !== undefined && threshold !== undefined ? value >= threshold : false);
+   const displayValue = value !== undefined
+      ? (typeof value === 'number' ? (isStatus ? (value === 100 ? 'INACTIVE' : 'ACTIVE') : value.toFixed(1)) : value)
+      : '-';
+
+   return (
+      <div style={{
+         textAlign: 'center',
+         padding: '12px 8px',
+         background: active ? 'rgba(239, 68, 68, 0.1)' : 'rgba(241, 245, 249, 0.5)',
+         borderRadius: '10px',
+         border: `2px solid ${active ? '#FECACA' : '#E2E8F0'}`,
+         transition: 'all 0.2s ease'
+      }}>
+         <div style={{ fontSize: '0.7rem', fontWeight: 800, color: active ? '#DC2626' : '#94A3B8', marginBottom: '4px' }}>{label}</div>
+         <div style={{ fontSize: '0.6rem', color: '#64748B', marginBottom: '6px', fontWeight: 600 }}>{name}</div>
+         <div style={{ fontSize: '0.9rem', fontWeight: 900, color: active ? '#DC2626' : '#1E293B', marginBottom: '6px', fontFamily: 'monospace' }}>
+            {displayValue}
+            {unit && !isStatus && <span style={{ fontSize: '0.6rem', fontWeight: 600, marginLeft: '2px' }}>{unit}</span>}
+         </div>
+         <div style={{
+            width: '8px',
+            height: '8px',
+            borderRadius: '50%',
+            margin: '0 auto',
+            background: active ? '#DC2626' : '#CBD5E1',
+            boxShadow: active ? '0 0 8px rgba(220, 38, 38, 0.5)' : 'none',
+            transition: 'all 0.2s ease'
+         }} />
+      </div>
+   );
 };
 
+const TelemetryBar = ({ label, value, threshold, max, unit }) => {
+   const percentage = Math.min((value / max) * 100, 100);
+   const thresholdPct = (threshold / max) * 100;
+   const isBreached = value >= threshold;
+
+   return (
+      <div className="telemetry-gauge-container">
+         <div className="gauge-header">
+            <span className="gauge-label">{label}</span>
+            <span className="gauge-value" style={{ color: isBreached ? '#EF4444' : '#1E293B' }}>
+               {value}{unit}
+            </span>
+         </div>
+         <div className="gauge-track">
+            <div className="threshold-marker" style={{ left: `${thresholdPct}%` }} />
+            <motion.div
+               className={`gauge-fill ${isBreached ? 'breached' : 'normal'}`}
+               initial={{ width: 0 }}
+               animate={{ width: `${percentage}%` }}
+               transition={{ duration: 1, ease: "easeOut" }}
+            />
+         </div>
+      </div>
+   );
+};
+
+const CalculationStep = ({ label, value, isFinal }) => (
+   <div className={`calc-step ${isFinal ? 'calc-final' : ''}`}>
+      <div className="calc-step-label">{label}</div>
+      <div className="calc-step-value">{value}</div>
+   </div>
+);
+
+const KPI = ({ icon: Icon, label, value, color }) => (
+   <div className="kpi-card">
+      <div className="kpi-icon-wrapper" style={{ background: `${color}15`, color }}>
+         <Icon size={24} />
+      </div>
+      <div className="kpi-texts">
+         <span className="kpi-val">{value}</span>
+         <span className="kpi-label">{label}</span>
+      </div>
+   </div>
+);
+
+const LoadingStage = ({ stage }) => {
+   const stages = [
+      "Synchronizing Distributed Ledger...",
+      "Profiling Geospatial Rider Risk...",
+      "Executing Parametric Settlement Audit...",
+      "Finalizing Resiliency Scorecard..."
+   ];
+   return (
+      <div className="loading-stage-container">
+         <div className="viz-radar">
+            <div className="radar-sweep" />
+            <div className="radar-pulse" />
+            <motion.div
+               animate={{ scale: [1, 1.1, 1], opacity: [0.5, 1, 0.5] }}
+               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+               style={{ position: 'absolute', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            >
+               <Fingerprint size={48} color="#3B82F6" />
+            </motion.div>
+         </div>
+         <div className="stage-text-sequence">
+            <motion.div
+               key={stage}
+               initial={{ opacity: 0, y: 10 }}
+               animate={{ opacity: 1, y: 0 }}
+               exit={{ opacity: 0, y: -10 }}
+               className="stage-text"
+            >
+               <Activity size={16} className="animate-pulse" /> {stages[stage] || "Processing..."}
+            </motion.div>
+         </div>
+      </div>
+   );
+};
+
+function WeatherMetricItem({ label, value, Icon, color }) {
+   return (
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+         <div style={{ color, display: 'flex', alignItems: 'center' }}><Icon size={16} /></div>
+         <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span style={{ fontSize: '0.55rem', fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase' }}>{label}</span>
+            <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#1E293B' }}>{value}</span>
+         </div>
+      </div>
+   );
+}
+
+function PersonaIcon({ persona }) {
+   if (persona === 'Full-Timer') return <Briefcase size={14} color="#3B82F6" />;
+   if (persona === 'Gig-Pro' || persona === 'Gig Pro') return <UserCheck size={14} color="#10B981" />;
+   if (persona === 'Student-Flex') return <Clock size={14} color="#8B5CF6" />;
+   if (persona === 'Veteran') return <ShieldCheck size={14} color="#F43F5E" />;
+   return <Zap size={14} color="#F59E0B" />;
+}
+
 export default function Simulation() {
-  const showToast = useToast();
-  const [riders, setRiders] = useState([]);
-  const [weatherByCity, setWeatherByCity] = useState({});
-  const [results, setResults] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [simulating, setSimulating] = useState(false);
-  const [expandedId, setExpandedId] = useState(null);
-  const [filter, setFilter] = useState('all');
-  const [showHelp, setShowHelp] = useState(false);
-  const [summaryWeather, setSummaryWeather] = useState(null);
-  const [useLiveWeather, setUseLiveWeather] = useState(false);
-  const [liveMode, setLiveMode] = useState(false);
-  const runCounterRef = useRef(0);
+   const navigate = useNavigate();
+   const [location, setLocation] = useState('Chennai');
+   const [isLiveMode, setIsLiveMode] = useState(false);
+   const [isStressMode, setIsStressMode] = useState(true);
+   const [results, setResults] = useState(null);
+   const [simulating, setSimulating] = useState(false);
+   const [loadingStage, setLoadingStage] = useState(0);
+   const [expandedId, setExpandedId] = useState(null);
+   const [filter, setFilter] = useState('All');
+   const cities = ['Chennai', 'Coimbatore', 'Salem', 'Madurai', 'Trichy'];
+   const [cityWeather, setCityWeather] = useState(null);
+   const [weatherLoading, setWeatherLoading] = useState(false);
 
-  useEffect(() => { initData(); }, []);
+   useEffect(() => {
+      fetchCityWeather();
+   }, [location]);
 
-  async function initData() {
-    setLoading(true);
-    const riderData = await getRiders();
-    setRiders(riderData);
-    setLoading(false);
-  }
+   async function fetchCityWeather() {
+      setWeatherLoading(true);
+      try {
+         const coordsMap = {
+            'Chennai': { lat: 13.08, lon: 80.27 },
+            'Coimbatore': { lat: 11.01, lon: 76.95 },
+            'Salem': { lat: 11.66, lon: 78.14 },
+            'Madurai': { lat: 9.92, lon: 78.11 },
+            'Trichy': { lat: 10.79, lon: 78.70 }
+         };
+         const { lat, lon } = coordsMap[location];
+         const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=precipitation`;
+         const resp = await fetch(url).then(r => r.json());
 
-  async function runSimulation() {
-    if (riders.length === 0) return;
-    setSimulating(true);
-    setResults(null);
-    setExpandedId(null);
-    setFilter('all');
-
-    runCounterRef.current += 1;
-    const runIdx = runCounterRef.current;
-
-    const uniqueCities = [...new Set(riders.map(r => r.city || 'Chennai'))];
-
-    let weatherMap = {};
-    if (liveMode && useLiveWeather) {
-      showToast('Fetching live weather data...', 'info');
-      await new Promise(r => setTimeout(r, 1000));
-      for (const city of uniqueCities) {
-        try {
-          weatherMap[city] = await fetchWeatherForCity(city);
-        } catch {
-          weatherMap[city] = simulateWeather({ variance: true });
-        }
+         const currentHour = new Date().getHours();
+         setCityWeather({
+            temp: resp.current_weather.temperature,
+            wind: resp.current_weather.windspeed,
+            rain: resp.hourly.precipitation[currentHour] || 0,
+         });
+      } catch (e) {
+         setCityWeather({ temp: 31.4, wind: 11, rain: 0 });
+      } finally {
+         setWeatherLoading(false);
       }
-    } else {
-      showToast('Fetching real-time weather data...', 'info');
-      await new Promise(r => setTimeout(r, 1500));
-      for (const city of uniqueCities) {
-        weatherMap[city] = simulateWeather({ variance: true });
+   }
+
+   async function executeEngineRun() {
+      setSimulating(true);
+      setResults(null);
+      setExpandedId(null);
+      setLoadingStage(0);
+
+      const timer = setInterval(() => {
+         setLoadingStage(prev => (prev < 3 ? prev + 1 : prev));
+      }, 700);
+
+      try {
+         const response = await dataService.runSimulation({
+            location,
+            isLiveMode: isLiveMode
+         });
+
+         await new Promise(r => setTimeout(r, 2200));
+
+         if (response && response.nodes) {
+            setResults(response.nodes);
+         } else {
+            setResults([]);
+         }
+      } catch (error) {
+         setResults([]);
+      } finally {
+         clearInterval(timer);
+         setSimulating(false);
       }
-    }
+   }
 
-    setWeatherByCity(weatherMap);
-    setSummaryWeather(weatherMap[uniqueCities[0]] || null);
+   const filteredResults = Array.isArray(results) ? results.filter(r => {
+      if (filter === 'All') return true;
+      if (filter === 'Approved') return r.payout?.status === 'APPROVED';
+      if (filter === 'Mitigated') return r.payout?.status === 'MITIGATED';
+      if (filter === 'Nominal') return r.payout?.status === 'NOMINAL';
+      return true;
+   }) : [];
 
-    showToast('Analyzing disruption signals...', 'info');
-    await new Promise(r => setTimeout(r, 1000));
+   return (
+      <div className="dash-container simulation-page">
+         {/* HORIZONTAL HUD */}
+         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="dash-toolbar" style={{ border: 'none', background: 'white', padding: '1.25rem 1.5rem', borderRadius: '16px', marginBottom: '2rem', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', overflow: 'hidden' }}>
+            <div style={{ display: 'flex', alignItems: 'center', flex: 1, gap: '1.5rem' }}>
+               <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#3B82F6', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+                     Geospatial Sync
+                  </span>
+                  <span style={{ fontSize: '1.4rem', fontWeight: 900, color: '#1E293B', letterSpacing: '-0.02em', margin: '2px 0 8px 0' }}>
+                     {location} Cluster
+                  </span>
+                  <div className="location-pills" style={{ display: 'flex', gap: '8px' }}>
+                     {cities.map(c => (
+                        <button
+                           key={c}
+                           onClick={() => setLocation(c)}
+                           className={`pill-btn-mini ${location === c ? 'active' : ''}`}
+                        >
+                           {c}
+                        </button>
+                     ))}
+                  </div>
+               </div>
 
-    showToast('Running fraud detection on all riders...', 'info');
-    await new Promise(r => setTimeout(r, 1000));
+               <div style={{ width: '1px', height: '48px', background: '#F1F5F9' }} />
 
-    const analysisResults = runBatchAnalysis(riders, weatherMap, runIdx);
+               <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
+                  <WeatherMetricItem label="Temperature" value={`${cityWeather?.temp || '--'}°C`} Icon={Sun} color="#F59E0B" />
+                  <WeatherMetricItem label="Wind Hazard" value={`${cityWeather?.wind || '--'}km/h`} Icon={Wind} color="#3B82F6" />
+                  <WeatherMetricItem label="Precipitation" value={`${cityWeather?.rain || '0'}mm`} Icon={Droplets} color="#0EA5E9" />
+               </div>
 
-    const paidCount = analysisResults.filter(r => r.payout?.payout > 0 && !r.fraud?.fraudFlag).length;
-    const totalPaid = analysisResults.reduce((s, r) => s + (r.payout?.payout > 0 && !r.fraud?.fraudFlag ? r.payout?.payout || 0 : 0), 0);
-    const fraudCount = analysisResults.filter(r => r.fraud?.fraudFlag).length;
-    const noEventCount = riders.length - paidCount - fraudCount;
+               <button onClick={fetchCityWeather} className={`${weatherLoading ? 'animate-spin' : ''}`} style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: '#CBD5E1', marginLeft: 'auto' }}>
+                  <RefreshCw size={16} />
+               </button>
 
-    await logSimulation({
-      results: analysisResults,
-      totalRiders: riders.length,
-      totalPayouts: totalPaid,
-      fraudCount,
-    });
+               <div style={{ width: '1px', height: '48px', background: '#F1F5F9' }} />
 
-    for (const result of analysisResults) {
-      if (result.payout?.payout > 0 && !result.fraud?.fraudFlag) {
-        await logPayout({
-          riderId: result.riderId,
-          riderName: result.riderName,
-          amount: result.payout.payout,
-          reason: result.payout.reason,
-          weather: result.weather?.description,
-          rainfallMm: result.weather?.rainfallMm,
-          severityScore: result.severityScore,
-          tier: result.tier,
-          multiplier: result.tier === 'Pro' ? '1.3x' : result.tier === 'Basic' ? '0.7x' : '1.0x',
-          status: 'completed',
-        });
-        await updateRiderPayouts(result.riderId, result.payout.payout);
-      } else if (result.fraud?.fraudFlag) {
-        await logPayout({
-          riderId: result.riderId,
-          riderName: result.riderName,
-          amount: 0,
-          reason: `FLAGGED: ${result.fraud.checks?.find(c => c.flagged)?.type || 'Fraud detected'}`,
-          weather: result.weather?.description,
-          rainfallMm: result.weather?.rainfallMm,
-          severityScore: result.severityScore,
-          tier: result.tier,
-          multiplier: '',
-          status: 'blocked',
-        });
-      }
-    }
-
-    setResults(analysisResults);
-    setSimulating(false);
-
-    const msg = fraudCount > 0
-      ? `${paidCount} paid | ${fraudCount} flagged | ${noEventCount} no-event`
-      : `${paidCount} payouts triggered - Rs.${totalPaid.toLocaleString()}`;
-    showToast(msg, fraudCount > 0 ? 'warning' : 'success');
-  }
-
-  const filteredResults = results
-    ? results.filter(r => {
-        if (filter === 'all') return true;
-        if (filter === 'paid') return r.payout?.payout > 0 && !r.fraud?.fraudFlag;
-        if (filter === 'fraud') return r.fraud?.fraudFlag;
-        if (filter === 'disrupted') return r.isDisrupted;
-        if (filter === 'noevent') return !r.fraud?.fraudFlag && r.payout?.payout === 0;
-        return true;
-      })
-    : [];
-
-  if (loading) {
-    return (
-      <div className="page">
-        <div className="loading"><div className="spinner-lg"></div><p>Loading simulation engine...</p></div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="page">
-      <header className="page-header">
-        <div className="page-header-row">
-          <div>
-            <h1 className="page-title">AI Simulation Engine</h1>
-            <p className="page-subtitle">Analyze disruption triggers, fraud detection & payout eligibility</p>
-          </div>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <button className="btn btn-secondary" onClick={() => setShowHelp(!showHelp)}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
-                <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
-              </svg>
-              How It Works
-            </button>
-            <button
-              className="btn btn-primary"
-              onClick={runSimulation}
-              disabled={simulating || riders.length === 0}
-            >
-              {simulating ? (
-                <><div className="spinner spinner-white"></div> Analyzing...</>
-              ) : (
-                <>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="15" height="15">
-                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-                  </svg>
-                  Run Simulation
-                </>
-              )}
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {showHelp && <HelpPanel />}
-
-      <div className="demo-scenario-bar">
-        <div className="demo-mode-toggle">
-          <button
-            className={`demo-toggle-btn ${!liveMode ? 'active' : ''}`}
-            onClick={() => setLiveMode(false)}
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="13" height="13">
-              <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
-            </svg>
-            Demo Mode
-          </button>
-          <button
-            className={`demo-toggle-btn ${liveMode ? 'active' : ''}`}
-            onClick={() => setLiveMode(true)}
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="13" height="13">
-              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-            </svg>
-            Live Mode
-          </button>
-        </div>
-
-        {liveMode && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-              {useLiveWeather ? 'Live weather data' : 'Simulated weather'}
-            </span>
-            <button
-              className="toggle-switch"
-              onClick={() => setUseLiveWeather(v => !v)}
-              style={{ background: useLiveWeather ? 'var(--success)' : 'var(--surface-3)' }}
-            >
-              <div className="toggle-knob" style={{ transform: useLiveWeather ? 'translateX(16px)' : 'translateX(0)' }} />
-            </button>
-          </div>
-        )}
-
-        {!liveMode && (
-          <span className="scenario-preview-text">
-            Each run produces a different mix of paid, flagged, and no-event riders
-          </span>
-        )}
-      </div>
-
-      {!results && !simulating && (
-        <div className="sim-idle">
-          <div className="sim-idle-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-1.94"/>
-              <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-1.94"/>
-            </svg>
-          </div>
-          <h3>AI Simulation Engine</h3>
-          <p>Click "Run Simulation" to analyze all riders for weather disruption triggers and run fraud detection across 6 checks.</p>
-          <button className="btn btn-primary" onClick={runSimulation} disabled={riders.length === 0}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="15" height="15">
-              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-            </svg>
-            Run Simulation
-          </button>
-        </div>
-      )}
-
-      {simulating && (
-        <div style={{ textAlign: 'center', padding: '80px 40px' }}>
-          <div style={{ marginBottom: 16 }}>
-            <div className="spinner spinner-lg spinner-primary" style={{ margin: '0 auto' }}></div>
-          </div>
-          <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>AI Engine Analyzing...</p>
-        </div>
-      )}
-
-      {results && (
-        <>
-          <WeatherPanel weather={summaryWeather} liveMode={liveMode} />
-
-          <PredictionsSection results={results} />
-
-          <OutcomeSummary results={results} />
-
-          <div className="card">
-            <div className="card-header">
-              <h2 className="card-title">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="15" height="15">
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                  <circle cx="9" cy="7" r="4"/>
-                </svg>
-                Rider Analysis
-              </h2>
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{filteredResults.length} of {results.length}</span>
-                <div className="filter-tabs">
-                  {[
-                    ['all', 'All'],
-                    ['paid', 'Paid'],
-                    ['fraud', 'Flagged'],
-                    ['noevent', 'No Event'],
-                    ['disrupted', 'Disrupted'],
-                  ].map(([f, label]) => (
-                    <button key={f} className={`filter-tab ${filter === f ? 'active' : ''}`} onClick={() => setFilter(f)}>
-                      {label}
-                    </button>
-                  ))}
-                </div>
-              </div>
+               <div className="segmented-control" style={{ display: 'flex', background: '#F8FAFC', padding: '5px', borderRadius: '12px', border: '1px solid #F1F5F9', flexShrink: 0 }}>
+                  <button onClick={() => setIsStressMode(!isStressMode)} style={{ border: 'none', padding: '8px 16px', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer', background: isStressMode ? 'white' : 'transparent', color: isStressMode ? '#1E293B' : '#64748B', boxShadow: isStressMode ? '0 2px 8px rgba(0,0,0,0.06)' : 'none' }}>Stress</button>
+                  <button onClick={() => setIsLiveMode(!isLiveMode)} style={{ border: 'none', padding: '8px 16px', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer', background: isLiveMode ? 'white' : 'transparent', color: isLiveMode ? '#1E293B' : '#64748B', boxShadow: isLiveMode ? '0 2px 8px rgba(0,0,0,0.06)' : 'none' }}>Live</button>
+               </div>
+               {(results || simulating) && (
+                  <button
+                     onClick={() => navigate('/client/simulation')}
+                     style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '10px 20px',
+                        borderRadius: '12px',
+                        border: '1px solid #3B82F6',
+                        background: '#3B82F6',
+                        color: 'white',
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 15px rgba(59, 130, 246, 0.3)'
+                     }}
+                  >
+                     <X size={14} /> Exit
+                  </button>
+               )}
             </div>
-            <div className="card-body" style={{ padding: 0 }}>
-              <table className="analysis-table">
-                <thead>
-                  <tr>
-                    <th style={{ width: 36 }}></th>
-                    <th>Rider</th>
-                    <th>City</th>
-                    <th>Active</th>
-                    <th>Severity</th>
-                    <th>Signals</th>
-                    <th>Status</th>
-                    <th>Payout</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredResults.map(result => (
-                    <ResultRow
-                      key={result.riderId}
-                      result={result}
-                      expanded={expandedId === result.riderId}
-                      onToggle={() => setExpandedId(expandedId === result.riderId ? null : result.riderId)}
-                    />
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </>
-      )}
-    </div>
-  );
-}
+         </motion.div>
 
-function OutcomeSummary({ results }) {
-  const paid = results.filter(r => r.payout?.payout > 0 && !r.fraud?.fraudFlag);
-  const flagged = results.filter(r => r.fraud?.fraudFlag);
-  const noEvent = results.filter(r => !r.fraud?.fraudFlag && r.payout?.payout === 0);
-  const totalPaid = paid.reduce((s, r) => s + r.payout?.payout || 0, 0);
-
-  return (
-    <div className="outcome-summary-bar">
-      <div className="outcome-chip cleared">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="12" height="12">
-          <polyline points="20 6 9 17 4 12"/>
-        </svg>
-        <strong>{paid.length}</strong> Paid
-        <span className="outcome-amount">Rs.{totalPaid.toLocaleString()}</span>
-      </div>
-      <div className="outcome-chip flagged">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="12" height="12">
-          <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
-          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-        </svg>
-        <strong>{flagged.length}</strong> Flagged
-        <span className="outcome-amount">Fraud detected</span>
-      </div>
-      <div className="outcome-chip noevent">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="12" height="12">
-          <circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/>
-        </svg>
-        <strong>{noEvent.length}</strong> No Event
-        <span className="outcome-amount">Below threshold</span>
-      </div>
-    </div>
-  );
-}
-
-function ResultRow({ result, expanded, onToggle }) {
-  const flaggedChecks = result.fraud?.checks?.filter(c => c.flagged) || [];
-
-  return (
-    <>
-      <tr onClick={onToggle} style={{ cursor: 'pointer' }} className="analysis-row">
-        <td style={{ padding: '12px 10px' }}>
-          <button className={`expand-btn ${expanded ? 'open' : ''}`}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <polyline points="9 18 15 12 9 6"/>
-            </svg>
-          </button>
-        </td>
-        <td>
-          <div className="user-cell">
-            <div className="user-avatar" style={{
-              background: result.tier === 'Pro' ? 'var(--purple-light)' : result.tier === 'Basic' ? 'var(--surface-2)' : 'var(--info-light)',
-              color: result.tier === 'Pro' ? 'var(--purple)' : result.tier === 'Basic' ? 'var(--text-muted)' : 'var(--info)',
-              fontWeight: 700, fontSize: 12,
-            }}>
-              {result.riderName?.charAt(0)}
-            </div>
-            <div className="user-info">
-              <span className="user-name">{result.riderName}</span>
-              <span className="user-meta">{result.tier} Tier</span>
-            </div>
-          </div>
-        </td>
-        <td>
-          <span style={{ fontSize: 13, fontWeight: 500 }}>{result.city}</span>
-          <span className="user-meta" style={{ display: 'block' }}>{result.weather?.description}</span>
-        </td>
-        <td>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-            <div className={`activity-dot ${result.behavior?.riderActive ? 'active' : 'none'}`}></div>
-            <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-              {result.behavior?.riderActive ? 'Active' : 'Inactive'}
-            </span>
-          </div>
-        </td>
-        <td>
-          <span className={`pill ${
-            result.severityScore >= 5 ? 'pill-danger' :
-            result.severityScore >= 3.5 ? 'pill-warning' :
-            result.severityScore >= 1.5 ? 'pill-success' : 'pill-grey'
-          }`} style={{ fontSize: 11 }}>
-            {result.severityScore.toFixed(1)}
-          </span>
-        </td>
-        <td>
-          <div className="signal-count-badge">
-            <span className="signal-count-num">{result.activeSignalCount}</span>
-            <span className="signal-count-label">/ 7</span>
-            {result.activeSignalCount >= 4 && (
-              <span className="multi-badge">+20%</span>
-            )}
-          </div>
-        </td>
-        <td>
-          <span className={`risk-indicator ${
-            result.payoutStatus === 'FLAGGED' ? 'blocked' :
-            result.payoutStatus === 'CLEARED' ? 'low' : 'none'
-          }`}>
-            {result.payoutStatus === 'FLAGGED' ? (
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="10" height="10">
-                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
-                <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-              </svg>
-            ) : result.payoutStatus === 'CLEARED' ? (
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="10" height="10">
-                <polyline points="20 6 9 17 4 12"/>
-              </svg>
+         <AnimatePresence mode="wait">
+            {!results && !simulating ? (
+               <motion.div key="standby" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 1.05 }} className="standby-hero">
+                  <div className="viz-radar">
+                     <div className="radar-sweep" />
+                     <div className="radar-pulse" />
+                     <Cpu style={{ position: 'absolute', color: '#3B82F6' }} size={64} />
+                  </div>
+                  <h2 className="standby-title">Risk Lab V6.2</h2>
+                  <p className="standby-subtitle">Database-linked parametric audits against live {location} clusters. Synchronized with pre-final dataset ledger.</p>
+                  <button onClick={executeEngineRun} className="trigger-btn-primary" style={{ padding: '1.25rem 3.5rem', borderRadius: '16px', fontSize: '1.1rem' }}>
+                     <Play size={20} fill="white" /> Begin Audits
+                  </button>
+               </motion.div>
+            ) : simulating ? (
+               <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="standby-hero">
+                  <LoadingStage stage={loadingStage} />
+                  <div style={{ marginTop: '2rem' }}>
+                     <button
+                        onClick={() => navigate('/client/overview')}
+                        style={{
+                           display: 'flex',
+                           alignItems: 'center',
+                           gap: '8px',
+                           padding: '10px 20px',
+                           borderRadius: '12px',
+                           border: '1px solid #3B82F6',
+                           background: '#3B82F6',
+                           color: 'white',
+                           fontSize: '0.75rem',
+                           fontWeight: 700,
+                           cursor: 'pointer',
+                           boxShadow: '0 4px 15px rgba(59, 130, 246, 0.3)'
+                        }}
+                     >
+                        <X size={14} /> Exit to RiskLab
+                     </button>
+                  </div>
+               </motion.div>
             ) : (
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="10" height="10">
-                <circle cx="12" cy="12" r="10"/>
-              </svg>
+               <motion.div key="results" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="results-view">
+                  <div className="results-kpi-grid">
+                     <KPI icon={CheckCircle2} label="Approved" value={results.filter(n => n.payout?.status === 'APPROVED').length} color="#10B981" />
+                     <KPI icon={ShieldAlert} label="Mitigated" value={results.filter(n => n.payout?.status === 'MITIGATED').length} color="#F59E0B" />
+                     <KPI icon={Activity} label="Nominal" value={results.filter(n => n.payout?.status === 'NOMINAL').length} color="#64748B" />
+                  </div>
+
+                  <div className="dash-toolbar" style={{ marginBottom: '1rem', borderRadius: '16px' }}>
+                     <div className="filter-pills">
+                        {['All', 'Approved', 'Mitigated', 'Nominal'].map(p => (
+                           <button key={p} onClick={() => setFilter(p)} className={`pill-btn ${filter === p ? 'active' : ''}`}>
+                              {p}
+                           </button>
+                        ))}
+                     </div>
+                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                        <span style={{ fontSize: '0.6rem', fontWeight: 800, color: '#94A3B8', letterSpacing: '0.1em' }}>
+                           SYSTEM_AUTH: STABLE
+                        </span>
+                        <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#64748B', letterSpacing: '0.1em' }}>
+                           BATCH_ID: {Date.now().toString().slice(-8)}
+                        </span>
+                     </div>
+                  </div>
+
+                  <div className="table-container-executive">
+                     <table>
+                        <thead>
+                           <tr>
+                              <th>Rider ID</th>
+                              <th>Persona Profile</th>
+                              <th>Risk Indicators</th>
+                              <th>Audit Status</th>
+                              <th style={{ textAlign: 'right' }}>Disbursement</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                           {filteredResults.map((r, idx) => (
+                              <React.Fragment key={r.id}>
+                                 <tr
+                                    className={`exec-row ${expandedId === r.id ? 'expanded' : ''} ${r.payout?.status === 'MITIGATED' ? 'mitigated-row' : ''}`}
+                                    onClick={() => setExpandedId(expandedId === r.id ? null : r.id)}
+                                 >
+                                    <td>
+                                       <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                          <span style={{ fontWeight: 800, color: '#1E293B', fontSize: '1rem' }}>{r.id}</span>
+                                          <span style={{ fontSize: '0.6rem', color: '#94A3B8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>ID Verified</span>
+                                       </div>
+                                    </td>
+                                    <td>
+                                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                          <PersonaIcon persona={r.persona} />
+                                          <span style={{ opacity: 0.8, fontSize: '0.85rem', fontWeight: 600 }}>{r.persona}</span>
+                                       </div>
+                                    </td>
+                                    <td>
+                                       <div className="status-pills-container">
+                                          <CloudRain className={`peril-icon-mini ${r.signals?.heavyRain?.active ? 'active' : ''}`} size={14} />
+                                          <Wind className={`peril-icon-mini ${r.signals?.highWind?.active ? 'active' : ''}`} size={14} />
+                                          <ShieldCheck className={`peril-icon-mini ${r.payout?.status === 'APPROVED' ? 'active' : ''}`} size={14} />
+                                       </div>
+                                    </td>
+                                    <td>
+                                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                          <span className="dot" style={{
+                                             backgroundColor:
+                                                r.payout?.status === 'APPROVED' ? '#10B981' :
+                                                   r.payout?.status === 'MITIGATED' ? '#F59E0B' : '#94A3B8'
+                                          }} />
+                                          <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748B' }}>
+                                             {r.payout?.status === 'APPROVED' ? 'APPROVED' :
+                                                r.payout?.status === 'MITIGATED' ? 'MITIGATED' : 'NOMINAL'}
+                                          </span>
+                                       </div>
+                                    </td>
+                                    <td style={{ textAlign: 'right', fontWeight: 900, fontSize: '1rem', color: '#1E293B' }}>
+                                       ₹{(r.payout?.amount || 0).toLocaleString()}
+                                       <ChevronDown size={14} style={{ marginLeft: '0.5rem', opacity: 0.3, transform: expandedId === r.id ? 'rotate(180deg)' : 'none', transition: 'transform 0.3s' }} />
+                                    </td>
+                                 </tr>
+                                 <AnimatePresence>
+                                    {expandedId === r.id && (
+                                       <tr>
+                                          <td colSpan="5" style={{ padding: 0 }}>
+                                             <motion.div
+                                                exit={{ height: 0, opacity: 0 }}
+                                                className="audit-workflow-panel"
+                                             >
+                                                <div className="workflow-stepper" style={{ padding: '24px' }}>
+                                                   {/* PHASE 1: DISRUPTION ANALYSIS */}
+                                                   <div className="workflow-step">
+                                                      <div className="step-indicator">
+                                                         <div className={`step-circle ${r.isDisrupted ? 'step-warn' : 'step-ok'}`}>1</div>
+                                                         <div className="step-line" />
+                                                      </div>
+                                                      <div className="step-content" style={{ paddingBottom: '32px' }}>
+                                                         <div className="step-header" style={{ marginBottom: '20px' }}>
+                                                            <span className="step-title">Phase 1: Multi-Peril Disruption Analysis</span>
+                                                            <span className={`step-status-tag ${r.isDisrupted ? 'tag-danger' : 'tag-success'}`}>
+                                                               {r.isDisrupted ? 'BREACHED' : 'NOMINAL_STATE'}
+                                                            </span>
+                                                         </div>
+
+                                                         {/* MAIN TRIGGERS */}
+                                                         <div style={{ marginBottom: '28px' }}>
+                                                            <div style={{ fontSize: '0.65rem', fontWeight: 800, color: '#94A3B8', letterSpacing: '0.1em', marginBottom: '12px', textTransform: 'uppercase' }}>Primary Actuarial Triggers</div>
+                                                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
+                                                               <TriggerCard label="T1" name="Precipitation" value={r.signals?.heavyRain?.value} unit="mm/h" active={r.signals?.heavyRain?.active} threshold={r.signals?.heavyRain?.threshold} />
+                                                               <TriggerCard label="T3" name="Traffic Density" value={r.signals?.orderDrop?.value} unit="%" active={r.signals?.orderDrop?.active} threshold={r.signals?.orderDrop?.threshold} />
+                                                               <TriggerCard label="T4" name="Velocity Signal" value={r.signals?.riderInactive?.value} unit="" active={r.signals?.riderInactive?.active} isStatus />
+                                                            </div>
+                                                         </div>
+
+                                                         {/* SECONDARY TRIGGERS */}
+                                                         <div style={{ marginBottom: '28px' }}>
+                                                            <div style={{ fontSize: '0.65rem', fontWeight: 800, color: '#94A3B8', letterSpacing: '0.1em', marginBottom: '12px', textTransform: 'uppercase' }}>Ancillary Sensor Nodes</div>
+                                                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
+                                                               {[
+                                                                  { key: 'highWind', label: 'T2', name: 'Wind Speed', unit: 'km/h', val: r.signals?.highWind?.value },
+                                                                  { key: 'lowOrderVolume', label: 'T5', name: 'Order Vol', unit: '', val: r.signals?.lowOrderVolume?.active ? 'Low' : 'Norm' },
+                                                                  { key: 'abnormalDeliveryTime', label: 'T6', name: 'Latency', unit: 'min', val: r.signals?.abnormalDeliveryTime?.value },
+                                                                  { key: 'lowVisibility', label: 'T7', name: 'Visibility', unit: 'km', val: r.signals?.lowVisibility?.value }
+                                                               ].map(t => (
+                                                                  <div key={t.key} style={{ padding: '12px', background: r.signals?.[t.key]?.active ? 'rgba(239, 68, 68, 0.05)' : 'rgba(241, 245, 249, 0.3)', borderRadius: '10px', border: `1px solid ${r.signals?.[t.key]?.active ? '#FECACA' : '#F1F5F9'}` }}>
+                                                                     <div style={{ fontSize: '0.55rem', fontWeight: 800, color: '#94A3B8', marginBottom: '4px' }}>{t.label} {t.name}</div>
+                                                                     <div style={{ fontSize: '0.85rem', fontWeight: 800, color: r.signals?.[t.key]?.active ? '#DC2626' : '#475569' }}>
+                                                                        {typeof t.val === 'number' ? t.val.toFixed(1) : t.val}{t.unit}
+                                                                     </div>
+                                                                  </div>
+                                                               ))}
+                                                            </div>
+                                                         </div>
+
+                                                         {/* SUMMARY BAR */}
+                                                         <div style={{ padding: '16px 20px', background: 'rgba(248, 250, 252, 0.8)', borderRadius: '14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid #F1F5F9' }}>
+                                                            <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+                                                               <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                                                  <span style={{ fontSize: '0.6rem', color: '#94A3B8', fontWeight: 800 }}>ACTIVE SIGNALS</span>
+                                                                  <span style={{ fontSize: '1.1rem', fontWeight: 900, color: r.activeSignalCount >= 2 ? '#DC2626' : '#10B981' }}>{r.activeSignalCount || 0}/7</span>
+                                                               </div>
+                                                               <div style={{ width: '1px', height: '32px', background: '#E2E8F0' }} />
+                                                               <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                                                  <span style={{ fontSize: '0.6rem', color: '#94A3B8', fontWeight: 800 }}>SEVERITY INDEX</span>
+                                                                  <span style={{ fontSize: '1.1rem', fontWeight: 900, color: (r.severityScore || 0) >= 1.5 ? '#DC2626' : '#1E293B' }}>{(r.severityScore || 0).toFixed(2)}</span>
+                                                               </div>
+                                                            </div>
+                                                            <div style={{ textAlign: 'right' }}>
+                                                               <span style={{ fontSize: '0.6rem', color: '#94A3B8', fontWeight: 800, display: 'block', marginBottom: '4px' }}>AUDIT RESULT</span>
+                                                               <span style={{ fontSize: '0.75rem', fontWeight: 900, padding: '5px 12px', borderRadius: '8px', background: r.isDisrupted ? '#FEE2E2' : '#DCFCE7', color: r.isDisrupted ? '#DC2626' : '#16A34A', border: `1px solid ${r.isDisrupted ? '#FCA5A5' : '#BBF7D0'}`, letterSpacing: '0.02em' }}>
+                                                                  {r.isDisrupted ? 'PARAMETRIC_BREACH' : 'STABLE_NODE'}
+                                                               </span>
+                                                            </div>
+                                                         </div>
+                                                      </div>
+                                                   </div>
+
+                                                   {/* PHASE 2: INTEGRITY & TRUST */}
+                                                   <div className="workflow-step">
+                                                      <div className="step-indicator">
+                                                         <div className={`step-circle ${r.payout?.status === 'MITIGATED' ? 'step-fail' : 'step-ok'}`}>2</div>
+                                                         <div className="step-line" />
+                                                      </div>
+                                                      <div className="step-content" style={{ paddingBottom: '32px' }}>
+                                                         <div className="step-header" style={{ marginBottom: '20px' }}>
+                                                            <span className="step-title">Phase 2: Integrity & Trust Verification</span>
+                                                            <span className={`step-status-tag ${r.payout?.status === 'MITIGATED' ? 'tag-danger' : 'tag-success'}`}>
+                                                               {r.payout?.status === 'MITIGATED' ? 'RISK_MITIGATED' : 'IDENTITY_SECURE'}
+                                                            </span>
+                                                         </div>
+                                                         <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '24px' }}>
+                                                            <div style={{ background: 'rgba(241, 245, 249, 0.4)', padding: '24px', borderRadius: '18px', border: '1px solid #F1F5F9' }}>
+                                                               <div style={{ marginBottom: '20px' }}>
+                                                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                                                                     <span style={{ fontSize: '0.65rem', fontWeight: 800, color: '#94A3B8', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Fraud Probability Index</span>
+                                                                     <span style={{ fontSize: '1.1rem', fontWeight: 900, color: r.fraud_probability >= 0.5 ? '#EF4444' : '#10B981' }}>{(r.fraud_probability * 100).toFixed(0)}%</span>
+                                                                  </div>
+                                                                  <div style={{ height: '10px', background: '#E2E8F0', borderRadius: '10px', overflow: 'hidden' }}>
+                                                                     <motion.div initial={{ width: 0 }} animate={{ width: `${r.fraud_probability * 100}%` }} transition={{ duration: 1, ease: 'easeOut' }} style={{ height: '100%', background: r.fraud_probability >= 0.5 ? '#EF4444' : '#10B981' }} />
+                                                                  </div>
+                                                               </div>
+                                                               <div>
+                                                                  <div style={{ fontSize: '0.65rem', fontWeight: 800, color: '#94A3B8', letterSpacing: '0.1em', marginBottom: '10px', textTransform: 'uppercase' }}>Anomaly Detection Engine</div>
+                                                                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                                                     {r.fraud?.reasons?.length > 0 ? r.fraud.reasons.map((res, i) => (
+                                                                        <span key={i} style={{ fontSize: '0.65rem', fontWeight: 700, padding: '5px 12px', background: 'rgba(239, 68, 68, 0.08)', color: '#DC2626', borderRadius: '8px', border: '1px solid rgba(220, 38, 38, 0.2)' }}>
+                                                                           {res}
+                                                                        </span>
+                                                                     )) : (
+                                                                        <span style={{ fontSize: '0.65rem', fontWeight: 700, padding: '5px 12px', background: 'rgba(16, 185, 129, 0.08)', color: '#059669', borderRadius: '8px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
+                                                                           CLEAN_TELEMETRY_SIGNATURE
+                                                                        </span>
+                                                                     )}
+                                                                  </div>
+                                                               </div>
+                                                            </div>
+                                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                                               <div style={{ padding: '20px', background: '#FFFFFF', borderRadius: '18px', border: '1px solid #F1F5F9', boxShadow: '0 8px 24px rgba(0,0,0,0.03)' }}>
+                                                                  <span style={{ fontSize: '0.6rem', color: '#94A3B8', fontWeight: 800, display: 'block', marginBottom: '6px' }}>MASTER TRUST SCORE</span>
+                                                                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
+                                                                     <span style={{ fontSize: '1.8rem', fontWeight: 900, color: r.trust_score >= 70 ? '#10B981' : r.trust_score >= 45 ? '#F59E0B' : '#EF4444' }}>{Math.round(r.trust_score || 0)}</span>
+                                                                     <span style={{ fontSize: '0.8rem', color: '#94A3B8', fontWeight: 700 }}>/ 100</span>
+                                                                  </div>
+                                                               </div>
+                                                               {r.probation_status && (
+                                                                  <div style={{ padding: '16px', background: 'linear-gradient(135deg, #FEF2F2 0%, #FFF1F2 100%)', borderRadius: '18px', border: '1px solid #FECACA' }}>
+                                                                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#DC2626', marginBottom: '6px' }}>
+                                                                        <ShieldAlert size={14} />
+                                                                        <span style={{ fontSize: '0.7rem', fontWeight: 900, letterSpacing: '0.05em' }}>PROBATIONARY OVERRIDE</span>
+                                                                     </div>
+                                                                     <p style={{ fontSize: '0.65rem', color: '#991B1B', fontWeight: 600, lineHeight: 1.5, margin: 0 }}>Rider history indicates session instability. Mandatory 30% payout reduction applied.</p>
+                                                                  </div>
+                                                               )}
+                                                            </div>
+                                                         </div>
+                                                      </div>
+                                                   </div>
+
+                                                   {/* PHASE 3: ADAPTIVE SETTLEMENT */}
+                                                   <div className="workflow-step">
+                                                      <div className="step-indicator"><div className="step-circle step-ok">3</div></div>
+                                                      <div className="step-content">
+                                                         <div className="step-header" style={{ marginBottom: '20px' }}>
+                                                            <span className="step-title">Phase 3: Adaptive Parametric Settlement</span>
+                                                            <span className="step-status-tag tag-success">SETTLEMENT_CALCULATED</span>
+                                                         </div>
+                                                         <div className="calc-flow-container" style={{ background: '#F8FAFC', padding: '20px', borderRadius: '18px', border: '1px solid #F1F5F9' }}>
+                                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                                               <CalculationStep label="Baseline Capacity" value={`₹${r.payout?.math?.cap || 0}`} />
+                                                               {r.probation_status && <span style={{ fontSize: '0.65rem', color: '#EF4444', fontWeight: 800, marginLeft: '12px', textTransform: 'uppercase' }}>Probationary Adjustment Applied</span>}
+                                                            </div>
+                                                            <CalculationStep label="Severity Adjustment" value={`x ${(r.payout?.math?.severity || 0).toFixed(2)}`} />
+                                                            <CalculationStep label="Trust Confidence" value={`x ${(r.payout?.math?.confidence || 0).toFixed(2)}`} />
+                                                            <div style={{ margin: '12px 0', height: '1px', background: '#E2E8F0' }} />
+                                                            <CalculationStep label="Final Disbursement" value={`₹${(r.payout?.amount || 0).toLocaleString()}`} isFinal={true} />
+                                                            <div style={{ marginTop: '12px', fontSize: '0.65rem', color: '#64748B', fontWeight: 700, fontStyle: 'italic', letterSpacing: '0.02em', background: '#f1f5f9', padding: '10px', borderRadius: '8px' }}>
+                                                               <span style={{ opacity: 0.7 }}>PROPRIETARY_LEDGER_HASH:</span> <span style={{ color: '#1e293b' }}>SKYSURE-TXN-{r.id?.toUpperCase() || 'UNKNOWN'}</span>
+                                                            </div>
+                                                         </div>
+                                                      </div>
+                                                   </div>
+                                                </div>
+
+                                             </motion.div>
+                                          </td>
+                                       </tr>
+                                    )}
+                                 </AnimatePresence>
+                              </React.Fragment>
+                           ))}
+                        </tbody>
+                     </table>
+                  </div>
+               </motion.div>
             )}
-            {result.payoutStatus}
-          </span>
-        </td>
-        <td>
-          <span className={`amount ${
-            result.payout?.payout > 0 && !result.fraud?.fraudFlag ? 'success' : 
-            result.fraud?.fraudFlag ? 'danger' : 'muted'
-          }`} style={{ fontSize: 14 }}>
-            {result.payout?.payout > 0 && !result.fraud?.fraudFlag ? `Rs.${result.payout.payout}` : 'Rs.0'}
-          </span>
-        </td>
-      </tr>
-
-      {expanded && (
-        <tr>
-          <td colSpan={8} className="accordion-detail">
-            <div className="detail-grid">
-              <div className="detail-section">
-                <div className="detail-section-title">Weather Signals (7 checks)</div>
-                <div className="signal-chips">
-                  {SIGNAL_KEYS.map(key => {
-                    const active = result.signals?.[key]?.active;
-                    return (
-                      <span key={key} className={`signal-chip ${active ? 'on' : 'off'}`}>
-                        {active ? (
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" width="9" height="9">
-                            <polyline points="20 6 9 17 4 12"/>
-                          </svg>
-                        ) : (
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="9" height="9">
-                            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                          </svg>
-                        )}
-                        {SIGNAL_NAMES[key]}
-                      </span>
-                    );
-                  })}
-                </div>
-                {result.activeSignalCount >= 4 && (
-                  <div className="multi-signal-badge">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="12" height="12">
-                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-                    </svg>
-                    Multi-Signal Bonus +20%
-                  </div>
-                )}
-              </div>
-
-              <div className="detail-section fraud-section">
-                <div className="detail-section-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  Fraud Detection (6 checks)
-                  <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-                    <span className={`pill ${
-                      flaggedChecks.length > 0 ? 'pill-danger' : 'pill-success'
-                    }`} style={{ fontSize: 10 }}>
-                      {flaggedChecks.length > 0 ? `${flaggedChecks.length} FLAGGED` : 'ALL PASS'}
-                    </span>
-                    <span className={`pill ${result.fraud?.riskLevel === 'HIGH' ? 'pill-danger' : result.fraud?.riskLevel === 'MEDIUM' ? 'pill-warning' : 'pill-success'}`} style={{ fontSize: 10 }}>
-                      RISK: {result.fraud?.riskLevel}
-                    </span>
-                  </div>
-                </div>
-                <div className="fraud-card-grid">
-                  {result.fraud?.checks?.map((check, i) => (
-                    <div key={i} className={`fraud-card ${check.flagged ? 'flagged' : 'passed'}`}>
-                      <div className="fraud-card-header">
-                        <span className="fraud-card-name">{check.type}</span>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                          <span className={`fraud-card-badge ${check.flagged ? 'fail' : 'pass'}`}>
-                            {check.flagged ? 'FLAGGED' : 'PASS'}
-                          </span>
-                          {check.flagged && (
-                            <span className="fraud-score-tag">+{check.score}</span>
-                          )}
-                        </div>
-                      </div>
-                      <div className="fraud-card-reason">{check.reason}</div>
-                      <div className="fraud-card-detail">{check.details}</div>
-                    </div>
-                  ))}
-                </div>
-                <div className="fraud-summary">
-                  <div className="fraud-score-row">
-                    <span className="fraud-score-label">Fraud Score</span>
-                    <div className="fraud-score-bar-wrap">
-                      <div className="progress-bar fraud-bar">
-                        <div
-                          className={`progress-fill ${
-                            result.fraud?.fraudScore > 70 ? 'danger' :
-                            result.fraud?.fraudScore > 30 ? 'warning' : 'success'
-                          }`}
-                          style={{ width: `${result.fraud?.fraudScore}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                    <span className={`fraud-score-value ${result.fraud?.fraudFlag ? 'danger-val' : ''}`}>
-                      {result.fraud?.fraudScore}%
-                    </span>
-                    {result.fraud?.fraudFlag && (
-                      <span className="fraud-threshold-note">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="10" height="10">
-                          <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
-                          <line x1="12" y1="9" x2="12" y2="13"/>
-                        </svg>
-                        {result.fraud?.fraudScore}% ≥ 30% threshold = BLOCKED
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div className="detail-section">
-                <div className="detail-section-title">Payout Decision</div>
-                <div className={`payout-box ${
-                  result.payoutStatus === 'FLAGGED' ? 'blocked' :
-                  result.payoutStatus === 'CLEARED' ? 'cleared' : 'none'
-                }`}>
-                  <div className="payout-tier" style={{
-                    color: result.payoutStatus === 'FLAGGED' ? 'var(--danger)' :
-                           result.payoutStatus === 'CLEARED' ? 'var(--success)' : 'var(--text-muted)',
-                  }}>
-                    {result.payoutStatus === 'FLAGGED' ? 'FRAUD - BLOCKED' : result.payoutStatus === 'CLEARED' ? result.payout?.tier : 'NO EVENT'}
-                  </div>
-                  <div className="payout-amount" style={{
-                    color: result.payoutStatus === 'FLAGGED' ? 'var(--danger)' :
-                           result.payoutStatus === 'CLEARED' ? 'var(--success)' : 'var(--text-muted)',
-                  }}>
-                    Rs.{result.payout?.payout || 0}
-                  </div>
-                  <div className="payout-reason-text" style={result.payoutStatus === 'FLAGGED' ? { color: 'var(--danger)', fontWeight: 600 } : {}}>
-                    {result.payoutStatus === 'FLAGGED'
-                      ? `FLAGGED: ${result.fraud.checks?.find(c => c.flagged)?.type || 'Fraud'} check failed`
-                      : result.payout?.reason || 'No qualifying disruption detected'}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </td>
-        </tr>
-      )}
-    </>
-  );
-}
-
-function WeatherPanel({ weather, liveMode }) {
-  return (
-    <div className="weather-panel">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-        <h2 style={{ fontSize: 14, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8 }}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="15" height="15">
-            <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
-          </svg>
-          Current Conditions
-          {!liveMode && <span className="demo-badge">DEMO</span>}
-        </h2>
+         </AnimatePresence>
       </div>
-
-      {weather ? (
-        <div className="weather-row">
-          <div className="weather-metrics">
-            <div className="weather-metric">
-              <span className="weather-metric-label">Rain</span>
-              <span className="weather-metric-value">{weather.rainfallMm} mm</span>
-            </div>
-            <div className="weather-metric">
-              <span className="weather-metric-label">Temp</span>
-              <span className="weather-metric-value">{weather.temperatureC}°C</span>
-            </div>
-            <div className="weather-metric">
-              <span className="weather-metric-label">Humidity</span>
-              <span className="weather-metric-value">{weather.humidity}%</span>
-            </div>
-            <div className="weather-metric">
-              <span className="weather-metric-label">Wind</span>
-              <span className="weather-metric-value">{weather.windKph} km/h</span>
-            </div>
-            <div className="weather-metric">
-              <span className="weather-metric-label">Visibility</span>
-              <span className="weather-metric-value">{weather.visibility} km</span>
-            </div>
-          </div>
-          <span className={`pill ${
-            weather.severity === 'CRITICAL' ? 'pill-danger' :
-            weather.severity === 'HIGH' ? 'pill-warning' :
-            weather.severity === 'MEDIUM' ? 'pill-info' :
-            weather.severity === 'LOW' ? 'pill-success' : 'pill-grey'
-          }`} style={{ fontSize: 12, padding: '5px 12px' }}>
-            {weather.severity || 'NONE'}
-          </span>
-        </div>
-      ) : (
-        <div style={{ color: 'var(--text-muted)', fontSize: 13 }}>No weather data</div>
-      )}
-    </div>
-  );
-}
-
-function PredictionsSection({ results }) {
-  const avgSeverity = results.reduce((s, r) => s + r.severityScore, 0) / results.length;
-  const maxSeverity = Math.max(...results.map(r => r.severityScore));
-  const disruptedCount = results.filter(r => r.isDisrupted).length;
-  const avgSeverity2 = avgSeverity.toFixed(1);
-  const predictedRisk = disruptedCount >= results.length / 2 ? 'HIGH' : disruptedCount > 0 ? 'MEDIUM' : 'LOW';
-
-  return (
-    <div className="card" style={{ marginBottom: 20 }}>
-      <div className="card-header">
-        <h2 className="card-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="15" height="15">
-            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-          </svg>
-          AI Predictions
-        </h2>
-      </div>
-      <div className="card-body">
-        <div className="predictions-list">
-          <div className="prediction-row">
-            <span className="prediction-label">Predicted Risk</span>
-            <span className={`prediction-value ${predictedRisk === 'HIGH' ? 'high' : predictedRisk === 'MEDIUM' ? 'medium' : 'low'}`}>
-              {predictedRisk}
-            </span>
-          </div>
-          <div className="prediction-row">
-            <span className="prediction-label">Avg Severity</span>
-            <span className={`prediction-value ${avgSeverity >= 5 ? 'high' : avgSeverity >= 3.5 ? 'medium' : 'low'}`}>
-              {avgSeverity2} / 10.0
-            </span>
-          </div>
-          <div className="prediction-row">
-            <span className="prediction-label">Max Severity Expected</span>
-            <span className={`prediction-value ${maxSeverity >= 5 ? 'high' : maxSeverity >= 3.5 ? 'medium' : 'low'}`}>
-              {maxSeverity.toFixed(1)} / 10.0
-            </span>
-          </div>
-          <div className="prediction-row">
-            <span className="prediction-label">Riders Disrupted</span>
-            <span className="prediction-value" style={{ color: 'var(--text)' }}>
-              {disruptedCount} of {results.length}
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function HelpPanel() {
-  return (
-    <div className="help-panel">
-      <div className="help-section">
-        <div className="help-section-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="16" height="16">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-          </svg>
-          Disruption vs Payout
-        </div>
-        <div className="help-grid">
-          <div className="help-card">
-            <h4>DISRUPTION</h4>
-            <p>Weather conditions affect rider performance</p>
-            <ul>
-              <li>Severity Score ≥ 1.5</li>
-              <li>At least 2 of 7 signals active</li>
-            </ul>
-            <p className="help-note">May qualify, but could be blocked by fraud</p>
-          </div>
-          <div className="help-card payout">
-            <h4>PAYOUT</h4>
-            <p>Actual money disbursed to rider</p>
-            <ul>
-              <li>Must be DISRUPTED first</li>
-              <li>Must PASS all fraud checks</li>
-              <li>Severity ≥ 1.0 for any payout</li>
-            </ul>
-            <p className="help-note">Base amounts: Rs.300-1000 x tier multiplier</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="help-section">
-        <div className="help-section-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="16" height="16">
-            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-          </svg>
-          The 7 Disruption Signals
-        </div>
-        <table className="help-table">
-          <thead><tr><th>Signal</th><th>Condition</th><th>Weight</th></tr></thead>
-          <tbody>
-            {[
-              ['Heavy Rain', 'Rainfall > 10mm/hr', '35%'],
-              ['Order Drop', 'Orders dropped > 30%', '30%'],
-              ['Inactive', 'Rider not active', '20%'],
-              ['Slow Delivery', 'Delivery > 45 min', '10%'],
-              ['Low Volume', 'Orders < 50% baseline', '5%'],
-              ['High Wind', 'Wind > 40 km/h', '5%'],
-              ['Low Visibility', 'Visibility < 5 km', '5%'],
-            ].map(([name, cond, w]) => (
-              <tr key={name}><td><strong>{name}</strong></td><td>{cond}</td><td>{w}</td></tr>
-            ))}
-          </tbody>
-        </table>
-        <p className="help-formula">DISRUPTION = Severity ≥ 1.5 AND Signals ≥ 2</p>
-      </div>
-
-      <div className="help-section">
-        <div className="help-section-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="16" height="16">
-            <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-1.94"/>
-            <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-1.94"/>
-          </svg>
-          Fraud Detection (6 Checks)
-        </div>
-        <table className="help-table">
-          <thead><tr><th>Check</th><th>Weight</th><th>Condition</th></tr></thead>
-          <tbody>
-            {[
-              ['Rain Correlation', '25%', '≥80% inactive during rain'],
-              ['Velocity Spike', '20%', '>3x payout spike'],
-              ['Ghost Rider', '20%', 'No weather + long absence'],
-              ['Synced Inactivity', '15%', '≥75% inactive together'],
-              ['Behavioral', '10%', '>2x delivery deviation'],
-              ['Cluster', '10%', '>40% inactivity excess'],
-            ].map(([name, w, t]) => (
-              <tr key={name}><td><strong>{name}</strong></td><td>{w}</td><td style={{ fontSize: 10 }}>{t}</td></tr>
-            ))}
-          </tbody>
-        </table>
-        <p className="help-formula">Fraud Score ≥ 30% AND 1+ checks flagged = FLAGGED (payout blocked)</p>
-      </div>
-
-      <div className="help-section">
-        <div className="help-section-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="16" height="16">
-            <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/>
-            <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/>
-            <path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/>
-          </svg>
-          Payout Tiers
-        </div>
-        <table className="help-table">
-          <thead><tr><th>Tier</th><th>Severity</th><th>Base</th><th>Pro (1.3x)</th><th>Standard</th><th>Basic (0.7x)</th></tr></thead>
-          <tbody>
-            {[
-              ['Critical', '≥ 5.0', 'Rs.1000', 'Rs.1300', 'Rs.1000', 'Rs.700'],
-              ['High', '≥ 3.5', 'Rs.700', 'Rs.910', 'Rs.700', 'Rs.490'],
-              ['Medium', '≥ 2.5', 'Rs.500', 'Rs.650', 'Rs.500', 'Rs.350'],
-              ['Low', '≥ 1.0', 'Rs.300', 'Rs.390', 'Rs.300', 'Rs.210'],
-            ].map(([tier, sev, base, pro, std, basic]) => (
-              <tr key={tier}><td><strong>{tier}</strong></td><td>{sev}</td><td>{base}</td><td>{pro}</td><td>{std}</td><td>{basic}</td></tr>
-            ))}
-          </tbody>
-        </table>
-        <p className="help-formula">Multi-Signal Bonus: +20% if 4+ signals active</p>
-      </div>
-    </div>
-  );
+   );
 }

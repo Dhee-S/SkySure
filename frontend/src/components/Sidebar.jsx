@@ -1,110 +1,118 @@
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { LayoutDashboard, Users, Zap, ScrollText, LogOut, Activity, Globe, Gauge, Home } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { signOut } from 'firebase/auth';
+import { auth } from '../firebase';
+
+const navItems = [
+  { path: '/client/overview', label: 'Operations Hub', icon: LayoutDashboard },
+  { path: '/client/riders', label: 'Partner Registry', icon: Users },
+  { path: '/client/simulation', label: 'Risk Lab', icon: Zap },
+  { path: '/client/logs', label: 'Payout Feed', icon: ScrollText },
+];
 
 export default function Sidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    localStorage.removeItem('skysure_mock_user');
+    await signOut(auth);
+    window.location.href = '/login';
+  };
 
   return (
     <aside className="sidebar">
       <div className="sidebar-header">
-        <a href="/" className="sidebar-logo">
-          <div className="logo-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            </svg>
-          </div>
-          <div>
-            <span className="logo-text">SkySure</span>
-            <span className="logo-sub">Admin Panel</span>
-          </div>
-        </a>
+        <div className="sidebar-brand">
+          <h1>SkySure</h1>
+          <span>Enterprise</span>
+        </div>
       </div>
 
-      <nav className="sidebar-nav">
-        <div className="nav-section">
-          <div className="nav-section-title">Navigation</div>
-          {navItems.map(item => {
+      <div className="sidebar-nav">
+        <div className="nav-label">Core Console</div>
+        <nav className="nav-list">
+          {navItems.map((item, index) => {
             const Icon = item.icon;
-            const isActive = location.pathname === item.path || (item.path === '/client/overview' && location.pathname === '/client');
+            const isActive = location.pathname.startsWith(item.path) || (item.path === '/client/overview' && location.pathname === '/client');
+            
             return (
               <NavLink
                 key={item.path}
                 to={item.path}
                 className={`nav-item ${isActive ? 'active' : ''}`}
               >
-                <span className="nav-icon"><Icon /></span>
-                <span className="nav-label">{item.label}</span>
+                <motion.div
+                  className="nav-item-content"
+                  whileHover={{ x: 4 }}
+                >
+                  <div className={`nav-icon ${isActive ? 'active' : ''}`}>
+                    <Icon size={20} />
+                  </div>
+                  <span>{item.label}</span>
+                </motion.div>
+                {isActive && (
+                  <motion.div 
+                    layoutId="active-pill"
+                    className="active-indicator"
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  />
+                )}
               </NavLink>
             );
           })}
+        </nav>
+
+        <div className="nav-section">
+          <div className="nav-label">System Status</div>
+          <div className="status-items">
+            <div className="status-item">
+              <div className="status-header">
+                <span>Global Latency</span>
+                <span className="status-badge success">STABLE</span>
+              </div>
+              <div className="status-bar">
+                <div className="status-fill" style={{ width: '85%' }} />
+              </div>
+            </div>
+            <div className="status-item">
+              <div className="status-header">
+                <span>Actuarial Sync</span>
+                <span className="status-badge primary">SYNCED</span>
+              </div>
+              <div className="status-bar">
+                <div className="status-fill primary" style={{ width: '98%' }} />
+              </div>
+            </div>
+          </div>
         </div>
-      </nav>
+      </div>
 
       <div className="sidebar-footer">
-        <a href="/" className="btn" style={{
-          background: 'rgba(255,255,255,0.06)',
-          color: 'rgba(255,255,255,0.6)',
-          border: '1px solid rgba(255,255,255,0.1)',
-          width: '100%',
-          justifyContent: 'center',
-          fontSize: 12,
-          padding: '8px 12px',
-        }}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-            <polyline points="16 17 21 12 16 7"/>
-            <line x1="21" y1="12" x2="9" y2="12"/>
-          </svg>
-          Back to Home
-        </a>
+        <button 
+          onClick={() => navigate('/')}
+          className="home-btn"
+        >
+          <div className="home-icon">
+            <Home size={18} />
+          </div>
+          <span>Back to Landing</span>
+        </button>
+        <button 
+          onClick={handleLogout}
+          className="logout-btn"
+        >
+          <div className="user-avatar">
+            <span>GC</span>
+          </div>
+          <div className="user-info">
+            <div className="user-name">Admin Console</div>
+            <div className="user-role">Parametric Lead</div>
+          </div>
+          <LogOut size={16} className="logout-icon" />
+        </button>
       </div>
     </aside>
-  );
-}
-
-const navItems = [
-  { path: '/client/overview', label: 'Overview', icon: OverviewIcon },
-  { path: '/client/riders', label: 'Riders', icon: RidersIcon },
-  { path: '/client/simulation', label: 'Simulation', icon: SimIcon },
-  { path: '/client/logs', label: 'Payout Logs', icon: LogsIcon },
-];
-
-function OverviewIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <rect x="3" y="3" width="7" height="7" rx="1"/>
-      <rect x="14" y="3" width="7" height="7" rx="1"/>
-      <rect x="14" y="14" width="7" height="7" rx="1"/>
-      <rect x="3" y="14" width="7" height="7" rx="1"/>
-    </svg>
-  );
-}
-
-function RidersIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-      <circle cx="9" cy="7" r="4"/>
-      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-      <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-    </svg>
-  );
-}
-
-function SimIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-    </svg>
-  );
-}
-
-function LogsIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-      <polyline points="14 2 14 8 20 8"/>
-      <line x1="16" y1="13" x2="8" y2="13"/>
-      <line x1="16" y1="17" x2="8" y2="17"/>
-    </svg>
   );
 }

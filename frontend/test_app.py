@@ -9,72 +9,48 @@ with sync_playwright() as p:
     page.on("console", lambda msg: errors.append(msg.text) if msg.type == "error" else None)
     
     print("1. Loading landing page...")
-    page.goto('http://localhost:5174')
+    page.goto('http://localhost:5180')
     page.wait_for_load_state('networkidle')
+    page.wait_for_timeout(3000)
     page.screenshot(path='D:/Code/Guidwire/gigguard/frontend/test_results/1_landing.png')
     print("   Landing page loaded")
     
-    print("2. Clicking Company Dashboard...")
-    page.click('text=Company Dashboard')
+    print("2. Navigating to Login...")
+    page.goto('http://localhost:5180/login')
     page.wait_for_load_state('networkidle')
     page.wait_for_timeout(2000)
-    page.screenshot(path='D:/Code/Guidwire/gigguard/frontend/test_results/2_overview.png')
-    print("   Overview page loaded")
+    page.screenshot(path='D:/Code/Guidwire/gigguard/frontend/test_results/2_login.png')
     
-    print("3. Navigating to Simulation...")
-    page.click('a:has-text("Simulation")')
+    print("3. Logging in as admin...")
+    page.fill('input[type="email"]', 'admin@skysure.com')
+    page.fill('input[type="password"]', 'admin123')
+    page.click('button[type="submit"]')
+    page.wait_for_timeout(3000)
+    page.screenshot(path='D:/Code/Guidwire/gigguard/frontend/test_results/3_after_login.png')
+    print("   Login submitted")
+    
+    print("4. Navigating to Overview...")
+    page.goto('http://localhost:5180/client/overview')
     page.wait_for_load_state('networkidle')
     page.wait_for_timeout(3000)
-    page.screenshot(path='D:/Code/Guidwire/gigguard/frontend/test_results/3_simulation_before.png')
+    page.screenshot(path='D:/Code/Guidwire/gigguard/frontend/test_results/4_overview.png')
+    print("   Overview page loaded")
+    
+    print("5. Navigating to Simulation...")
+    page.goto('http://localhost:5180/client/simulation')
+    page.wait_for_load_state('networkidle')
+    page.wait_for_timeout(3000)
+    page.screenshot(path='D:/Code/Guidwire/gigguard/frontend/test_results/5_simulation.png')
     print("   Simulation page loaded")
     
-    print("4. Running simulation...")
-    run_btn = page.locator('button').filter(has_text="Run Simulation")
+    print("6. Running simulation...")
+    # Try multiple possible button texts
+    run_btn = page.locator('button:has-text("Execute Run"), button:has-text("Begin Baseline Run"), button:has-text("Execute")').first
     if run_btn.count() > 0:
         run_btn.click()
-        page.wait_for_load_state('networkidle')
-        page.wait_for_timeout(3000)
-        page.screenshot(path='D:/Code/Guidwire/gigguard/frontend/test_results/4_simulation_after.png')
+        page.wait_for_timeout(5000)
+        page.screenshot(path='D:/Code/Guidwire/gigguard/frontend/test_results/6_simulation_done.png')
         print("   Simulation completed")
-        
-        print("5. Checking results...")
-        content = page.text_content('body')
-        
-        # Find payout count
-        payout_match = re.search(r'(\d+)\s+Payouts', content)
-        if payout_match:
-            print(f"   Payouts: {payout_match.group(1)}")
-        
-        # Find fraud count
-        fraud_match = re.search(r'(\d+)\s+Fraud Flags', content)
-        if fraud_match:
-            print(f"   Fraud Flags: {fraud_match.group(1)}")
-        
-        # Find total amount
-        total_match = re.search(r'Rs\.([\d,]+)', content)
-        if total_match:
-            print(f"   Total Payouts: Rs.{total_match.group(1)}")
-        
-        # Check for riders table
-        rows = page.locator('.results-table')
-        if rows.count() > 0:
-            print(f"   Rider rows found: {rows.count()}")
-            
-            # Click first row to expand
-            rows.first.click()
-            page.wait_for_timeout(500)
-            page.screenshot(path='D:/Code/Guidwire/gigguard/frontend/test_results/5_expanded.png')
-            print("   Expanded first rider details")
-            
-            # Check for fraud checks
-            fraud_checks = page.locator('.fraud-check-item')
-            if fraud_checks.count() > 0:
-                print(f"   Fraud check items: {fraud_checks.count()}")
-            
-            # Check for signal chips
-            signal_chips = page.locator('.signal-chip')
-            if signal_chips.count() > 0:
-                print(f"   Signal chips: {signal_chips.count()}")
     else:
         print("   Run Simulation button not found!")
         page.screenshot(path='D:/Code/Guidwire/gigguard/frontend/test_results/error.png')

@@ -1,233 +1,207 @@
-import { useEffect, useState } from 'react';
-import { getPayoutLogs } from '../mockStore';
+import React, { useEffect, useState, useMemo } from 'react';
+import { dataService } from '../data/dataService';
+import {
+  FileText, IndianRupee, ShieldCheck,
+  ShieldAlert, Calendar, CloudRain,
+  Search, Download, ChevronLeft, ChevronRight,
+  Filter, MoreVertical
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import '../styles/dashboard.css';
 
 export default function PayoutLogs() {
   const [payouts, setPayouts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('All');
 
-  useEffect(() => { loadData(); }, []);
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 25;
 
-  async function loadData() {
-    setLoading(true);
-    const data = await getPayoutLogs();
-    setPayouts(data);
-    setLoading(false);
-  }
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      try {
+        const data = await dataService.getPayouts();
+        setPayouts(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Error loading payouts:", error);
+      }
+      setLoading(false);
+    }
+    loadData();
+  }, []);
 
-  const filteredLogs = payouts.filter(log => {
-    if (filter === 'All') return true;
-    if (filter === 'Paid') return log.amount > 0;
-    if (filter === 'Fraud') return log.status === 'blocked';
-    if (filter === 'No Payout') return log.amount === 0 && log.status !== 'blocked';
-    return true;
-  });
+  const filteredLogs = useMemo(() => {
+    return payouts.filter(log => {
+      const matchesSearch = 
+        log.riderName?.toLowerCase().includes(search.toLowerCase()) ||
+        log.id?.toLowerCase().includes(search.toLowerCase()) ||
+        log.reason?.toLowerCase().includes(search.toLowerCase());
+      
+      const matchesFilter = 
+        filter === 'All' || 
+        (filter === 'Paid' && log.status === 'approved') ||
+        (filter === 'Fraud' && log.status === 'blocked');
+      
+      return matchesSearch && matchesFilter;
+    });
+  }, [payouts, search, filter]);
 
-  const totalDisbursed = payouts.reduce((s, p) => s + (p.amount || 0), 0);
-  const paidCount = payouts.filter(p => p.amount > 0).length;
-  const fraudCount = payouts.filter(p => p.status === 'blocked').length;
+  // Reset pagination when searching
+  useEffect(() => { setCurrentPage(1); }, [search, filter]);
 
-  if (loading) {
-    return (
-      <div className="page">
-        <div className="loading"><div className="spinner-lg"></div><p>Loading payout logs...</p></div>
-      </div>
-    );
-  }
+  const totalPages = Math.ceil(filteredLogs.length / itemsPerPage) || 1;
+  const paginatedLogs = filteredLogs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  if (loading) return (
+    <div style={{ display: 'flex', height: '100vh', justifyContent: 'center', alignItems: 'center' }}>
+      Syncing Audit Ledger...
+    </div>
+  );
 
   return (
-    <div className="page">
-      <header className="page-header">
-        <div className="page-header-row">
-          <div>
-            <h1 className="page-title">Payout Logs</h1>
-            <p className="page-subtitle">Complete history of disbursements and fraud blocks</p>
-          </div>
+    <div className="dash-container">
+      <header className="dash-header">
+        <div>
+          <h1 className="dash-title">Audit Ledger</h1>
+          <p className="dash-subtitle">Real-time immutable record of parametric triggers and security mitigations.</p>
+        </div>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <button className="dash-btn dash-btn-outline">
+            <Download size={14} /> Export Transaction PDF
+          </button>
+          <button className="dash-btn dash-btn-primary">
+            Sync Ledger
+          </button>
         </div>
       </header>
 
-      <div className="stats-grid">
-        <div className="stat-card">
-          <div className="stat-icon primary">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="20" height="20">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-              <polyline points="14 2 14 8 20 8"/>
-            </svg>
-          </div>
-          <div className="stat-content">
-            <div className="stat-value">{payouts.length}</div>
-            <div className="stat-label">Total Events</div>
-          </div>
+      <div className="dash-toolbar">
+        <div style={{ display: 'flex', alignItems: 'center', background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(10px)', border: '1px solid var(--dash-border)', borderRadius: '16px', padding: '12px 20px', width: '400px' }}>
+          <Search size={20} style={{ color: '#94a3b8', marginRight: '12px' }} />
+          <input
+            type="text"
+            placeholder="Search by rider name, TRX ID, or reason..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{ border: 'none', outline: 'none', background: 'transparent', width: '100%', fontSize: '0.95rem', fontWeight: 500 }}
+          />
         </div>
-        <div className="stat-card">
-          <div className="stat-icon success">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="20" height="20">
-              <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/>
-              <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/>
-              <path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/>
-            </svg>
-          </div>
-          <div className="stat-content">
-            <div className="stat-value">₹{totalDisbursed.toLocaleString()}</div>
-            <div className="stat-label">Total Disbursed</div>
-          </div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-icon info">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="20" height="20">
-              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-            </svg>
-          </div>
-          <div className="stat-content">
-            <div className="stat-value">{paidCount}</div>
-            <div className="stat-label">Paid</div>
-          </div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-icon danger">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="20" height="20">
-              <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
-              <line x1="12" y1="9" x2="12" y2="13"/>
-              <line x1="12" y1="17" x2="12.01" y2="17"/>
-            </svg>
-          </div>
-          <div className="stat-content">
-            <div className="stat-value">{fraudCount}</div>
-            <div className="stat-label">Fraud Flags</div>
-          </div>
+        <div style={{ display: 'flex', gap: '8px', background: 'rgba(255,255,255,0.7)', padding: '6px', borderRadius: '16px', border: '1px solid var(--dash-border)' }}>
+          {['All', 'Paid', 'Fraud'].map(f => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`filter-pill ${filter === f ? 'active' : ''}`}
+            >
+              {f === 'Paid' ? 'Settled' : f === 'Fraud' ? 'Mitigated' : 'All Events'}
+            </button>
+          ))}
         </div>
       </div>
 
-      <div className="card">
-        <div className="card-header">
-          <h2 className="card-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="15" height="15">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-              <polyline points="14 2 14 8 20 8"/>
-            </svg>
-            Payout History
-          </h2>
-          <div className="filter-tabs">
-            {['All', 'Paid', 'Fraud', 'No Payout'].map(f => (
-              <button key={f} className={`filter-tab ${filter === f ? 'active' : ''}`} onClick={() => setFilter(f)}>
-                {f}
-              </button>
-            ))}
+      <div className="dash-table-wrapper">
+        <table className="dash-table">
+          <thead>
+            <tr>
+              <th>Partner Name</th>
+              <th>Temporal Signal</th>
+              <th>Trigger Cause</th>
+              <th>Security Outcome</th>
+              <th>Settlement</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <AnimatePresence mode="popLayout">
+              {paginatedLogs.map((log, i) => (
+                <motion.tr
+                  key={log.id || i}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  whileHover={{ backgroundColor: 'rgba(241, 245, 249, 0.8)' }}
+                  transition={{ delay: (i % 10) * 0.04, type: 'spring', stiffness: 300, damping: 24 }}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <td style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <div className="avatar" style={{ background: log.status === 'blocked' ? '#FEF2F2' : '#F3F4F6', color: log.status === 'blocked' ? '#DC2626' : '#1e3a8a' }}>
+                      {log.riderName?.charAt(0) || 'N'}
+                    </div>
+                    <div>
+                      <strong style={{ display: 'block', fontSize: '1.05rem', marginBottom: '2px' }}>{log.riderName}</strong>
+                      <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontFamily: 'monospace' }}>TRX: {log.id?.slice(0, 12)}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>
+                        <Calendar size={14} color="#64748b" />
+                        <span>{new Date(log.timestamp).toLocaleDateString()}</span>
+                      </div>
+                      <span style={{ fontSize: '0.75rem', color: '#94a3b8', marginLeft: '20px' }}>
+                        {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+                  </td>
+                  <td>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, color: '#0f172a' }}>
+                      <ShieldCheck size={14} color="#10b981" />
+                      <span>{log.reason}</span>
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginLeft: '22px' }}>
+                      Context: {log.weather} | {log.location}
+                    </div>
+                  </td>
+                  <td>
+                    <span className={log.status === 'blocked' ? 'badge-danger' : 'badge-success'}>
+                      {log.status === 'blocked' ? 'Mitigated' : 'Settled'}
+                    </span>
+                  </td>
+                  <td>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <span style={{ fontFamily: 'monospace', fontSize: '1.2rem', fontWeight: 800, color: log.status === 'blocked' ? '#94a3b8' : '#1e3a8a', textDecoration: log.status === 'blocked' ? 'line-through' : 'none' }}>
+                        ₹{log.amount?.toLocaleString() || '0'}
+                      </span>
+                    </div>
+                  </td>
+                  <td>
+                    <button style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#64748b', padding: '8px', borderRadius: '8px' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.5)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
+                      <MoreVertical size={20} />
+                    </button>
+                  </td>
+                </motion.tr>
+              ))}
+            </AnimatePresence>
+          </tbody>
+        </table>
+
+        {filteredLogs.length === 0 && (
+          <div style={{ padding: '60px', textAlign: 'center' }}>
+            <FileText size={32} color="#94a3b8" style={{ margin: '0 auto 16px' }} />
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '8px' }}>No transactions found</h3>
+            <p style={{ color: '#64748b', marginBottom: '24px' }}>Try adjusting your search or filters.</p>
+            <button onClick={() => { setSearch(''); setFilter('All'); }} className="dash-btn dash-btn-outline">
+              Reset Audit Parameters
+            </button>
           </div>
-        </div>
-        <div className="card-body">
-          {filteredLogs.length === 0 ? (
-            <div className="empty-state">
-              <div className="empty-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="24" height="24">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                  <polyline points="14 2 14 8 20 8"/>
-                </svg>
-              </div>
-              <p>No payout records found</p>
-            </div>
-          ) : (
-            <div className="table-wrap">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Rider</th>
-                    <th>Date</th>
-                    <th>Weather</th>
-                    <th>Signals</th>
-                    <th>Severity</th>
-                    <th>Status</th>
-                    <th>Payout</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredLogs.map(log => (
-                    <tr key={log.id}>
-                      <td>
-                        <div className="user-cell">
-                          <div className="user-avatar" style={{
-                            background: log.status === 'blocked' ? 'var(--danger-bg)' : 'var(--success-bg)',
-                            color: log.status === 'blocked' ? 'var(--danger)' : 'var(--success)',
-                            fontSize: 12,
-                          }}>
-                            {log.riderName?.charAt(0)}
-                          </div>
-                          <div className="user-info">
-                            <span className="user-name">{log.riderName}</span>
-                            <span className="user-meta">{log.tier || 'Standard'}</span>
-                          </div>
-                        </div>
-                      </td>
-                      <td style={{ fontSize: 12, color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
-                        {new Date(log.timestamp).toLocaleDateString()}
-                        <br />
-                        <span style={{ fontSize: 11 }}>{new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                      </td>
-                      <td>
-                        <span style={{ fontSize: 12, fontWeight: 500 }}>{log.weather}</span>
-                        {log.rainfallMm != null && log.rainfallMm > 0 && (
-                          <span style={{ display: 'block', fontSize: 11, color: 'var(--text-muted)' }}>
-                            {log.rainfallMm.toFixed(1)} mm
-                          </span>
-                        )}
-                      </td>
-                      <td>
-                        <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-                          {log.rainfallMm > 5 && (
-                            <span className="pill pill-info" style={{ fontSize: 10 }}>Rain</span>
-                          )}
-                          {log.rainfallMm > 12 && (
-                            <span className="pill pill-warning" style={{ fontSize: 10 }}>Storm</span>
-                          )}
-                          {log.severityScore >= 1.5 && (
-                            <span className="pill pill-grey" style={{ fontSize: 10 }}>Inactive</span>
-                          )}
-                        </div>
-                      </td>
-                      <td>
-                        <span className={`pill ${
-                          log.severityScore >= 5 ? 'pill-danger' :
-                          log.severityScore >= 3.5 ? 'pill-warning' :
-                          log.severityScore >= 1.5 ? 'pill-success' : 'pill-grey'
-                        }`} style={{ fontSize: 11 }}>
-                          {log.severityScore.toFixed(1)}
-                        </span>
-                      </td>
-                      <td>
-                        <span className={`risk-indicator ${
-                          log.status === 'blocked' ? 'blocked' :
-                          log.severityScore >= 3.5 ? 'medium' :
-                          log.severityScore >= 1.5 ? 'low' : 'none'
-                        }`}>
-                          {log.status === 'blocked' ? (
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="10" height="10">
-                              <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
-                              <line x1="12" y1="9" x2="12" y2="13"/>
-                              <line x1="12" y1="17" x2="12.01" y2="17"/>
-                            </svg>
-                          ) : log.severityScore >= 1.5 ? (
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="10" height="10">
-                              <polyline points="20 6 9 17 4 12"/>
-                            </svg>
-                          ) : null}
-                          {log.status === 'blocked' ? 'BLOCKED' :
-                            log.severityScore >= 3.5 ? 'HIGH' :
-                            log.severityScore >= 1.5 ? 'LOW' : 'None'}
-                        </span>
-                      </td>
-                      <td>
-                        {log.amount > 0 ? (
-                          <span className="amount success" style={{ fontSize: 14 }}>₹{log.amount}</span>
-                        ) : (
-                          <span className="amount muted" style={{ fontSize: 14 }}>---</span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+        )}
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '24px 32px', borderTop: '1px solid var(--dash-border)', background: 'rgba(255,255,255,0.5)' }}>
+          <span style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 500 }}>
+            Showing <strong style={{ color: '#0f172a' }}>{(currentPage - 1) * itemsPerPage + 1}</strong> to <strong style={{ color: '#0f172a' }}>{Math.min(currentPage * itemsPerPage, filteredLogs.length)}</strong> of <strong style={{ color: '#0f172a' }}>{filteredLogs.length}</strong> entries
+          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="dash-btn dash-btn-outline" style={{ padding: '8px 16px' }}>
+              <ChevronLeft size={16} /> Prev
+            </button>
+            <span style={{ fontSize: '0.9rem', fontWeight: 800 }}>{currentPage} / {totalPages}</span>
+            <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="dash-btn dash-btn-outline" style={{ padding: '8px 16px' }}>
+              Next <ChevronRight size={16} />
+            </button>
+          </div>
         </div>
       </div>
     </div>
