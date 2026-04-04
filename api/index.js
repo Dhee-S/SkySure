@@ -7,7 +7,7 @@ const { admin, db } = require('./firebase');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const DATA_PATH = path.join(__dirname, '..', 'data', 'pre-final_dataset3.csv');
+const DATA_PATH = path.join(__dirname, '..', 'data', 'pre-final_dataset_cleaned.csv');
 
 app.use(cors());
 app.use(express.json());
@@ -17,23 +17,63 @@ app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
 const simulationRoutes = require('./src/routes/simulationRoutes');
 
-// Global storage for Cache (Optional, but Firestore is live)
+// Global storage for Cache
 let riders = [];
 
-// Replaced CSV load with Firestore Fetch
+// Resilient Data Loading (Firestore + CSV Fallback)
 async function loadData() {
     try {
-        const snapshot = await db.collection('riders').limit(1000).get();
-        riders = snapshot.docs.map(doc => ({
-            ...doc.data(),
-            id: doc.id,
-            rider_id: doc.data().rider_id || doc.id
-        }));
-        console.log(`✅ Loaded ${riders.length} riders from Firestore`);
-        return riders;
+        // Priority 1: Attempt Firestore
+        if (db) {
+            const snapshot = await db.collection('riders').limit(500).get();
+            if (!snapshot.empty) {
+                riders = snapshot.docs.map(doc => ({
+                    ...doc.data(),
+                    id: doc.id,
+                    rider_id: doc.data().rider_id || doc.id
+                }));
+                console.log(`✅ Priority 1: Loaded ${riders.length} riders from Firestore`);
+                return riders;
+            }
+        }
+        throw new Error("Firestore empty or unconfigured");
     } catch (err) {
-        console.error('Firestore Load Error:', err);
-        throw err;
+        console.warn('⚠️ Firestore unavailable. Falling back to CSV Showcase Mode...');
+        return new Promise((resolve, reject) => {
+            const results = [];
+            if (!fs.existsSync(DATA_PATH)) {
+                console.error(`❌ Data file missing: ${DATA_PATH}`);
+                return resolve([]);
+            }
+
+            fs.createReadStream(DATA_PATH)
+                .pipe(csv())
+                .on('data', (data) => results.push(data))
+                .on('end', () => {
+                    // Randomize and pick 500
+                    const shuffled = results.sort(() => 0.5 - Math.random());
+                    const selected = shuffled.slice(0, 500);
+
+                    riders = selected.map(r => {
+                        const [lat, lng] = (r.coordinates || "13.0,80.2").split(',').map(v => parseFloat(v));
+                        return {
+                            ...r,
+                            id: r.rider_id,
+                            coordinates: { lat, lng },
+                            trust_score: parseFloat(r.trust_score) || 0,
+                            fraud_probability: parseFloat(r.fraud_probability) || 0,
+                            weekly_premium: parseFloat(r.weekly_premium) || 120,
+                            probation_status: r.probationary_tier === 'True' || r.probationary_tier === true
+                        };
+                    });
+                    console.log(`✅ Showcase Mode: Loaded ${riders.length} random riders from local CSV`);
+                    resolve(riders);
+                })
+                .on('error', (e) => {
+                    console.error('CSV Parsing Error:', e);
+                    resolve([]);
+                });
+        });
     }
 }
 
