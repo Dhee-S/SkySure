@@ -110,14 +110,14 @@ export default function Riders() {
           <tbody>
             <AnimatePresence mode="popLayout">
               {paginatedRiders.map((rider, i) => {
-                // 1. ADAPTIVE PREMIUM: From backend
-                const premium = rider?.stats?.premium || 120;
+                // 1. ADAPTIVE PREMIUM: Sync with Actuarial Engine
+                const premium = rider?.weeklyPremium || 120;
                 
-                // 3. TRUST SCORE: Direct from clean dataset
-                const trustScore = rider?.trust_score || 0;
+                // 3. TRUST SCORE: Direct from harmonized dataset
+                const trustScore = rider?.trustScore || 0;
                 
                 // 4. CLEAN IDENTITY
-                const displayName = (rider?.name || 'Active Partner').replace('Node', 'Rider');
+                const displayName = (rider?.name || 'Active Partner');
                 const tier = rider?.tier || 'Standard';
 
                 return (
