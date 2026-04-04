@@ -41,6 +41,8 @@ firebase-key.json
 !firebase.json
 !jsconfig.json
 !vercel.json
+!frontend/src/data/*.json
+!api/data/*.json
 
 # IDE and System Files
 .vscode/

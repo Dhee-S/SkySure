@@ -1,0 +1,7802 @@
+[
+  {
+    "id": "VADRES15DEL03",
+    "name": "Bhavya Jain",
+    "persona": "Gig-Pro",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "01:02",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 132.0,
+        "undelivered": 3.0
+      },
+      "earnings": 66000.0,
+      "premium": 1320.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        0.0,
+        0.0
+      ],
+      "delivery": [
+        0.09,
+        0.09
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1500.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "INDORES010DEL02",
+    "name": "Sandeep Menon",
+    "persona": "Full-Timer",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "03:53",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 473.0,
+        "undelivered": 2.0
+      },
+      "earnings": 236500.0,
+      "premium": 3547.5
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        22.75,
+        75.9028
+      ],
+      "delivery": [
+        22.83,
+        75.9828
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "JAPRES19DEL01",
+    "name": "Nitin Gadkari",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "01:21",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 51.0,
+        "undelivered": 1.0
+      },
+      "earnings": 25500.0,
+      "premium": 153.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        26.9137,
+        75.7528
+      ],
+      "delivery": [
+        27.0237,
+        75.8628
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "JAPRES13DEL03",
+    "name": "Ishani Mukherjee",
+    "persona": "Full-Timer",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:09",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 170.0,
+        "undelivered": 1.0
+      },
+      "earnings": 85000.0,
+      "premium": 1402.5
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        26.8462,
+        75.8023
+      ],
+      "delivery": [
+        26.9362,
+        75.8923
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "BANGRES08DEL01",
+    "name": "Nikhil Saxena",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "02:31",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 118.0,
+        "undelivered": 3.0
+      },
+      "earnings": 59000.0,
+      "premium": 1475.0
+    },
+    "environment": {
+      "weather": "Stormy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        12.9062,
+        77.5968
+      ],
+      "delivery": [
+        12.9762,
+        77.6668
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "RANCHIRES17DEL01",
+    "name": "Lokesh Rahul",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "05:45",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 87.0,
+        "undelivered": 0.0
+      },
+      "earnings": 43500.0,
+      "premium": 478.5
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        23.3749,
+        85.3357
+      ],
+      "delivery": [
+        23.4449,
+        85.4057
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "SURRES13DEL01",
+    "name": "Manish Rao",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "00:43",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 8.0,
+        "undelivered": 0.0
+      },
+      "earnings": 4000.0,
+      "premium": 22.0
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        21.1701,
+        72.7891
+      ],
+      "delivery": [
+        21.2401,
+        72.8591
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "MYSRES13DEL01",
+    "name": "Bhuvneshwar Kumar",
+    "persona": "Gig-Pro",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "01:21",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 140.0,
+        "undelivered": 0.0
+      },
+      "earnings": 70000.0,
+      "premium": 1750.0
+    },
+    "environment": {
+      "weather": "Stormy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        12.311,
+        76.6593
+      ],
+      "delivery": [
+        12.421,
+        76.7693
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1500.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "VADRES03DEL02",
+    "name": "Gautam Das",
+    "persona": "Full-Timer",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "01:15",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 220.0,
+        "undelivered": 1.0
+      },
+      "earnings": 110000.0,
+      "premium": 3300.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        22.32,
+        73.17
+      ],
+      "delivery": [
+        22.4,
+        73.25
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "VADRES20DEL03",
+    "name": "Sandeep Menon",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:28",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 82.0,
+        "undelivered": 0.0
+      },
+      "earnings": 41000.0,
+      "premium": 492.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        22.3114,
+        73.1648
+      ],
+      "delivery": [
+        22.4014,
+        73.2548
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "COIMBRES07DEL02",
+    "name": "Chetan Bhagat",
+    "persona": "Full-Timer",
+    "tier": "Pro",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "00:29",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 338.0,
+        "undelivered": 2.0
+      },
+      "earnings": 169000.0,
+      "premium": 3042.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        10.9618,
+        76.9711
+      ],
+      "delivery": [
+        11.0919,
+        77.1011
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "RANCHIRES11DEL01",
+    "name": "Gautam Das",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "03:08",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 9.0,
+        "undelivered": 0.0
+      },
+      "earnings": 4500.0,
+      "premium": 27.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        23.3592,
+        85.3254
+      ],
+      "delivery": [
+        23.4292,
+        85.3954
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "VADRES18DEL02",
+    "name": "Rahul Bose",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:20",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 56.0,
+        "undelivered": 1.0
+      },
+      "earnings": 28000.0,
+      "premium": 154.0
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        0.0,
+        0.0
+      ],
+      "delivery": [
+        0.13,
+        0.13
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "COIMBRES04DEL01",
+    "name": "Trupti Desai",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "01:28",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 124.0,
+        "undelivered": 1.0
+      },
+      "earnings": 62000.0,
+      "premium": 1550.0
+    },
+    "environment": {
+      "weather": "Stormy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        11.0248,
+        77.007
+      ],
+      "delivery": [
+        11.1348,
+        77.117
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1500.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "MYSRES010DEL01",
+    "name": "Meera Kulkarni",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "01:04",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 67.0,
+        "undelivered": 0.0
+      },
+      "earnings": 33500.0,
+      "premium": 184.25
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        12.3212,
+        76.6211
+      ],
+      "delivery": [
+        12.4312,
+        76.7311
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "PUNERES05DEL01",
+    "name": "Vandana Rao",
+    "persona": "Gig-Pro",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "03:52",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 142.0,
+        "undelivered": 2.0
+      },
+      "earnings": 71000.0,
+      "premium": 781.0
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        18.5436,
+        73.9051
+      ],
+      "delivery": [
+        18.6136,
+        73.9751
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "MUMRES05DEL01",
+    "name": "Karan Joshi",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "00:15",
+      "efficiency": 0.96,
+      "orders": {
+        "delivered": 89.0,
+        "undelivered": 4.0
+      },
+      "earnings": 44500.0,
+      "premium": 1112.5
+    },
+    "environment": {
+      "weather": "Stormy",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        18.9276,
+        72.8326
+      ],
+      "delivery": [
+        18.9976,
+        72.9026
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "RANCHIRES02DEL01",
+    "name": "Vikram Sethi",
+    "persona": "Gig-Pro",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "00:58",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 265.0,
+        "undelivered": 1.0
+      },
+      "earnings": 132500.0,
+      "premium": 1987.5
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        0.0,
+        0.0
+      ],
+      "delivery": [
+        0.07,
+        0.07
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "PUNERES13DEL03",
+    "name": "Akash Gupta",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "06:40",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 57.0,
+        "undelivered": 0.0
+      },
+      "earnings": 28500.0,
+      "premium": 142.5
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        18.5624,
+        73.9166
+      ],
+      "delivery": [
+        18.6525,
+        74.0066
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "JAPRES18DEL03",
+    "name": "Karan Joshi",
+    "persona": "Full-Timer",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "04:15",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 339.0,
+        "undelivered": 0.0
+      },
+      "earnings": 169500.0,
+      "premium": 3051.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        26.914,
+        75.7529
+      ],
+      "delivery": [
+        27.004,
+        75.8429
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "JAPRES03DEL03",
+    "name": "Vikram Sethi",
+    "persona": "Full-Timer",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "07:58",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 182.0,
+        "undelivered": 1.0
+      },
+      "earnings": 91000.0,
+      "premium": 3412.5
+    },
+    "environment": {
+      "weather": "Stormy",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        26.9135,
+        75.8031
+      ],
+      "delivery": [
+        27.0035,
+        75.8931
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "RANCHIRES16DEL03",
+    "name": "Varun Dhawan",
+    "persona": "Full-Timer",
+    "tier": "Pro",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "06:27",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 153.0,
+        "undelivered": 1.0
+      },
+      "earnings": 76500.0,
+      "premium": 2868.75
+    },
+    "environment": {
+      "weather": "Stormy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        23.3713,
+        85.3279
+      ],
+      "delivery": [
+        23.4613,
+        85.4179
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1500.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "MYSRES04DEL02",
+    "name": "Anjali Deshmukh",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:28",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 80.0,
+        "undelivered": 0.0
+      },
+      "earnings": 40000.0,
+      "premium": 800.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        12.3085,
+        76.6658
+      ],
+      "delivery": [
+        12.3885,
+        76.7458
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1500.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "COIMBRES05DEL01",
+    "name": "Pooja Hegde",
+    "persona": "Full-Timer",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "04:50",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 164.0,
+        "undelivered": 1.0
+      },
+      "earnings": 82000.0,
+      "premium": 1353.0
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        11.0222,
+        76.9996
+      ],
+      "delivery": [
+        11.1322,
+        77.1096
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "HYDRES17DEL01",
+    "name": "Gautam Das",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:21",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 109.0,
+        "undelivered": 1.0
+      },
+      "earnings": 54500.0,
+      "premium": 1362.5
+    },
+    "environment": {
+      "weather": "Stormy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        17.452,
+        78.3859
+      ],
+      "delivery": [
+        17.522,
+        78.4559
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "JAPRES16DEL03",
+    "name": "Nikhil Saxena",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "00:02",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 17.0,
+        "undelivered": 0.0
+      },
+      "earnings": 8500.0,
+      "premium": 106.25
+    },
+    "environment": {
+      "weather": "Stormy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        26.8496,
+        75.8005
+      ],
+      "delivery": [
+        26.9896,
+        75.9405
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1214.29,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "VADRES15DEL03",
+    "name": "Bhavya Jain",
+    "persona": "Gig-Pro",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:16",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 327.0,
+        "undelivered": 4.0
+      },
+      "earnings": 163500.0,
+      "premium": 2697.75
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        0.0,
+        0.0
+      ],
+      "delivery": [
+        0.09,
+        0.09
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "BANGRES17DEL03",
+    "name": "Tarun Gill",
+    "persona": "Full-Timer",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:47",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 438.0,
+        "undelivered": 1.0
+      },
+      "earnings": 219000.0,
+      "premium": 3285.0
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        12.9725,
+        77.6082
+      ],
+      "delivery": [
+        13.0625,
+        77.6982
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "PUNERES18DEL03",
+    "name": "Bhuvneshwar Kumar",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "06:51",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 101.0,
+        "undelivered": 0.0
+      },
+      "earnings": 50500.0,
+      "premium": 1010.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        18.5935,
+        73.7859
+      ],
+      "delivery": [
+        18.6835,
+        73.8759
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "MYSRES18DEL01",
+    "name": "Rahul Bose",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "01:47",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 15.0,
+        "undelivered": 0.0
+      },
+      "earnings": 7500.0,
+      "premium": 37.5
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        12.3379,
+        76.6179
+      ],
+      "delivery": [
+        12.4079,
+        76.6879
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "PUNERES01DEL01",
+    "name": "Pooja Hegde",
+    "persona": "Full-Timer",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "04:43",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 220.0,
+        "undelivered": 3.0
+      },
+      "earnings": 110000.0,
+      "premium": 1650.0
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        18.5692,
+        73.7747
+      ],
+      "delivery": [
+        18.6792,
+        73.8847
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "JAPRES04DEL01",
+    "name": "Aditi Singh",
+    "persona": "Full-Timer",
+    "tier": "Pro",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "02:49",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 182.0,
+        "undelivered": 0.0
+      },
+      "earnings": 91000.0,
+      "premium": 3412.5
+    },
+    "environment": {
+      "weather": "Stormy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        26.9023,
+        75.7943
+      ],
+      "delivery": [
+        26.9723,
+        75.8643
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "CHENRES14DEL01",
+    "name": "Aditi Singh",
+    "persona": "Full-Timer",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:18",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 212.0,
+        "undelivered": 3.0
+      },
+      "earnings": 106000.0,
+      "premium": 1749.0
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        13.0263,
+        80.1746
+      ],
+      "delivery": [
+        13.0963,
+        80.2446
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "MUMRES09DEL03",
+    "name": "Arjun Verma",
+    "persona": "Full-Timer",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "00:27",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 163.0,
+        "undelivered": 2.0
+      },
+      "earnings": 81500.0,
+      "premium": 2445.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        18.994,
+        72.8252
+      ],
+      "delivery": [
+        19.084,
+        72.9152
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "COIMBRES05DEL02",
+    "name": "Kiran More",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "07:22",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 78.0,
+        "undelivered": 2.0
+      },
+      "earnings": 39000.0,
+      "premium": 429.0
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        11.0222,
+        76.9996
+      ],
+      "delivery": [
+        11.1522,
+        77.1296
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "COIMBRES19DEL02",
+    "name": "Varun Dhawan",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "00:33",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 69.0,
+        "undelivered": 1.0
+      },
+      "earnings": 34500.0,
+      "premium": 310.5
+    },
+    "environment": {
+      "weather": "Fog",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        11.0223,
+        76.9983
+      ],
+      "delivery": [
+        11.1523,
+        77.1283
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1500.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "BANGRES12DEL02",
+    "name": "Anjali Deshmukh",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "00:52",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 78.0,
+        "undelivered": 2.0
+      },
+      "earnings": 39000.0,
+      "premium": 468.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        12.9395,
+        77.626
+      ],
+      "delivery": [
+        13.0195,
+        77.706
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "JAPRES11DEL02",
+    "name": "Lokesh Rahul",
+    "persona": "Gig-Pro",
+    "tier": "Pro",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "00:02",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 265.0,
+        "undelivered": 1.0
+      },
+      "earnings": 132500.0,
+      "premium": 3975.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        26.9029,
+        75.793
+      ],
+      "delivery": [
+        27.0329,
+        75.923
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1500.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "CHENRES04DEL01",
+    "name": "Arjun Verma",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "00:13",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 95.0,
+        "undelivered": 1.0
+      },
+      "earnings": 47500.0,
+      "premium": 855.0
+    },
+    "environment": {
+      "weather": "Fog",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        13.0298,
+        80.2088
+      ],
+      "delivery": [
+        13.1398,
+        80.3188
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1500.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "SURRES01DEL01",
+    "name": "Manish Rao",
+    "persona": "Gig-Pro",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:35",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 113.0,
+        "undelivered": 0.0
+      },
+      "earnings": 56500.0,
+      "premium": 565.0
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        21.1864,
+        72.7941
+      ],
+      "delivery": [
+        21.2964,
+        72.9041
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "RANCHIRES15DEL01",
+    "name": "Varun Dhawan",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "03:27",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 8.0,
+        "undelivered": 0.0
+      },
+      "earnings": 4000.0,
+      "premium": 36.0
+    },
+    "environment": {
+      "weather": "Fog",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        23.3697,
+        85.3398
+      ],
+      "delivery": [
+        23.4797,
+        85.4498
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "INDORES09DEL02",
+    "name": "Trupti Desai",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "03:14",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 56.0,
+        "undelivered": 1.0
+      },
+      "earnings": 28000.0,
+      "premium": 168.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        22.7258,
+        75.8876
+      ],
+      "delivery": [
+        22.8558,
+        76.0176
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "RANCHIRES13DEL03",
+    "name": "Chirag Gandhi",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "06:00",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 75.0,
+        "undelivered": 1.0
+      },
+      "earnings": 37500.0,
+      "premium": 412.5
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        23.375,
+        85.3355
+      ],
+      "delivery": [
+        23.465,
+        85.4255
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "INDORES14DEL01",
+    "name": "Meera Kulkarni",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "03:00",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 98.0,
+        "undelivered": 0.0
+      },
+      "earnings": 49000.0,
+      "premium": 980.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        22.7616,
+        75.8864
+      ],
+      "delivery": [
+        22.8316,
+        75.9564
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1500.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "BANGRES05DEL02",
+    "name": "Jyoti Sharma",
+    "persona": "Full-Timer",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "03:46",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 158.0,
+        "undelivered": 1.0
+      },
+      "earnings": 79000.0,
+      "premium": 1422.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        12.9703,
+        77.6457
+      ],
+      "delivery": [
+        13.0503,
+        77.7257
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "VADRES15DEL03",
+    "name": "Bhavya Jain",
+    "persona": "Student-Flex",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "00:03",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 153.0,
+        "undelivered": 2.0
+      },
+      "earnings": 76500.0,
+      "premium": 2868.75
+    },
+    "environment": {
+      "weather": "Stormy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        0.0,
+        0.0
+      ],
+      "delivery": [
+        0.09,
+        0.09
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1500.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "VADRES18DEL02",
+    "name": "Rahul Bose",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:34",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 45.0,
+        "undelivered": 1.0
+      },
+      "earnings": 22500.0,
+      "premium": 281.25
+    },
+    "environment": {
+      "weather": "Stormy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        0.0,
+        0.0
+      ],
+      "delivery": [
+        0.13,
+        0.13
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1500.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "SURRES09DEL03",
+    "name": "Sneha Kapoor",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "00:50",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 34.0,
+        "undelivered": 0.0
+      },
+      "earnings": 17000.0,
+      "premium": 93.5
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        21.176,
+        72.7955
+      ],
+      "delivery": [
+        21.266,
+        72.8855
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "JAPRES01DEL03",
+    "name": "Pooja Hegde",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "07:53",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 12.0,
+        "undelivered": 0.0
+      },
+      "earnings": 6000.0,
+      "premium": 60.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        26.9052,
+        75.8108
+      ],
+      "delivery": [
+        26.9952,
+        75.9008
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "MUMRES03DEL01",
+    "name": "Ishani Mukherjee",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:00",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 59.0,
+        "undelivered": 0.0
+      },
+      "earnings": 29500.0,
+      "premium": 177.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        19.2238,
+        72.8413
+      ],
+      "delivery": [
+        19.2938,
+        72.9113
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "MYSRES04DEL02",
+    "name": "Anjali Deshmukh",
+    "persona": "Gig-Pro",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "08:16",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 134.0,
+        "undelivered": 3.0
+      },
+      "earnings": 67000.0,
+      "premium": 804.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        12.3085,
+        76.6658
+      ],
+      "delivery": [
+        12.4385,
+        76.7958
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "CHENRES07DEL02",
+    "name": "Karan Joshi",
+    "persona": "Gig-Pro",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "00:00",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 148.0,
+        "undelivered": 3.0
+      },
+      "earnings": 74000.0,
+      "premium": 1480.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        13.0819,
+        80.2485
+      ],
+      "delivery": [
+        13.2119,
+        80.3785
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "INDORES18DEL02",
+    "name": "Akash Gupta",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "01:05",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 65.0,
+        "undelivered": 1.0
+      },
+      "earnings": 32500.0,
+      "premium": 406.25
+    },
+    "environment": {
+      "weather": "Stormy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        22.7538,
+        75.8974
+      ],
+      "delivery": [
+        22.8338,
+        75.9774
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1500.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "MYSRES19DEL01",
+    "name": "Jyoti Sharma",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "09:03",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 50.0,
+        "undelivered": 0.0
+      },
+      "earnings": 25000.0,
+      "premium": 312.5
+    },
+    "environment": {
+      "weather": "Stormy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        12.334,
+        76.6182
+      ],
+      "delivery": [
+        12.444,
+        76.7282
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1500.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "MYSRES13DEL02",
+    "name": "Trupti Desai",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "09:13",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 56.0,
+        "undelivered": 0.0
+      },
+      "earnings": 28000.0,
+      "premium": 252.0
+    },
+    "environment": {
+      "weather": "Fog",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        12.311,
+        76.6593
+      ],
+      "delivery": [
+        12.441,
+        76.7893
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "CHENRES07DEL03",
+    "name": "Bhavya Jain",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "08:30",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 16.0,
+        "undelivered": 0.0
+      },
+      "earnings": 8000.0,
+      "premium": 80.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        13.0819,
+        80.2485
+      ],
+      "delivery": [
+        13.1719,
+        80.3385
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1142.86,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "MYSRES05DEL02",
+    "name": "Sandeep Menon",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "00:21",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 88.0,
+        "undelivered": 1.0
+      },
+      "earnings": 44000.0,
+      "premium": 440.0
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        12.324,
+        76.628
+      ],
+      "delivery": [
+        12.404,
+        76.708
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "INDORES09DEL03",
+    "name": "Aarav Sharma",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "01:30",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 35.0,
+        "undelivered": 0.0
+      },
+      "earnings": 17500.0,
+      "premium": 105.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        22.7258,
+        75.8876
+      ],
+      "delivery": [
+        22.8158,
+        75.9776
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "SURRES18DEL03",
+    "name": "Vandana Rao",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "03:22",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 146.0,
+        "undelivered": 0.0
+      },
+      "earnings": 73000.0,
+      "premium": 730.0
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        21.1498,
+        72.7787
+      ],
+      "delivery": [
+        21.2398,
+        72.8687
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "BANGRES14DEL03",
+    "name": "Minal Pathak",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "01:34",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 62.0,
+        "undelivered": 0.0
+      },
+      "earnings": 31000.0,
+      "premium": 170.5
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        12.9499,
+        77.6994
+      ],
+      "delivery": [
+        13.0399,
+        77.7894
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "COIMBRES06DEL01",
+    "name": "Harish Iyer",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "03:47",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 83.0,
+        "undelivered": 0.0
+      },
+      "earnings": 41500.0,
+      "premium": 747.0
+    },
+    "environment": {
+      "weather": "Fog",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        11.0213,
+        76.995
+      ],
+      "delivery": [
+        11.1313,
+        77.105
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1500.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "MYSRES04DEL01",
+    "name": "Vandana Rao",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "01:31",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 81.0,
+        "undelivered": 1.0
+      },
+      "earnings": 40500.0,
+      "premium": 445.5
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        12.3085,
+        76.6658
+      ],
+      "delivery": [
+        12.4185,
+        76.7758
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "MYSRES09DEL02",
+    "name": "Lokesh Rahul",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "00:31",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 144.0,
+        "undelivered": 0.0
+      },
+      "earnings": 72000.0,
+      "premium": 1296.0
+    },
+    "environment": {
+      "weather": "Fog",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        12.3232,
+        76.6306
+      ],
+      "delivery": [
+        12.4532,
+        76.7606
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1500.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "COIMBRES03DEL03",
+    "name": "Sneha Kapoor",
+    "persona": "Full-Timer",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "07:00",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 185.0,
+        "undelivered": 2.0
+      },
+      "earnings": 92500.0,
+      "premium": 2497.5
+    },
+    "environment": {
+      "weather": "Fog",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        11.0251,
+        77.0154
+      ],
+      "delivery": [
+        11.1151,
+        77.1054
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "VADRES03DEL01",
+    "name": "Trupti Desai",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "02:11",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 32.0,
+        "undelivered": 0.0
+      },
+      "earnings": 16000.0,
+      "premium": 80.0
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        22.32,
+        73.17
+      ],
+      "delivery": [
+        22.39,
+        73.24
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "MYSRES05DEL01",
+    "name": "Rahul Bose",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "01:33",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 86.0,
+        "undelivered": 0.0
+      },
+      "earnings": 43000.0,
+      "premium": 774.0
+    },
+    "environment": {
+      "weather": "Fog",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        12.324,
+        76.628
+      ],
+      "delivery": [
+        12.434,
+        76.738
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1500.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "BANGRES01DEL03",
+    "name": "Chaitanya Iyer",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "06:15",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 22.0,
+        "undelivered": 0.0
+      },
+      "earnings": 11000.0,
+      "premium": 60.5
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        12.9333,
+        77.6154
+      ],
+      "delivery": [
+        13.0233,
+        77.7054
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "INDORES07DEL02",
+    "name": "Kiran More",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "01:10",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 42.0,
+        "undelivered": 1.0
+      },
+      "earnings": 21000.0,
+      "premium": 262.5
+    },
+    "environment": {
+      "weather": "Stormy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        22.7226,
+        75.887
+      ],
+      "delivery": [
+        22.8026,
+        75.967
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1500.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "CHENRES04DEL01",
+    "name": "Arjun Verma",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "06:09",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 119.0,
+        "undelivered": 1.0
+      },
+      "earnings": 59500.0,
+      "premium": 714.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        13.0298,
+        80.2088
+      ],
+      "delivery": [
+        13.0998,
+        80.2788
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "SURRES12DEL03",
+    "name": "Deepak Kumar",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "01:43",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 17.0,
+        "undelivered": 0.0
+      },
+      "earnings": 8500.0,
+      "premium": 106.25
+    },
+    "environment": {
+      "weather": "Stormy",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        21.1834,
+        72.8145
+      ],
+      "delivery": [
+        21.2734,
+        72.9045
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "RANCHIRES04DEL02",
+    "name": "Aditi Singh",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "",
+    "stats": {
+      "sessionTime": "00:51",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 19.0,
+        "undelivered": 0.0
+      },
+      "earnings": 9500.0,
+      "premium": 52.25
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        23.359,
+        85.3253
+      ],
+      "delivery": [
+        23.439,
+        85.4053
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "RANCHIRES20DEL02",
+    "name": "Priya Mani",
+    "persona": "Gig-Pro",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "05:10",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 321.0,
+        "undelivered": 2.0
+      },
+      "earnings": 160500.0,
+      "premium": 4815.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        23.3992,
+        85.3905
+      ],
+      "delivery": [
+        23.5292,
+        85.5205
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "PUNERES01DEL02",
+    "name": "Nitin Gadkari",
+    "persona": "Gig-Pro",
+    "tier": "Standard",
+    "city": "",
+    "stats": {
+      "sessionTime": "00:35",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 148.0,
+        "undelivered": 3.0
+      },
+      "earnings": 74000.0,
+      "premium": 814.0
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        18.5692,
+        73.7747
+      ],
+      "delivery": [
+        18.6992,
+        73.9047
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "SURRES20DEL01",
+    "name": "Priya Mani",
+    "persona": "Gig-Pro",
+    "tier": "Standard",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "01:49",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 104.0,
+        "undelivered": 1.0
+      },
+      "earnings": 52000.0,
+      "premium": 624.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        21.1528,
+        72.7781
+      ],
+      "delivery": [
+        21.2628,
+        72.8881
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "JAPRES15DEL03",
+    "name": "Priya Mani",
+    "persona": "Gig-Pro",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "05:24",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 193.0,
+        "undelivered": 0.0
+      },
+      "earnings": 96500.0,
+      "premium": 2605.5
+    },
+    "environment": {
+      "weather": "Fog",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        26.8912,
+        75.8021
+      ],
+      "delivery": [
+        26.9812,
+        75.8921
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1500.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "MYSRES19DEL02",
+    "name": "Divya Nair",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:33",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 23.0,
+        "undelivered": 0.0
+      },
+      "earnings": 11500.0,
+      "premium": 69.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        12.334,
+        76.6182
+      ],
+      "delivery": [
+        12.464,
+        76.7482
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "INDORES02DEL01",
+    "name": "Karan Joshi",
+    "persona": "Gig-Pro",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:54",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 99.0,
+        "undelivered": 0.0
+      },
+      "earnings": 49500.0,
+      "premium": 1237.5
+    },
+    "environment": {
+      "weather": "Stormy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        22.6518,
+        75.882
+      ],
+      "delivery": [
+        22.7618,
+        75.992
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "CHENRES17DEL01",
+    "name": "Trupti Desai",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "00:00",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 6.0,
+        "undelivered": 0.0
+      },
+      "earnings": 3000.0,
+      "premium": 30.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        13.0455,
+        80.2331
+      ],
+      "delivery": [
+        13.1555,
+        80.3431
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 428.57,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "RANCHIRES11DEL02",
+    "name": "Arjun Verma",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "08:42",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 126.0,
+        "undelivered": 0.0
+      },
+      "earnings": 63000.0,
+      "premium": 1260.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        23.3592,
+        85.3254
+      ],
+      "delivery": [
+        23.4392,
+        85.4054
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1500.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "HYDRES05DEL02",
+    "name": "Vikram Sethi",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "01:22",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 11.0,
+        "undelivered": 0.0
+      },
+      "earnings": 5500.0,
+      "premium": 27.5
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        17.4338,
+        78.3867
+      ],
+      "delivery": [
+        17.5138,
+        78.4667
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "CHENRES09DEL03",
+    "name": "Trupti Desai",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "05:56",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 92.0,
+        "undelivered": 0.0
+      },
+      "earnings": 46000.0,
+      "premium": 828.0
+    },
+    "environment": {
+      "weather": "Fog",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        13.0447,
+        80.2615
+      ],
+      "delivery": [
+        13.1347,
+        80.3515
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "RANCHIRES16DEL01",
+    "name": "Sandeep Menon",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "07:28",
+      "efficiency": 0.97,
+      "orders": {
+        "delivered": 38.0,
+        "undelivered": 1.0
+      },
+      "earnings": 19000.0,
+      "premium": 171.0
+    },
+    "environment": {
+      "weather": "Fog",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        23.3713,
+        85.3279
+      ],
+      "delivery": [
+        23.4413,
+        85.3979
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "CHENRES05DEL02",
+    "name": "Deepak Kumar",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "00:41",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 63.0,
+        "undelivered": 0.0
+      },
+      "earnings": 31500.0,
+      "premium": 173.25
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        13.0586,
+        80.2642
+      ],
+      "delivery": [
+        13.1386,
+        80.3442
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "MYSRES02DEL02",
+    "name": "Kavya Pillai",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "02:25",
+      "efficiency": 0.97,
+      "orders": {
+        "delivered": 34.0,
+        "undelivered": 1.0
+      },
+      "earnings": 17000.0,
+      "premium": 170.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        12.3046,
+        76.6436
+      ],
+      "delivery": [
+        12.3846,
+        76.7236
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "BANGRES19DEL02",
+    "name": "Sandeep Menon",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "04:00",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 43.0,
+        "undelivered": 0.0
+      },
+      "earnings": 21500.0,
+      "premium": 107.5
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        12.9143,
+        77.6784
+      ],
+      "delivery": [
+        13.0443,
+        77.8084
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "HYDRES17DEL02",
+    "name": "Deepika Padukone",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "00:04",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 62.0,
+        "undelivered": 1.0
+      },
+      "earnings": 31000.0,
+      "premium": 186.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        17.452,
+        78.3859
+      ],
+      "delivery": [
+        17.582,
+        78.5159
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "BANGRES07DEL01",
+    "name": "Aarav Sharma",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "07:50",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 97.0,
+        "undelivered": 0.0
+      },
+      "earnings": 48500.0,
+      "premium": 533.5
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        12.9785,
+        77.6437
+      ],
+      "delivery": [
+        13.0885,
+        77.7537
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "JAPRES06DEL03",
+    "name": "Bhavya Jain",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "03:25",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 2.0,
+        "undelivered": 0.0
+      },
+      "earnings": 1000.0,
+      "premium": 5.5
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        26.9119,
+        75.7973
+      ],
+      "delivery": [
+        27.0019,
+        75.8873
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "JAPRES01DEL02",
+    "name": "Kiran More",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "09:14",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 16.0,
+        "undelivered": 0.0
+      },
+      "earnings": 8000.0,
+      "premium": 80.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        26.9052,
+        75.8108
+      ],
+      "delivery": [
+        27.0352,
+        75.9408
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1142.86,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "VADRES010DEL02",
+    "name": "Minal Pathak",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "04:25",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 56.0,
+        "undelivered": 1.0
+      },
+      "earnings": 28000.0,
+      "premium": 140.0
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        22.3103,
+        73.1691
+      ],
+      "delivery": [
+        22.3903,
+        73.2491
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "SURRES14DEL01",
+    "name": "Tarun Gill",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:17",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 118.0,
+        "undelivered": 0.0
+      },
+      "earnings": 59000.0,
+      "premium": 649.0
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        21.1577,
+        72.7687
+      ],
+      "delivery": [
+        21.2277,
+        72.8387
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "HYDRES12DEL01",
+    "name": "Esha Gupta",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "00:23",
+      "efficiency": 0.86,
+      "orders": {
+        "delivered": 6.0,
+        "undelivered": 1.0
+      },
+      "earnings": 3000.0,
+      "premium": 27.0
+    },
+    "environment": {
+      "weather": "Fog",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        17.4296,
+        78.3926
+      ],
+      "delivery": [
+        17.5396,
+        78.5026
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 214.29,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "PUNERES13DEL01",
+    "name": "Nikhil Saxena",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:41",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 33.0,
+        "undelivered": 0.0
+      },
+      "earnings": 16500.0,
+      "premium": 90.75
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        18.5624,
+        73.9166
+      ],
+      "delivery": [
+        18.6324,
+        73.9866
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "VADRES15DEL03",
+    "name": "Bhavya Jain",
+    "persona": "Gig-Pro",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "08:16",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 179.0,
+        "undelivered": 0.0
+      },
+      "earnings": 89500.0,
+      "premium": 1476.75
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        0.0,
+        0.0
+      ],
+      "delivery": [
+        0.09,
+        0.09
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "PUNERES11DEL02",
+    "name": "Priya Mani",
+    "persona": "Full-Timer",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "10:07",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 308.0,
+        "undelivered": 1.0
+      },
+      "earnings": 154000.0,
+      "premium": 4620.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        18.5338,
+        73.8993
+      ],
+      "delivery": [
+        18.6138,
+        73.9793
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "PUNERES010DEL02",
+    "name": "Rahul Bose",
+    "persona": "Gig-Pro",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:36",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 266.0,
+        "undelivered": 2.0
+      },
+      "earnings": 133000.0,
+      "premium": 2394.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        18.5393,
+        73.8979
+      ],
+      "delivery": [
+        18.6693,
+        74.0279
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "BANGRES010DEL01",
+    "name": "Arjun Verma",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "03:47",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 61.0,
+        "undelivered": 0.0
+      },
+      "earnings": 30500.0,
+      "premium": 167.75
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        12.9333,
+        77.6143
+      ],
+      "delivery": [
+        13.0033,
+        77.6843
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "HYDRES010DEL02",
+    "name": "Rahul Bose",
+    "persona": "Full-Timer",
+    "tier": "Pro",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "02:56",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 331.0,
+        "undelivered": 1.0
+      },
+      "earnings": 165500.0,
+      "premium": 4468.5
+    },
+    "environment": {
+      "weather": "Fog",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        17.4283,
+        78.4044
+      ],
+      "delivery": [
+        17.5083,
+        78.4844
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "SURRES04DEL03",
+    "name": "Esha Gupta",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:03",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 3.0,
+        "undelivered": 0.0
+      },
+      "earnings": 1500.0,
+      "premium": 18.75
+    },
+    "environment": {
+      "weather": "Stormy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        -21.1735,
+        -72.802
+      ],
+      "delivery": [
+        21.2635,
+        72.892
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 214.29,
+      "fraudProbability": 0.2,
+      "ringScore": 0.2,
+      "level": "Medium",
+      "reason": "Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "VADRES18DEL02",
+    "name": "Rahul Bose",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:54",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 49.0,
+        "undelivered": 0.0
+      },
+      "earnings": 24500.0,
+      "premium": 147.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        0.0,
+        0.0
+      ],
+      "delivery": [
+        0.08,
+        0.08
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "HYDRES09DEL01",
+    "name": "Anjali Deshmukh",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:46",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 42.0,
+        "undelivered": 0.0
+      },
+      "earnings": 21000.0,
+      "premium": 189.0
+    },
+    "environment": {
+      "weather": "Fog",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        17.4317,
+        78.4083
+      ],
+      "delivery": [
+        17.5017,
+        78.4783
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "VADRES01DEL02",
+    "name": "Sneha Kapoor",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "00:09",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 59.0,
+        "undelivered": 0.0
+      },
+      "earnings": 29500.0,
+      "premium": 368.75
+    },
+    "environment": {
+      "weather": "Stormy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        22.3079,
+        73.1678
+      ],
+      "delivery": [
+        22.4379,
+        73.2978
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "BANGRES17DEL01",
+    "name": "Jyoti Sharma",
+    "persona": "Gig-Pro",
+    "tier": "Standard",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "04:06",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 139.0,
+        "undelivered": 0.0
+      },
+      "earnings": 69500.0,
+      "premium": 695.0
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        12.9725,
+        77.6082
+      ],
+      "delivery": [
+        13.0825,
+        77.7182
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "MUMRES09DEL02",
+    "name": "Chetan Bhagat",
+    "persona": "Full-Timer",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:43",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 263.0,
+        "undelivered": 0.0
+      },
+      "earnings": 131500.0,
+      "premium": 2367.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        18.994,
+        72.8252
+      ],
+      "delivery": [
+        19.124,
+        72.9552
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "MYSRES01DEL03",
+    "name": "Deepika Padukone",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:52",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 14.0,
+        "undelivered": 0.0
+      },
+      "earnings": 7000.0,
+      "premium": 70.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        12.3111,
+        76.6549
+      ],
+      "delivery": [
+        12.4011,
+        76.7449
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1000.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "CHENRES05DEL03",
+    "name": "Divya Nair",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "08:14",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 42.0,
+        "undelivered": 1.0
+      },
+      "earnings": 21000.0,
+      "premium": 210.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        13.0586,
+        80.2642
+      ],
+      "delivery": [
+        13.1486,
+        80.3542
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "MYSRES11DEL01",
+    "name": "Nikhil Saxena",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "04:22",
+      "efficiency": 0.95,
+      "orders": {
+        "delivered": 18.0,
+        "undelivered": 1.0
+      },
+      "earnings": 9000.0,
+      "premium": 49.5
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        12.3232,
+        76.63
+      ],
+      "delivery": [
+        12.3932,
+        76.7
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "COIMBRES010DEL01",
+    "name": "Chetan Bhagat",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "00:14",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 105.0,
+        "undelivered": 0.0
+      },
+      "earnings": 52500.0,
+      "premium": 630.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        11.003,
+        76.9754
+      ],
+      "delivery": [
+        11.113,
+        77.0854
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "PUNERES12DEL02",
+    "name": "Aditi Singh",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "08:28",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 18.0,
+        "undelivered": 0.0
+      },
+      "earnings": 9000.0,
+      "premium": 45.0
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        18.52,
+        73.8305
+      ],
+      "delivery": [
+        18.65,
+        73.9605
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "SURRES06DEL02",
+    "name": "Sneha Kapoor",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:52",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 64.0,
+        "undelivered": 1.0
+      },
+      "earnings": 32000.0,
+      "premium": 160.0
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        21.185,
+        72.8086
+      ],
+      "delivery": [
+        21.265,
+        72.8886
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "SURRES17DEL02",
+    "name": "Sanjay Dutt",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:17",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 35.0,
+        "undelivered": 0.0
+      },
+      "earnings": 17500.0,
+      "premium": 96.25
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        21.1496,
+        72.7727
+      ],
+      "delivery": [
+        21.2796,
+        72.9027
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "HYDRES11DEL02",
+    "name": "Bhavya Jain",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "01:45",
+      "efficiency": 0.94,
+      "orders": {
+        "delivered": 15.0,
+        "undelivered": 1.0
+      },
+      "earnings": 7500.0,
+      "premium": 67.5
+    },
+    "environment": {
+      "weather": "Fog",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        -17.4304,
+        78.4182
+      ],
+      "delivery": [
+        17.5604,
+        78.5482
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.2,
+      "ringScore": 0.2,
+      "level": "Low",
+      "reason": "Normal Operations"
+    }
+  },
+  {
+    "id": "CHENRES06DEL03",
+    "name": "Chirag Gandhi",
+    "persona": "Full-Timer",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:37",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 189.0,
+        "undelivered": 3.0
+      },
+      "earnings": 94500.0,
+      "premium": 1417.5
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        13.0543,
+        80.2572
+      ],
+      "delivery": [
+        13.1443,
+        80.3472
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "COIMBRES13DEL03",
+    "name": "Harish Iyer",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "00:28",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 22.0,
+        "undelivered": 0.0
+      },
+      "earnings": 11000.0,
+      "premium": 55.0
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        11.0037,
+        76.9765
+      ],
+      "delivery": [
+        11.0937,
+        77.0665
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "CHENRES20DEL02",
+    "name": "Kavya Pillai",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "01:38",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 93.0,
+        "undelivered": 1.0
+      },
+      "earnings": 46500.0,
+      "premium": 1162.5
+    },
+    "environment": {
+      "weather": "Stormy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        12.976,
+        80.2219
+      ],
+      "delivery": [
+        13.106,
+        80.3519
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "SURRES01DEL02",
+    "name": "Akash Gupta",
+    "persona": "Full-Timer",
+    "tier": "Pro",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "10:06",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 260.0,
+        "undelivered": 0.0
+      },
+      "earnings": 130000.0,
+      "premium": 3900.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        21.1864,
+        72.7941
+      ],
+      "delivery": [
+        21.3164,
+        72.9241
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "MUMRES010DEL03",
+    "name": "Kiran More",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:13",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 11.0,
+        "undelivered": 0.0
+      },
+      "earnings": 5500.0,
+      "premium": 33.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        19.0035,
+        72.8276
+      ],
+      "delivery": [
+        19.0935,
+        72.9176
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "BANGRES11DEL03",
+    "name": "Deepika Padukone",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "00:39",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 58.0,
+        "undelivered": 1.0
+      },
+      "earnings": 29000.0,
+      "premium": 174.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        12.9344,
+        77.6162
+      ],
+      "delivery": [
+        13.0244,
+        77.7062
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "SURRES19DEL01",
+    "name": "Vikram Sethi",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "01:22",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 65.0,
+        "undelivered": 0.0
+      },
+      "earnings": 32500.0,
+      "premium": 162.5
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        21.1497,
+        72.7726
+      ],
+      "delivery": [
+        21.2597,
+        72.8826
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "MUMRES17DEL03",
+    "name": "Harish Iyer",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:11",
+      "efficiency": 0.96,
+      "orders": {
+        "delivered": 26.0,
+        "undelivered": 1.0
+      },
+      "earnings": 13000.0,
+      "premium": 162.5
+    },
+    "environment": {
+      "weather": "Stormy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        19.122,
+        72.9085
+      ],
+      "delivery": [
+        19.212,
+        72.9985
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1500.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "HYDRES11DEL02",
+    "name": "Bhavya Jain",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:26",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 147.0,
+        "undelivered": 2.0
+      },
+      "earnings": 73500.0,
+      "premium": 808.5
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        17.4304,
+        78.4182
+      ],
+      "delivery": [
+        17.5104,
+        78.4982
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "COIMBRES17DEL03",
+    "name": "Priya Mani",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "08:17",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 52.0,
+        "undelivered": 0.0
+      },
+      "earnings": 26000.0,
+      "premium": 156.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        11.0261,
+        76.9447
+      ],
+      "delivery": [
+        11.1161,
+        77.0347
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "BANGRES02DEL02",
+    "name": "Karan Joshi",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "02:12",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 100.0,
+        "undelivered": 0.0
+      },
+      "earnings": 50000.0,
+      "premium": 500.0
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        12.9702,
+        77.6454
+      ],
+      "delivery": [
+        13.1002,
+        77.7754
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "VADRES11DEL02",
+    "name": "Deepak Kumar",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "01:10",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 112.0,
+        "undelivered": 2.0
+      },
+      "earnings": 56000.0,
+      "premium": 672.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        22.3081,
+        73.1678
+      ],
+      "delivery": [
+        22.3881,
+        73.2478
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "HYDRES20DEL01",
+    "name": "Abhishek Bajaj",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "07:49",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 22.0,
+        "undelivered": 0.0
+      },
+      "earnings": 11000.0,
+      "premium": 55.0
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        17.4832,
+        78.5521
+      ],
+      "delivery": [
+        17.5932,
+        78.6621
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "COIMBRES14DEL02",
+    "name": "Chetan Bhagat",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "10:10",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 144.0,
+        "undelivered": 2.0
+      },
+      "earnings": 72000.0,
+      "premium": 720.0
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        11.0037,
+        76.9755
+      ],
+      "delivery": [
+        11.0837,
+        77.0555
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "HYDRES02DEL01",
+    "name": "Gautam Das",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "01:08",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 19.0,
+        "undelivered": 0.0
+      },
+      "earnings": 9500.0,
+      "premium": 85.5
+    },
+    "environment": {
+      "weather": "Fog",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        17.4123,
+        78.4497
+      ],
+      "delivery": [
+        17.4823,
+        78.5197
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 678.57,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "CHENRES06DEL01",
+    "name": "Aditi Singh",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "02:46",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 21.0,
+        "undelivered": 0.0
+      },
+      "earnings": 10500.0,
+      "premium": 57.75
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        13.0543,
+        80.2572
+      ],
+      "delivery": [
+        13.1243,
+        80.3272
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "BANGRES07DEL02",
+    "name": "Abhishek Bajaj",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "",
+    "stats": {
+      "sessionTime": "00:53",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 127.0,
+        "undelivered": 0.0
+      },
+      "earnings": 63500.0,
+      "premium": 1143.0
+    },
+    "environment": {
+      "weather": "Fog",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        12.9785,
+        77.6437
+      ],
+      "delivery": [
+        13.1085,
+        77.7737
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "HYDRES15DEL03",
+    "name": "Harish Iyer",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "07:19",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 61.0,
+        "undelivered": 0.0
+      },
+      "earnings": 30500.0,
+      "premium": 152.5
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        17.4597,
+        78.3689
+      ],
+      "delivery": [
+        17.5497,
+        78.4589
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "SURRES05DEL02",
+    "name": "Deepak Kumar",
+    "persona": "Full-Timer",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "08:22",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 159.0,
+        "undelivered": 3.0
+      },
+      "earnings": 79500.0,
+      "premium": 1431.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        21.1751,
+        72.8043
+      ],
+      "delivery": [
+        21.3051,
+        72.9343
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "INDORES12DEL01",
+    "name": "Ishani Mukherjee",
+    "persona": "Gig-Pro",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:23",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 121.0,
+        "undelivered": 1.0
+      },
+      "earnings": 60500.0,
+      "premium": 605.0
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        22.7481,
+        75.8934
+      ],
+      "delivery": [
+        22.8181,
+        75.9634
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "SURRES04DEL02",
+    "name": "Divya Nair",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "10:04",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 46.0,
+        "undelivered": 0.0
+      },
+      "earnings": 23000.0,
+      "premium": 207.0
+    },
+    "environment": {
+      "weather": "Fog",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        21.1735,
+        72.802
+      ],
+      "delivery": [
+        21.2535,
+        72.882
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "PUNERES14DEL03",
+    "name": "Divya Nair",
+    "persona": "Gig-Pro",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "07:30",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 165.0,
+        "undelivered": 1.0
+      },
+      "earnings": 82500.0,
+      "premium": 2227.5
+    },
+    "environment": {
+      "weather": "Fog",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        18.5162,
+        73.8425
+      ],
+      "delivery": [
+        18.6062,
+        73.9325
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "INDORES01DEL01",
+    "name": "Ananya Reddy",
+    "persona": "Gig-Pro",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "01:43",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 139.0,
+        "undelivered": 0.0
+      },
+      "earnings": 69500.0,
+      "premium": 1737.5
+    },
+    "environment": {
+      "weather": "Stormy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        22.6952,
+        75.8661
+      ],
+      "delivery": [
+        22.7652,
+        75.9361
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "MUMRES14DEL01",
+    "name": "Akash Gupta",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "00:27",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 27.0,
+        "undelivered": 0.0
+      },
+      "earnings": 13500.0,
+      "premium": 81.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        19.1813,
+        72.8362
+      ],
+      "delivery": [
+        19.2513,
+        72.9062
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "JAPRES02DEL03",
+    "name": "Sanjay Dutt",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:32",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 142.0,
+        "undelivered": 2.0
+      },
+      "earnings": 71000.0,
+      "premium": 852.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        26.9141,
+        75.8057
+      ],
+      "delivery": [
+        27.0541,
+        75.9457
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "CHENRES01DEL01",
+    "name": "Meera Kulkarni",
+    "persona": "Gig-Pro",
+    "tier": "Standard",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "01:12",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 107.0,
+        "undelivered": 0.0
+      },
+      "earnings": 53500.0,
+      "premium": 535.0
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        13.0058,
+        80.2507
+      ],
+      "delivery": [
+        13.0758,
+        80.3207
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "MYSRES08DEL02",
+    "name": "Esha Malhotra",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:33",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 11.0,
+        "undelivered": 0.0
+      },
+      "earnings": 5500.0,
+      "premium": 27.5
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        12.298,
+        76.6652
+      ],
+      "delivery": [
+        12.428,
+        76.7952
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "MYSRES17DEL01",
+    "name": "Trupti Desai",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "",
+    "stats": {
+      "sessionTime": "09:21",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 134.0,
+        "undelivered": 2.0
+      },
+      "earnings": 67000.0,
+      "premium": 1340.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        12.3264,
+        76.6191
+      ],
+      "delivery": [
+        12.4364,
+        76.7291
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "COIMBRES02DEL01",
+    "name": "Esha Gupta",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "01:39",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 87.0,
+        "undelivered": 2.0
+      },
+      "earnings": 43500.0,
+      "premium": 783.0
+    },
+    "environment": {
+      "weather": "Fog",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        11.0225,
+        76.9957
+      ],
+      "delivery": [
+        11.0925,
+        77.0657
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1500.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "COIMBRES03DEL01",
+    "name": "Aarav Sharma",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "02:48",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 9.0,
+        "undelivered": 0.0
+      },
+      "earnings": 4500.0,
+      "premium": 56.25
+    },
+    "environment": {
+      "weather": "Stormy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        11.0251,
+        77.0154
+      ],
+      "delivery": [
+        11.0951,
+        77.0854
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 642.86,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "RANCHIRES02DEL01",
+    "name": "Vikram Sethi",
+    "persona": "Full-Timer",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "00:30",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 205.0,
+        "undelivered": 0.0
+      },
+      "earnings": 102500.0,
+      "premium": 3075.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        0.0,
+        0.0
+      ],
+      "delivery": [
+        0.07,
+        0.07
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "INDORES19DEL02",
+    "name": "Abhishek Bajaj",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "04:13",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 8.0,
+        "undelivered": 0.0
+      },
+      "earnings": 4000.0,
+      "premium": 50.0
+    },
+    "environment": {
+      "weather": "Stormy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        22.7455,
+        75.8931
+      ],
+      "delivery": [
+        22.8755,
+        76.0231
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "VADRES15DEL03",
+    "name": "Bhavya Jain",
+    "persona": "Gig-Pro",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "09:43",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 271.0,
+        "undelivered": 1.0
+      },
+      "earnings": 135500.0,
+      "premium": 4065.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        0.0,
+        0.0
+      ],
+      "delivery": [
+        0.09,
+        0.09
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "INDORES19DEL02",
+    "name": "Abhishek Bajaj",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "02:18",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 31.0,
+        "undelivered": 0.0
+      },
+      "earnings": 15500.0,
+      "premium": 155.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        22.7455,
+        75.8931
+      ],
+      "delivery": [
+        22.8255,
+        75.9731
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "JAPRES09DEL02",
+    "name": "Sandeep Menon",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "01:42",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 33.0,
+        "undelivered": 0.0
+      },
+      "earnings": 16500.0,
+      "premium": 165.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        26.9114,
+        75.789
+      ],
+      "delivery": [
+        26.9914,
+        75.869
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "BANGRES15DEL01",
+    "name": "Chaitanya Iyer",
+    "persona": "Full-Timer",
+    "tier": "Pro",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "02:48",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 305.0,
+        "undelivered": 2.0
+      },
+      "earnings": 152500.0,
+      "premium": 4117.5
+    },
+    "environment": {
+      "weather": "Fog",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        12.9754,
+        77.6967
+      ],
+      "delivery": [
+        13.0854,
+        77.8067
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "MUMRES02DEL01",
+    "name": "Manish Rao",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "01:40",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 65.0,
+        "undelivered": 0.0
+      },
+      "earnings": 32500.0,
+      "premium": 325.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        19.2213,
+        72.8624
+      ],
+      "delivery": [
+        19.2913,
+        72.9324
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1500.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "RANCHIRES03DEL01",
+    "name": "Deepak Kumar",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "01:56",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 16.0,
+        "undelivered": 0.0
+      },
+      "earnings": 8000.0,
+      "premium": 72.0
+    },
+    "environment": {
+      "weather": "Fog",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        0.0,
+        0.0
+      ],
+      "delivery": [
+        0.11,
+        0.11
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "INDORES17DEL03",
+    "name": "Bhavya Jain",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "05:05",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 16.0,
+        "undelivered": 0.0
+      },
+      "earnings": 8000.0,
+      "premium": 72.0
+    },
+    "environment": {
+      "weather": "Fog",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        22.7612,
+        75.8875
+      ],
+      "delivery": [
+        22.8512,
+        75.9775
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "RANCHIRES02DEL01",
+    "name": "Vikram Sethi",
+    "persona": "Gig-Pro",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "05:19",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 187.0,
+        "undelivered": 0.0
+      },
+      "earnings": 93500.0,
+      "premium": 1542.75
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        0.0,
+        0.0
+      ],
+      "delivery": [
+        0.07,
+        0.07
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "MUMRES010DEL01",
+    "name": "Vikram Sethi",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "03:24",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 144.0,
+        "undelivered": 0.0
+      },
+      "earnings": 72000.0,
+      "premium": 1800.0
+    },
+    "environment": {
+      "weather": "Stormy",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        19.0035,
+        72.8276
+      ],
+      "delivery": [
+        19.1135,
+        72.9376
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "INDORES12DEL01",
+    "name": "Ishani Mukherjee",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "04:05",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 40.0,
+        "undelivered": 0.0
+      },
+      "earnings": 20000.0,
+      "premium": 120.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        22.7481,
+        75.8934
+      ],
+      "delivery": [
+        22.8581,
+        76.0034
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "RANCHIRES03DEL01",
+    "name": "Deepak Kumar",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "07:29",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 42.0,
+        "undelivered": 0.0
+      },
+      "earnings": 21000.0,
+      "premium": 210.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        0.0,
+        0.0
+      ],
+      "delivery": [
+        0.11,
+        0.11
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1500.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "JAPRES06DEL02",
+    "name": "Sandeep Menon",
+    "persona": "Gig-Pro",
+    "tier": "Standard",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "00:50",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 124.0,
+        "undelivered": 2.0
+      },
+      "earnings": 62000.0,
+      "premium": 1240.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        26.9119,
+        75.7973
+      ],
+      "delivery": [
+        27.0419,
+        75.9273
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "HYDRES13DEL02",
+    "name": "Varun Dhawan",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "00:40",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 128.0,
+        "undelivered": 0.0
+      },
+      "earnings": 64000.0,
+      "premium": 768.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        17.4315,
+        78.4004
+      ],
+      "delivery": [
+        17.5615,
+        78.5304
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "BANGRES01DEL02",
+    "name": "Tarun Gill",
+    "persona": "Gig-Pro",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:12",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 229.0,
+        "undelivered": 2.0
+      },
+      "earnings": 114500.0,
+      "premium": 4293.75
+    },
+    "environment": {
+      "weather": "Stormy",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        12.9333,
+        77.6154
+      ],
+      "delivery": [
+        13.0133,
+        77.6954
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "MYSRES16DEL01",
+    "name": "Gautam Das",
+    "persona": "Gig-Pro",
+    "tier": "Standard",
+    "city": "",
+    "stats": {
+      "sessionTime": "04:00",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 73.0,
+        "undelivered": 1.0
+      },
+      "earnings": 36500.0,
+      "premium": 912.5
+    },
+    "environment": {
+      "weather": "Stormy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        12.317,
+        76.6031
+      ],
+      "delivery": [
+        12.427,
+        76.7131
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "BANGRES13DEL01",
+    "name": "Deepak Kumar",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "02:34",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 46.0,
+        "undelivered": 1.0
+      },
+      "earnings": 23000.0,
+      "premium": 230.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        12.9357,
+        77.6141
+      ],
+      "delivery": [
+        13.0457,
+        77.7241
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "VADRES13DEL02",
+    "name": "Amitabh Bachchan",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:44",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 65.0,
+        "undelivered": 1.0
+      },
+      "earnings": 32500.0,
+      "premium": 162.5
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        22.3102,
+        73.1589
+      ],
+      "delivery": [
+        22.4402,
+        73.2889
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "HYDRES06DEL03",
+    "name": "Lokesh Rahul",
+    "persona": "Full-Timer",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "09:12",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 269.0,
+        "undelivered": 2.0
+      },
+      "earnings": 134500.0,
+      "premium": 2219.25
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        17.4559,
+        78.3755
+      ],
+      "delivery": [
+        17.5459,
+        78.4655
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "SURRES20DEL02",
+    "name": "Aditi Singh",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "04:39",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 64.0,
+        "undelivered": 1.0
+      },
+      "earnings": 32000.0,
+      "premium": 160.0
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        21.1528,
+        72.7781
+      ],
+      "delivery": [
+        21.2828,
+        72.9081
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "JAPRES17DEL01",
+    "name": "Rajesh Khanna",
+    "persona": "Gig-Pro",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "08:26",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 194.0,
+        "undelivered": 3.0
+      },
+      "earnings": 97000.0,
+      "premium": 1600.5
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        26.8923,
+        75.8069
+      ],
+      "delivery": [
+        26.9623,
+        75.8769
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "PUNERES19DEL01",
+    "name": "Ananya Reddy",
+    "persona": "Full-Timer",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "04:35",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 406.0,
+        "undelivered": 0.0
+      },
+      "earnings": 203000.0,
+      "premium": 3349.5
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        18.5639,
+        73.9154
+      ],
+      "delivery": [
+        18.6339,
+        73.9854
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "RANCHIRES02DEL01",
+    "name": "Vikram Sethi",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "02:45",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 86.0,
+        "undelivered": 2.0
+      },
+      "earnings": 43000.0,
+      "premium": 860.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        0.0,
+        0.0
+      ],
+      "delivery": [
+        0.07,
+        0.07
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1500.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "RANCHIRES07DEL02",
+    "name": "Karan Joshi",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:13",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 30.0,
+        "undelivered": 0.0
+      },
+      "earnings": 15000.0,
+      "premium": 150.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        23.3594,
+        85.3251
+      ],
+      "delivery": [
+        23.4894,
+        85.4551
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "SURRES16DEL02",
+    "name": "Sneha Kapoor",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "03:10",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 66.0,
+        "undelivered": 1.0
+      },
+      "earnings": 33000.0,
+      "premium": 198.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        21.1604,
+        72.7742
+      ],
+      "delivery": [
+        21.2404,
+        72.8542
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "JAPRES08DEL01",
+    "name": "Dinesh Karthik",
+    "persona": "Gig-Pro",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "03:25",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 88.0,
+        "undelivered": 0.0
+      },
+      "earnings": 44000.0,
+      "premium": 484.0
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        26.9103,
+        75.783
+      ],
+      "delivery": [
+        27.0203,
+        75.893
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "CHENRES14DEL01",
+    "name": "Aditi Singh",
+    "persona": "Full-Timer",
+    "tier": "Pro",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "09:21",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 373.0,
+        "undelivered": 2.0
+      },
+      "earnings": 186500.0,
+      "premium": 6993.75
+    },
+    "environment": {
+      "weather": "Stormy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        13.0263,
+        80.1746
+      ],
+      "delivery": [
+        13.1363,
+        80.2846
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1500.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "INDORES08DEL02",
+    "name": "Ananya Reddy",
+    "persona": "Gig-Pro",
+    "tier": "Pro",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "06:56",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 180.0,
+        "undelivered": 0.0
+      },
+      "earnings": 90000.0,
+      "premium": 1350.0
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        22.7257,
+        75.8985
+      ],
+      "delivery": [
+        22.8057,
+        75.9785
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "SURRES14DEL02",
+    "name": "Trupti Desai",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:44",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 57.0,
+        "undelivered": 0.0
+      },
+      "earnings": 28500.0,
+      "premium": 356.25
+    },
+    "environment": {
+      "weather": "Stormy",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        21.1577,
+        72.7687
+      ],
+      "delivery": [
+        21.2877,
+        72.8987
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "BANGRES17DEL02",
+    "name": "Harish Iyer",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "04:51",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 145.0,
+        "undelivered": 1.0
+      },
+      "earnings": 72500.0,
+      "premium": 797.5
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        12.9725,
+        77.6082
+      ],
+      "delivery": [
+        13.1025,
+        77.7382
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "RANCHIRES02DEL01",
+    "name": "Vikram Sethi",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "03:09",
+      "efficiency": 0.94,
+      "orders": {
+        "delivered": 49.0,
+        "undelivered": 3.0
+      },
+      "earnings": 24500.0,
+      "premium": 147.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        0.0,
+        0.0
+      ],
+      "delivery": [
+        0.07,
+        0.07
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "RANCHIRES07DEL02",
+    "name": "Karan Joshi",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "01:56",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 27.0,
+        "undelivered": 0.0
+      },
+      "earnings": 13500.0,
+      "premium": 67.5
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        23.3594,
+        85.3251
+      ],
+      "delivery": [
+        23.4394,
+        85.4051
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "HYDRES17DEL03",
+    "name": "Ananya Reddy",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "06:42",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 133.0,
+        "undelivered": 0.0
+      },
+      "earnings": 66500.0,
+      "premium": 1662.5
+    },
+    "environment": {
+      "weather": "Stormy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        17.452,
+        78.3859
+      ],
+      "delivery": [
+        17.542,
+        78.4759
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1500.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "MUMRES09DEL02",
+    "name": "Chetan Bhagat",
+    "persona": "Full-Timer",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "04:49",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 157.0,
+        "undelivered": 1.0
+      },
+      "earnings": 78500.0,
+      "premium": 1177.5
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        18.994,
+        72.8252
+      ],
+      "delivery": [
+        19.074,
+        72.9052
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "MYSRES15DEL03",
+    "name": "Varun Dhawan",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "03:00",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 123.0,
+        "undelivered": 0.0
+      },
+      "earnings": 61500.0,
+      "premium": 738.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        12.3521,
+        76.6066
+      ],
+      "delivery": [
+        12.4421,
+        76.6966
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "MYSRES09DEL03",
+    "name": "Lokesh Rahul",
+    "persona": "Full-Timer",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "10:50",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 374.0,
+        "undelivered": 0.0
+      },
+      "earnings": 187000.0,
+      "premium": 3085.5
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        12.3232,
+        76.6306
+      ],
+      "delivery": [
+        12.4132,
+        76.7206
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "PUNERES06DEL02",
+    "name": "Pooja Hegde",
+    "persona": "Full-Timer",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:00",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 166.0,
+        "undelivered": 1.0
+      },
+      "earnings": 83000.0,
+      "premium": 2241.0
+    },
+    "environment": {
+      "weather": "Fog",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        18.5463,
+        73.9043
+      ],
+      "delivery": [
+        18.6263,
+        73.9843
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1500.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "MYSRES19DEL03",
+    "name": "Akash Gupta",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "00:00",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 56.0,
+        "undelivered": 1.0
+      },
+      "earnings": 28000.0,
+      "premium": 252.0
+    },
+    "environment": {
+      "weather": "Fog",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        12.334,
+        76.6182
+      ],
+      "delivery": [
+        12.424,
+        76.7082
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1500.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "CHENRES09DEL01",
+    "name": "Aditi Singh",
+    "persona": "Gig-Pro",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "00:02",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 520.0,
+        "undelivered": 6.0
+      },
+      "earnings": 260000.0,
+      "premium": 9750.0
+    },
+    "environment": {
+      "weather": "Stormy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        13.0447,
+        80.2615
+      ],
+      "delivery": [
+        13.1147,
+        80.3315
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1500.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "BANGRES07DEL02",
+    "name": "Abhishek Bajaj",
+    "persona": "Gig-Pro",
+    "tier": "Standard",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "00:03",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 71.0,
+        "undelivered": 0.0
+      },
+      "earnings": 35500.0,
+      "premium": 710.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        12.9785,
+        77.6437
+      ],
+      "delivery": [
+        13.0585,
+        77.7237
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "PUNERES06DEL02",
+    "name": "Pooja Hegde",
+    "persona": "Gig-Pro",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "00:32",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 93.0,
+        "undelivered": 0.0
+      },
+      "earnings": 46500.0,
+      "premium": 558.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        18.5463,
+        73.9043
+      ],
+      "delivery": [
+        18.6763,
+        74.0343
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "MYSRES07DEL02",
+    "name": "Akash Gupta",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "07:45",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 26.0,
+        "undelivered": 0.0
+      },
+      "earnings": 13000.0,
+      "premium": 130.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        12.3255,
+        76.6323
+      ],
+      "delivery": [
+        12.4555,
+        76.7623
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "MYSRES12DEL03",
+    "name": "Chirag Gandhi",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "05:37",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 77.0,
+        "undelivered": 1.0
+      },
+      "earnings": 38500.0,
+      "premium": 423.5
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        12.2847,
+        76.6259
+      ],
+      "delivery": [
+        12.3747,
+        76.7159
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "RANCHIRES16DEL02",
+    "name": "Esha Malhotra",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "01:53",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 46.0,
+        "undelivered": 0.0
+      },
+      "earnings": 23000.0,
+      "premium": 207.0
+    },
+    "environment": {
+      "weather": "Fog",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        23.3713,
+        85.3279
+      ],
+      "delivery": [
+        23.5013,
+        85.4579
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1500.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "RANCHIRES13DEL01",
+    "name": "Aarav Sharma",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "",
+    "stats": {
+      "sessionTime": "04:15",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 11.0,
+        "undelivered": 0.0
+      },
+      "earnings": 5500.0,
+      "premium": 55.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        23.375,
+        85.3355
+      ],
+      "delivery": [
+        23.485,
+        85.4455
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "BANGRES01DEL01",
+    "name": "Bhuvneshwar Kumar",
+    "persona": "Gig-Pro",
+    "tier": "Pro",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "01:03",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 265.0,
+        "undelivered": 1.0
+      },
+      "earnings": 132500.0,
+      "premium": 3975.0
+    },
+    "environment": {
+      "weather": "Sandstorms",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        12.9333,
+        77.6154
+      ],
+      "delivery": [
+        13.0433,
+        77.7254
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "COIMBRES03DEL02",
+    "name": "Chetan Bhagat",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "00:44",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 7.0,
+        "undelivered": 0.0
+      },
+      "earnings": 3500.0,
+      "premium": 21.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        11.0251,
+        77.0154
+      ],
+      "delivery": [
+        11.1051,
+        77.0954
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "HYDRES01DEL02",
+    "name": "Bhavya Jain",
+    "persona": "Full-Timer",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:40",
+      "efficiency": 0.99,
+      "orders": {
+        "delivered": 94.0,
+        "undelivered": 1.0
+      },
+      "earnings": 47000.0,
+      "premium": 470.0
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        17.4104,
+        78.4372
+      ],
+      "delivery": [
+        17.4904,
+        78.5172
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "JAPRES20DEL02",
+    "name": "Aditi Singh",
+    "persona": "Gig-Pro",
+    "tier": "Standard",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "07:54",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 80.0,
+        "undelivered": 2.0
+      },
+      "earnings": 40000.0,
+      "premium": 400.0
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        26.9564,
+        75.7766
+      ],
+      "delivery": [
+        27.0364,
+        75.8566
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "COIMBRES16DEL03",
+    "name": "Deepak Kumar",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "02:02",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 13.0,
+        "undelivered": 0.0
+      },
+      "earnings": 6500.0,
+      "premium": 32.5
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        11.0104,
+        76.953
+      ],
+      "delivery": [
+        11.1004,
+        77.043
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "VADRES01DEL02",
+    "name": "Sneha Kapoor",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "04:19",
+      "efficiency": 0.98,
+      "orders": {
+        "delivered": 62.0,
+        "undelivered": 1.0
+      },
+      "earnings": 31000.0,
+      "premium": 186.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        22.3079,
+        73.1678
+      ],
+      "delivery": [
+        22.3879,
+        73.2478
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "MUMRES14DEL01",
+    "name": "Akash Gupta",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "00:43",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 5.0,
+        "undelivered": 0.0
+      },
+      "earnings": 2500.0,
+      "premium": 15.0
+    },
+    "environment": {
+      "weather": "Windy",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        19.1813,
+        72.8362
+      ],
+      "delivery": [
+        19.2913,
+        72.9462
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "CHENRES05DEL02",
+    "name": "Deepak Kumar",
+    "persona": "Gig-Pro",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "00:32",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 10.0,
+        "undelivered": 0.0
+      },
+      "earnings": 5000.0,
+      "premium": 25.0
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        13.0586,
+        80.2642
+      ],
+      "delivery": [
+        13.1886,
+        80.3942
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "CHENRES01DEL03",
+    "name": "Anjali Deshmukh",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "01:18",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 68.0,
+        "undelivered": 0.0
+      },
+      "earnings": 34000.0,
+      "premium": 425.0
+    },
+    "environment": {
+      "weather": "Stormy",
+      "traffic": "Jam"
+    },
+    "location": {
+      "restaurant": [
+        13.0058,
+        80.2507
+      ],
+      "delivery": [
+        13.0958,
+        80.3407
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": true,
+      "predictedPayout": 1500.0,
+      "fraudProbability": 0.9,
+      "ringScore": 0.9,
+      "level": "High",
+      "reason": "Geospatial Clustering (Possible Fraud Ring) | Systemic Parametric Risk (Weather + Traffic)"
+    }
+  },
+  {
+    "id": "MYSRES03DEL01",
+    "name": "Priya Mani",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "01:06",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 2.0,
+        "undelivered": 0.0
+      },
+      "earnings": 1000.0,
+      "premium": 5.5
+    },
+    "environment": {
+      "weather": "Cloudy",
+      "traffic": "Medium"
+    },
+    "location": {
+      "restaurant": [
+        12.2995,
+        76.6426
+      ],
+      "delivery": [
+        12.3695,
+        76.7126
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "JAPRES16DEL03",
+    "name": "Nikhil Saxena",
+    "persona": "Full-Timer",
+    "tier": "Basic",
+    "city": "Metropolitian",
+    "stats": {
+      "sessionTime": "01:52",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 39.0,
+        "undelivered": 0.0
+      },
+      "earnings": 19500.0,
+      "premium": 97.5
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        26.8496,
+        75.8005
+      ],
+      "delivery": [
+        26.9396,
+        75.8905
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  },
+  {
+    "id": "VADRES11DEL03",
+    "name": "Esha Malhotra",
+    "persona": "Gig-Pro",
+    "tier": "Pro",
+    "city": "Urban",
+    "stats": {
+      "sessionTime": "03:15",
+      "efficiency": 1.0,
+      "orders": {
+        "delivered": 182.0,
+        "undelivered": 0.0
+      },
+      "earnings": 91000.0,
+      "premium": 1365.0
+    },
+    "environment": {
+      "weather": "Sunny",
+      "traffic": "Low"
+    },
+    "location": {
+      "restaurant": [
+        22.3081,
+        73.1678
+      ],
+      "delivery": [
+        22.3981,
+        73.2578
+      ]
+    },
+    "risk": {
+      "isPayoutEligible": false,
+      "predictedPayout": 0.0,
+      "fraudProbability": 0.8,
+      "ringScore": 0.8,
+      "level": "Medium",
+      "reason": "Geospatial Clustering (Possible Fraud Ring)"
+    }
+  }
+]

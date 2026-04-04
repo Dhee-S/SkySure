@@ -1,0 +1,67 @@
+[
+  {
+    "rider_id": "TN_RID_1000",
+    "rider_name": "Arjun Raghavan",
+    "persona_type": "Gig-Pro",
+    "tier": "Pro",
+    "city": "Chennai",
+    "session_time_hhmm": "06:30",
+    "earning_efficiency": 0.88,
+    "past_week_earnings": 5432,
+    "weekly_premium": 1500,
+    "ring_score": 0.12,
+    "fraud_probability": 0.02
+  },
+  {
+    "rider_id": "TN_RID_1001",
+    "rider_name": "Sanjay Jayakumar",
+    "persona_type": "Full-Timer",
+    "tier": "Standard",
+    "city": "Coimbatore",
+    "session_time_hhmm": "08:30",
+    "earning_efficiency": 0.92,
+    "past_week_earnings": 4500,
+    "weekly_premium": 1200,
+    "ring_score": 0.08,
+    "fraud_probability": 0.01
+  },
+  {
+    "rider_id": "TN_RID_1002",
+    "rider_name": "Priya Krishnan",
+    "persona_type": "Student-Flex",
+    "tier": "Basic",
+    "city": "Madurai",
+    "session_time_hhmm": "10:30",
+    "earning_efficiency": 0.75,
+    "past_week_earnings": 2500,
+    "weekly_premium": 800,
+    "ring_score": 0.25,
+    "fraud_probability": 0.05
+  },
+  {
+    "rider_id": "TN_RID_1003",
+    "rider_name": "Vijay Ramachandran",
+    "persona_type": "Veteran",
+    "tier": "Pro",
+    "city": "Trichy",
+    "session_time_hhmm": "12:30",
+    "earning_efficiency": 0.95,
+    "past_week_earnings": 6500,
+    "weekly_premium": 1800,
+    "ring_score": 0.05,
+    "fraud_probability": 0.00
+  },
+  {
+    "rider_id": "TN_RID_1004",
+    "rider_name": "Anitha Selvam",
+    "persona_type": "Gig-Pro",
+    "tier": "Standard",
+    "city": "Salem",
+    "session_time_hhmm": "14:30",
+    "earning_efficiency": 0.82,
+    "past_week_earnings": 3800,
+    "weekly_premium": 1100,
+    "ring_score": 0.35,
+    "fraud_probability": 0.08
+  }
+]
