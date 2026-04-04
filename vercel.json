@@ -1,6 +1,8 @@
 {
   "version": 2,
   "name": "skysure-root",
+  "cleanUrls": true,
+  "trailingSlash": false,
   "builds": [
     {
       "src": "api/index.js",
@@ -18,9 +20,6 @@
     {
       "source": "/api/(.*)",
       "destination": "api/index.js"
-    },
-    {
-      "handle": "filesystem"
     },
     {
       "source": "/(.*)",
