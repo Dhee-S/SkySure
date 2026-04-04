@@ -1,6 +1,6 @@
 import { getRiders, seedSampleRiders } from './mockStore';
 
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = '/api';
 const useBackend = true;
 
 export const dataService = {
