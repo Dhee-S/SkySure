@@ -12,6 +12,9 @@ const DATA_PATH = path.join(__dirname, '..', 'data', 'pre-final_dataset3.csv');
 app.use(cors());
 app.use(express.json());
 
+// Serve static files from the React frontend build
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
 const simulationRoutes = require('./src/routes/simulationRoutes');
 
 // Global storage for Cache (Optional, but Firestore is live)
@@ -380,14 +383,19 @@ app.post('/api/simulation/batch', async (req, res) => {
     }
 });
 
-// Initialization: Load data from Firestore then start server (skip listen in Vercel)
+// Catch-all route to serve the React index.html (SPA mode)
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+});
+
+// Initialization: Load data from Firestore then start server
 const startServer = async () => {
     try {
         await loadData();
-        if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
-            app.listen(PORT, () => {
-                console.log(`\n🚀 SkySure API running on http://localhost:${PORT}`);
-                console.log(`-------------------------------------------`);
+        // Always listen on Render or Local, but allow Vercel to handle its own functions
+        if (process.env.RENDER || (process.env.NODE_ENV !== 'production' && !process.env.VERCEL)) {
+            app.listen(PORT, '0.0.0.0', () => {
+                console.log(`\n🚀 SkySure Unified Server running on Port ${PORT}`);
                 console.log(`✅ System Status: ALL_SYSTEMS_OPERATIONAL`);
             });
         }

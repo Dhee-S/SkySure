@@ -9,6 +9,7 @@
     "api"
   ],
   "scripts": {
-    "build": "npm run build --workspace=frontend"
+    "build": "npm run build --workspace=frontend",
+    "start": "node api/index.js"
   }
 }
