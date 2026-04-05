@@ -28,7 +28,7 @@ const getLiveWeather = async (lat, lon) => {
     }
 };
 
-// Synchronized with pre-final_dataset3.csv schema
+// ─── IMPROVED SYNTHETIC GENERATOR ────────────────────────────────────────────
 const generateSyntheticRiders = (count, city) => {
     const names = [
         "Arjun Raghavan", "Sanjay Jayakumar", "Priya Krishnan", "Vijay Ramachandran", 
@@ -37,14 +37,31 @@ const generateSyntheticRiders = (count, city) => {
     ];
     const personas = ["Gig-Pro", "Full-Timer", "Student-Flex", "Veteran"];
     
-    return Array.from({ length: count }, (_, i) => ({
-        rider_id: `TN_RID_SYN_${1000 + i}`,
-        city: city,
-        persona_type: personas[Math.floor(Math.random() * personas.length)],
-        session_time_hhmm: "06:30",
-        earning_efficiency: 0.8 + (Math.random() * 0.15),
-        weekly_premium: 1000 + (Math.floor(Math.random() * 5) * 100)
-    }));
+    return Array.from({ length: count }, (_, i) => {
+        const persona = personas[Math.floor(Math.random() * personas.length)];
+        const isProbation = Math.random() > 0.85; // 15% probation rate
+        const efficiency = 0.6 + (Math.random() * 0.35);
+        
+        // Match the 'Synthetic Actuarial Engine' logic from api/index.js
+        const baseRisk = 0.05;
+        const probationRisk = isProbation ? 0.65 : 0;
+        const efficiencyRisk = (1.0 - efficiency) * 0.4;
+        const derivedFraud = Math.min(0.98, Math.max(0.02, baseRisk + probationRisk + efficiencyRisk));
+
+        return {
+            rider_id: `TN_RID_SYN_${1000 + i}`,
+            rider_name: names[i % names.length],
+            city: city,
+            persona_type: persona,
+            persona: persona,
+            session_time_hhmm: "06:30",
+            earning_efficiency: efficiency,
+            probation_status: isProbation,
+            fraud_probability: derivedFraud,
+            trust_score: Math.round((1 - derivedFraud) * 100),
+            id: `syn_${1000 + i}`
+        };
+    });
 };
 
 router.post('/batch', async (req, res) => {
@@ -54,201 +71,136 @@ router.post('/batch', async (req, res) => {
         const batchCount = 15; 
         
         let selectedRiders = [];
+        // [LOGIC] Pull from Firestore first for "Real" flavor
         try {
-            // Updated query to use 'city' as per pre-final_dataset3.csv
-            // Case-Insensitive City Matching for Perfect Alignment
-            const snapshot = await db.collection('riders').where('city', 'in', [targetCity, targetCity.toLowerCase(), targetCity.toUpperCase()]).get();
-            if (!snapshot.empty) {
-                selectedRiders = snapshot.docs.map(d => ({ 
-                    ...d.data(), 
-                    id: d.id,
-                    rider_id: d.data().rider_id || d.id
-                }))
-                .sort(() => 0.5 - Math.random())
-                .slice(0, batchCount);
-                console.log(`[SIM] Linked ${selectedRiders.length} records from ${targetCity} dataset.`);
+            if (db) {
+                const snapshot = await db.collection('riders').limit(batchCount).get();
+                if (!snapshot.empty) {
+                    selectedRiders = snapshot.docs.map(d => ({ 
+                        ...d.data(), 
+                        id: d.id,
+                        rider_id: d.data().rider_id || d.id
+                    }));
+                }
             }
-        } catch (e) { console.error("[SIM] DB Failed Fallback", e); }
+        } catch (e) { console.warn("[SIM] Firestore ingest bypassed."); }
 
-        // Ensure we have enough riders
+        // Fill with high-fidelity synthetics if needed
         if (selectedRiders.length < batchCount) {
             selectedRiders = [...selectedRiders, ...generateSyntheticRiders(batchCount - selectedRiders.length, targetCity)];
         }
         selectedRiders = selectedRiders.sort(() => 0.5 - Math.random()).slice(0, batchCount);
 
-        let globalLiveEnv = null;
+        // ─── BATCH WEATHER SCENARIO (Consistency) ────────────────────────────
+        let batchEnv = { rainfall: 0, windSpeed: 10, trafficLevel: 'Medium', isStressMode: false };
+        
         if (isLiveMode) {
             const coords = CITY_COORDS[targetCity];
-            if (coords) {
-                globalLiveEnv = await getLiveWeather(coords.lat, coords.lon);
+            if (coords) batchEnv = await getLiveWeather(coords.lat, coords.lon);
+        } else {
+            // Force a 'Storm Scenario' for 60% of simulations for exciting audit data
+            const isStorm = Math.random() > 0.4;
+            if (isStorm) {
+                batchEnv = { 
+                    rainfall: 15 + (Math.random() * 20), 
+                    windSpeed: 35 + (Math.random() * 25), 
+                    trafficLevel: 'High', 
+                    isStressMode: true 
+                };
             }
         }
 
-        const approvedTarget = 8 + Math.floor(Math.random() * 2);
-        const mitigatedTarget = 2 + Math.floor(Math.random() * 2);
-        
-        const types = [];
-        for(let i=0; i<approvedTarget; i++) types.push('APPROVED');
-        for(let i=0; i<mitigatedTarget; i++) types.push('MITIGATED');
-        while(types.length < batchCount) types.push('NOMINAL');
-        
-        const shuffledTypes = types.sort(() => 0.5 - Math.random());
-
         const nodes = selectedRiders.map((rider, index) => {
-            const type = shuffledTypes[index];
-            let env = {};
+            // Behavioral Simulation: Some riders are 'Stable', some 'Risky'
+            const isRiskyBehavior = Math.random() > 0.7; // 30% anomaly rate
+            
             let behavior = {};
-            let isFraudCase = false;
-            let isNominalCase = false;
-
             const baseEfficiency = parseFloat(rider.earning_efficiency) || 0.85;
             
-            let baseSessionHours = 6;
-            if (rider.session_time_hhmm && typeof rider.session_time_hhmm === 'string') {
-                const parts = rider.session_time_hhmm.split(':');
-                if (parts.length === 2) {
-                    baseSessionHours = parseInt(parts[0]) + (parseInt(parts[1]) / 60);
-                }
-            } else if (typeof rider.session_time_hhmm === 'number') {
-                baseSessionHours = rider.session_time_hhmm;
-            }
-
-            if (type === 'APPROVED') { 
-                env = { 
-                    rainfall: Math.round(18 + (Math.random() * 12)), 
-                    windSpeed: Math.round(42 + (Math.random() * 15)), 
-                    trafficLevel: 'High', 
-                    zoneDisruption: Math.random() > 0.4,
-                    isSocialTrigger: Math.random() > 0.85,
-                    platformDowntime: Math.random() > 0.90,
-                    isStressMode: true
-                };
-                behavior = { 
-                    earning_efficiency: baseEfficiency * (0.3 + Math.random() * 0.2), 
-                    session_time_hr: Math.min(baseSessionHours, 4 + Math.random() * 2), 
-                    order_drop: Math.min(0.95, 0.05 + (0.6 + Math.random() * 0.2)) 
-                };
-            } else if (type === 'MITIGATED') {
-                env = { 
-                    rainfall: Math.round(32 + (Math.random() * 8)), 
-                    windSpeed: Math.round(52 + (Math.random() * 18)), 
-                    trafficLevel: 'High', 
-                    zoneDisruption: true,
-                    isSocialTrigger: Math.random() > 0.70,
-                    platformDowntime: Math.random() > 0.80,
-                    isStressMode: true
-                };
-                behavior = { 
-                    earning_efficiency: 0.98 + (Math.random() * 0.02), 
-                    session_time_hr: Math.min(baseSessionHours, 1.5 + Math.random() * 1), 
-                    order_drop: 0.02 
-                };
-                isFraudCase = true;
+            if (isRiskyBehavior && batchEnv.isStressMode) {
+                // Anomaly: High efficiency during a storm (Ghost Riding / Spoofing)
+                behavior = { earning_efficiency: 0.98, session_time_hr: 1, order_drop: 0.05 };
+            } else if (batchEnv.isStressMode) {
+                // Normal reaction: Slow down during storm
+                behavior = { earning_efficiency: baseEfficiency * 0.3, session_time_hr: 4, order_drop: 0.65 };
             } else {
-                env = { 
-                    rainfall: Math.round(2 + (Math.random() * 5)), 
-                    windSpeed: Math.round(8 + (Math.random() * 12)), 
-                    trafficLevel: 'Medium',
-                    zoneDisruption: false,
-                    isSocialTrigger: false,
-                    platformDowntime: false,
-                    isStressMode: false
-                };
-                behavior = { 
-                    earning_efficiency: baseEfficiency, 
-                    session_time_hr: baseSessionHours, 
-                    order_drop: 0.05 
-                };
-                isNominalCase = true;
+                // Standard conditions
+                behavior = { earning_efficiency: baseEfficiency, session_time_hr: 7, order_drop: 0.02 };
             }
 
-            const severityData = engine.ACTUARIAL_CONFIG.TRIGGERS.evaluate(env, behavior);
-            const fraud = engine.executeAdvancedFraudEngine(rider, env, behavior);
+            // ─── THE ACTUARIAL CORE (Truth Source) ───────────────────────────
+            const severityData = engine.ACTUARIAL_CONFIG.TRIGGERS.evaluate(batchEnv, behavior);
+            const fraud = engine.executeAdvancedFraudEngine(rider, batchEnv, behavior);
+            const payout = engine.calculateAdaptivePayout(rider, severityData, fraud, batchEnv);
             
-            if (isFraudCase) {
-                fraud.score = 75 + Math.floor(Math.random() * 20);
-                fraud.status = "BLOCK";
-                fraud.reasons = ['SPOOFING', 'COLLUSION', 'TIME_JUMP'];
-                fraud.summary = "CRITICAL: Multiple telemetry anomalies suggest systematic policy violation.";
-            } else if (isNominalCase) {
-                fraud.score = 5 + Math.floor(Math.random() * 10);
-                fraud.reasons = [];
-                fraud.summary = "TRUSTED: Behavioral signature matches historical pattern.";
-            } else {
-                fraud.score = 15 + Math.floor(Math.random() * 15);
-                fraud.reasons = [];
-                fraud.summary = "VERIFIED: Environmental triggers match claim profile.";
-            }
-
-            const payout = engine.calculateAdaptivePayout(rider, severityData, fraud);
-            const finalStatus = isFraudCase ? 'MITIGATED' : (severityData.isTriggered ? 'APPROVED' : 'NOMINAL');
-            
-            // Map structured signals for Simulation.jsx UI
+            // UI Signals mapping
             const signals = {
-                heavyRain: { value: env.rainfall, active: env.rainfall >= 10, threshold: 10 },
-                highWind: { value: env.windSpeed, active: env.windSpeed >= 35, threshold: 35 },
+                heavyRain: { value: batchEnv.rainfall, active: batchEnv.rainfall >= 10, threshold: 10 },
+                highWind: { value: batchEnv.windSpeed, active: batchEnv.windSpeed >= 35, threshold: 35 },
                 orderDrop: { value: behavior.order_drop * 100, active: behavior.order_drop > 0.5, threshold: 50 },
                 riderInactive: { value: behavior.session_time_hr < 2 ? 100 : 0, active: behavior.session_time_hr < 2, isStatus: true },
-                lowOrderVolume: { active: env.trafficLevel === 'Low' },
-                abnormalDeliveryTime: { value: (behavior.session_time_hr / baseSessionHours) * 60, active: behavior.session_time_hr < (baseSessionHours * 0.5) },
-                lowVisibility: { value: env.rainfall > 20 ? 2 : 8, active: env.rainfall > 20 }
+                lowOrderVolume: { active: batchEnv.trafficLevel === 'Low' },
+                abnormalDeliveryTime: { value: (behavior.session_time_hr / 8) * 60, active: behavior.session_time_hr < 4 },
+                lowVisibility: { value: batchEnv.rainfall > 20 ? 1 : 10, active: batchEnv.rainfall > 20 }
             };
+
+            const activeSignalCount = Object.values(signals).filter(s => s.active).length;
+            const currentTrustScore = Number(Math.round((1 - (fraud.score / 100)) * 100)) || 0;
 
             return {
                 ...rider,
-                id: rider.rider_id || rider.id || `NODE_${index}`,
-                name: rider.rider_name || `Pilot ${rider.rider_id?.split('_').pop() || index}`,
-                city: targetCity,
+                name: rider.rider_name || rider.name || `Partner ${rider.rider_id?.split('_').pop()}`,
                 persona: rider.persona_type || 'Gig-Pro',
-                env,
+                env: batchEnv,
                 behavior,
-                signals,
-                activeSignalCount: Object.values(signals).filter(s => s.active).length,
-                severityScore: severityData.totalSeverity / 100,
-                isDisrupted: severityData.isTriggered,
                 fraud,
-                payout: {
-                    ...payout,
-                    status: finalStatus,
-                    math: {
-                        ...payout.math,
-                        severity: severityData.rawSeverity / 100,
-                        confidence: (100 - fraud.score) / 100
-                    }
-                }
+                signals,
+                activeSignalCount,
+                severityScore: severityData.totalSeverity,
+                isDisrupted: severityData.isTriggered,
+                trust_score: currentTrustScore,
+                payout: payout
             };
         });
 
-        // PERSISTENCE LOOP: Batch Update Trust Scores
-        // Using batch for performance as requested "end of the batch"
-        const batch = db.batch();
-        nodes.forEach(node => {
-            const riderRef = db.collection('riders').doc(node.id);
-            let change = 0.5; // Nominal
-            if (node.payout.status === 'APPROVED') change = 2;
-            else if (node.payout.status === 'MITIGATED') change = -5; // User: "5 becease all having same trust"
-
-            const newTrust = Math.max(0, Math.min(100, (parseFloat(node.trust_score) || 85) + change));
-            batch.update(riderRef, { trust_score: newTrust });
-        });
-        await batch.commit();
-        console.log(`[SIM] Persistent Trust Loop committed for ${nodes.length} nodes.`);
+        // Batch Update Trust Scores in Firestore
+        if (db) {
+            try {
+                const batch = db.batch();
+                nodes.forEach(r => {
+                    if (r.id && !r.id.startsWith('TN_RID_SYN_')) {
+                        const ref = db.collection('riders').doc(r.id);
+                        // Delta: +10 for good behavior, -10 for a risk event (APPROVED payout)
+                        const delta = r.payout.status === 'APPROVED' ? -10 : 10;
+                        const initialScore = parseFloat(r.trust_score) || 75;
+                        const newScore = Math.max(0, Math.min(100, initialScore + delta));
+                        
+                        batch.set(ref, { 
+                            trust_score: newScore,
+                            trustScore:  newScore
+                        }, { merge: true });
+                    }
+                });
+                await batch.commit();
+                console.log(`[SIM] Persistent Trust Scores (Delta: +/-10) committed for ${nodes.length} nodes.`);
+            } catch (err) {
+                console.warn("[SIM] Trust score batch update failed:", err.message);
+            }
+        }
 
         res.json({
-            runId: `SIM_V6_${Date.now()}`,
             city: targetCity,
             nodes: nodes,
             summary: {
                 total: nodes.length,
                 approved: nodes.filter(n => n.payout.status === 'APPROVED').length,
-                nominal: nodes.filter(n => n.payout.status === 'NOMINAL').length,
                 mitigated: nodes.filter(n => n.payout.status === 'MITIGATED').length
             }
         });
 
     } catch (error) {
-        console.error('[CRITICAL] Batch Processor Fault:', error);
-        res.status(500).json({ error: 'Critical Simulation Failure' });
+        console.error('[SIM] Processor Error:', error);
+        res.status(500).json({ error: 'Simulation engine error' });
     }
 });
 

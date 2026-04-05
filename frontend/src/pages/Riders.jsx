@@ -34,8 +34,10 @@ export default function Riders() {
         (r?.id || '').toLowerCase().includes(search.toLowerCase()) ||
         (r?.rider_id || '').toLowerCase().includes(search.toLowerCase());
       
-      const riskLevel = r?.risk?.level || (parseFloat(r?.fraud_probability) >= 0.5 ? 'High' : 'Low');
-      const matchesFilter = filter === 'All' || riskLevel.toLowerCase().includes(filter.toLowerCase());
+      // Use derived fraud probability from backend or calc from trust score
+      const fraudVal = r?.fraud_probability ?? (r?.trust_score !== undefined ? (1 - r.trust_score / 100) : 0);
+      const riskLevel = fraudVal >= 0.7 ? 'High' : (fraudVal >= 0.4 ? 'Medium' : 'Low');
+      const matchesFilter = filter === 'All' || riskLevel.toLowerCase() === filter.toLowerCase();
       
       return matchesSearch && matchesFilter;
     });
@@ -113,8 +115,8 @@ export default function Riders() {
                 // 1. ADAPTIVE PREMIUM: Sync with Actuarial Engine
                 const premium = rider?.weeklyPremium || 120;
                 
-                // 3. TRUST SCORE: Direct from harmonized dataset
-                const trustScore = rider?.trustScore || 0;
+                // 3. TRUST SCORE: Direct from harmonized dataset (DB source: trust_score)
+                const trustScore = rider?.trust_score || rider?.trustScore || 0;
                 
                 // 4. CLEAN IDENTITY
                 const displayName = (rider?.name || 'Active Partner');
@@ -158,21 +160,35 @@ export default function Riders() {
                       </div>
                     </td>
                     <td>
-                      <span className={rider?.risk?.level === 'High' ? 'badge-danger' : rider?.risk?.level === 'Medium' ? 'badge-warning' : 'badge-success'}>
-                        {rider?.risk?.level || 'Low'}
-                      </span>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', justifyContent: 'center' }}>
+                        {(() => {
+                          const fraud = rider?.fraud_probability ?? (rider?.trust_score !== undefined ? (1 - rider.trust_score / 100) : 0);
+                          const isHigh = fraud >= 0.7;
+                          const isMed = fraud >= 0.4 && fraud < 0.7;
+                          return (
+                            <>
+                              <span className={isHigh ? 'badge-danger' : isMed ? 'badge-warning' : 'badge-success'} style={{ width: 'fit-content' }}>
+                                {isHigh ? 'HIGH' : isMed ? 'MEDIUM' : 'LOW'}
+                              </span>
+                              <div style={{ fontSize: '0.65rem', color: '#94a3b8', fontWeight: 600 }}>
+                                {isHigh ? 'CRITICAL RISK' : isMed ? 'ADAPTIVE NODE' : 'STABLE ASSET'}
+                              </div>
+                            </>
+                          );
+                        })()}
+                      </div>
                     </td>
                     <td>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', justifyContent: 'center' }}>
                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                            <div style={{ height: '6px', width: '80px', background: 'rgba(226, 232, 240, 0.8)', borderRadius: '100px', overflow: 'hidden' }}>
                              <div style={{ 
                                height: '100%', 
-                               width: `${trustScore}%`, 
-                               background: trustScore >= 70 ? '#10b981' : trustScore <= 45 ? '#ef4444' : '#f59e0b' 
+                               width: `${Math.round((1 - (rider?.fraud_probability ?? (rider?.trust_score !== undefined ? (1 - rider.trust_score / 100) : 0))) * 100)}%`, 
+                               background: (1 - (rider?.fraud_probability ?? (rider?.trust_score !== undefined ? (1 - rider.trust_score / 100) : 0))) >= 0.7 ? '#10b981' : (1 - (rider?.fraud_probability ?? (rider?.trust_score !== undefined ? (1 - rider.trust_score / 100) : 0))) <= 0.4 ? '#ef4444' : '#f59e0b' 
                              }} />
                            </div>
-                           <strong style={{ fontSize: '0.85rem' }}>{Math.round(trustScore)}</strong>
+                           <strong style={{ fontSize: '0.85rem' }}>{Math.round((1 - (rider?.fraud_probability ?? (rider?.trust_score !== undefined ? (1 - rider.trust_score / 100) : 0))) * 100)}</strong>
                          </div>
                          <span style={{ fontSize: '0.6rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase' }}>Velocity Trust</span>
                       </div>

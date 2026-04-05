@@ -114,86 +114,133 @@ const ACTUARIAL_CONFIG = {
 };
 
 const executeAdvancedFraudEngine = (rider, env, behavior) => {
-    // Determine Persona for Trust Matrix
+    // 1. PERSONA CONTEXT
     const personaKey = rider.persona_type || 'Gig-Pro';
     const persona = ACTUARIAL_CONFIG.PERSONAS[personaKey] || ACTUARIAL_CONFIG.PERSONAS['Gig-Pro'];
-    
-    // REDEMPTION TRACK Logic: Use the trust_score attribute from V3 dataset
     const trustScore = rider.trust_score || 85; 
-    const probationModifier = rider.probation_status ? 1.5 : 1.0;
+    const isProbation = rider.probation_status === true;
+    const efficiency = behavior.earning_efficiency || 1;
+    const sessionHr = behavior.session_time_hr || 6;
 
     let baseRingScore = 5; 
     const reasons = [];
 
-    // 1. Telemetry-Physics Cross-Validation (GPS Spoof Detection)
-    if (env.rainfall > 15 && behavior.earning_efficiency > 0.80) {
-        baseRingScore += 45;
-        reasons.push("Critical: Telemetry mismatch. High performance in severe storm suggests spoofing.");
-    }
+    // 2. RANDOMIZED ANOMALY REASON GENERATOR (Higher fidelity per trigger)
+    const library = {
+        GHOSTING: [
+            "Ghost Riding: Kinematic inconsistency. Moving faster than traffic congestion signals spoofing.",
+            "Efficiency Outlier: GPS velocity trajectory exceeds neighborhood physics baseline.",
+            "Velocity Spoofing: Machine learning model predicts output ceiling breach."
+        ],
+        SHARING: [
+            "Account Sharing: Logistical footprint mismatch. Impossible session duration for identified persona.",
+            "Biometric Dropout: Periodic telemetry gaps suggest multi-user device switching.",
+            "Fatigue Logic: Session activity exceeds algorithmic safety threshold for 'Gig-Pro' profile."
+        ],
+        GEOSPOOF: [
+            "Geo-Spoofing: Telemetry-weather mismatch. High-velocity in severe precipitation suggests hardware spoofing.",
+            "GPS Jitter: Satellite signal consistency is too perfect for urban canyon environments.",
+            "Location Mocking: Synthetic GPS heartbeat detected by platform security node."
+        ],
+        CLUSTER: [
+            "Network Sync Anomaly: Coordinated inactivity detected in local geofence.",
+            "Group Migration: Cluster movement pattern suggests non-organic agent behavior.",
+            "Social Curfew Trigger: Collective node disconnection in high-order density zone."
+        ]
+    };
 
-    // 2. Swarm Integrity (Synced Inactivity)
-    if (env.trafficLevel !== 'High' && behavior.order_drop > 0.85) {
+    const getRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+    // ─── TRIGGERS ────────────────────────────────────────────────────────────
+    if (env.trafficLevel === 'High' && efficiency > 0.90) {
+        baseRingScore += 40;
+        reasons.push(getRandom(library.GHOSTING));
+    }
+    if (sessionHr > (persona.targetSessionMins / 60) * 1.5) {
         baseRingScore += 35;
-        reasons.push("Warning: Coordinated inactivity detected in local geofence.");
+        reasons.push(getRandom(library.SHARING));
+    }
+    if (env.rainfall > 10 && efficiency > 0.95) {
+        baseRingScore += 45;
+        reasons.push(getRandom(library.GEOSPOOF));
+    }
+    if (env.trafficLevel !== 'High' && behavior.order_drop > 0.85) {
+        baseRingScore += 30;
+        reasons.push(getRandom(library.CLUSTER));
     }
 
-    // 3. Behavioral Scrutiny based on Persona
-    if (personaKey === 'Student-Flex' && behavior.session_time_hr > 8) {
-        baseRingScore += 25;
-        reasons.push("Alert: Micro-earner profile logged 8+ hour shift (Potential Account Sharing).");
-    }
+    // Impact of Trust Score & Probation
+    const probationModifier = isProbation ? 1.5 : 1.0;
+    let rawScore = baseRingScore * (persona.trustModifier || 1.0) * probationModifier;
+    rawScore += (100 - trustScore) / 4; 
 
-    // Apply Persona Trust Modifier & Probation Modifier
-    let rawScore = baseRingScore * persona.trustModifier * probationModifier;
-    
-    // Impact of Trust Score: High trust reduces the ring score, low trust increases it.
-    const trustEffect = (100 - trustScore) / 4; 
-    rawScore += trustEffect;
-
-    let threatLevel = Math.min(Math.ceil(rawScore / 10), 10); // Normalize to 1-10
+    const threatLevel = Math.min(Math.ceil(rawScore / 10), 10);
 
     return {
         threatLevel,
         score: Math.min(rawScore, 100),
-        isBlocked: threatLevel > 7,
+        isBlocked: threatLevel > 6, // Slightly lowered threshold for realism
         reasons,
-        summary: reasons.length > 0 ? reasons[0] : "Biometric and telemetry signals verified."
+        summary: reasons.length > 0 ? reasons[Math.floor(Math.random()*reasons.length)] : "Biometric and telemetry signals verified."
     };
 };
 
-const calculateAdaptivePayout = (rider, severityData, fraudResult) => {
+const calculateAdaptivePayout = (rider, severityData, fraudResult, env) => {
     const personaKey = rider.persona_type || 'Gig-Pro';
     const persona = ACTUARIAL_CONFIG.PERSONAS[personaKey] || ACTUARIAL_CONFIG.PERSONAS['Gig-Pro'];
     
-    // REDEMPTION TRACK: High Risk cohort has lower payout cap
-    let payoutCap = persona.maxPayoutCap;
-    if (rider.probation_status) {
-        payoutCap = Math.min(payoutCap, 150); // Probationary cap
-    }
+    // 1. DYNAMIC PAYOUT BASELINE (PERSONA DRIVEN)
+    // Use persona baseIncomeFloor instead of fixed 800rs, add variance
+    const baseFloor = persona.baseIncomeFloor || 800;
+    const variance = 0.85 + (Math.random() * 0.30); // +/- 15% random variance
+    const predictedIncome = Math.round(baseFloor * variance);
 
-    // Confidence Multiplier: (10 - ThreatLevel) / 10
+    let payoutCap = persona.maxPayoutCap || 500;
+    if (rider.probation_status) payoutCap = Math.min(payoutCap, 150);
+
     const confidenceMultiplier = (10 - fraudResult.threatLevel) / 10;
     const severityMultiplier = severityData.rawSeverity / 100;
 
-    const predictedSource = parseFloat(rider.predicted_payout || rider.estimated_earnings || 800);
-    const rawAmount = predictedSource * severityMultiplier * confidenceMultiplier;
-    
+    const rawAmount = predictedIncome * severityMultiplier * confidenceMultiplier;
     const finalAmount = Math.min(payoutCap, Math.round(rawAmount));
 
+    // 2. CONTEXTUAL LABEL ENGINE (Based on env)
+    let contextLabel = "Partly Cloudy";
+    if (env.rainfall > 20) contextLabel = "Severe Storm / Flash Flood";
+    else if (env.rainfall > 10) contextLabel = "Stormy / Heavy Rain";
+    else if (env.rainfall > 5) contextLabel = "Rainy / Moderate Precipitation";
+    else if (env.windSpeed > 40) contextLabel = "Gale Wind / High Hazard";
+    else if (env.trafficLevel === 'High') contextLabel = "Heavy Congestion / Delay";
+    else if (env.isStressMode) contextLabel = "Network Stress Event";
+
     if (fraudResult.isBlocked) {
-        return { amount: 0, status: 'MITIGATED', reason: 'FRAUD_BLOCK', math: { cap: payoutCap, severity: severityMultiplier, confidence: 0 } };
+        return { 
+            amount: 0, 
+            status: 'MITIGATED', 
+            reason: 'FRAUD_BLOCK', 
+            context: contextLabel,
+            math: { cap: payoutCap, base: predictedIncome, severity: severityMultiplier, confidence: 0 } 
+        };
     }
 
     if (!severityData.isTriggered) {
-        return { amount: 0, status: 'NOMINAL', reason: 'THRESHOLD_NOT_MET', math: { cap: payoutCap, severity: severityMultiplier, confidence: confidenceMultiplier } };
+        return { 
+            amount: 0, 
+            status: 'NOMINAL', 
+            reason: 'THRESHOLD_NOT_MET', 
+            context: contextLabel,
+            math: { cap: payoutCap, base: predictedIncome, severity: severityMultiplier, confidence: confidenceMultiplier } 
+        };
     }
 
     return {
         amount: finalAmount,
         status: 'APPROVED',
         reason: 'VelocityGuard Threshold Breached.',
+        context: contextLabel,
         math: {
             cap: payoutCap,
+            base: predictedIncome,
             severity: parseFloat(severityMultiplier.toFixed(2)),
             confidence: parseFloat(confidenceMultiplier.toFixed(2)),
             final: finalAmount

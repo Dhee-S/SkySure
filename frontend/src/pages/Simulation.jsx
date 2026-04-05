@@ -7,7 +7,7 @@ import {
    AlertTriangle, Cpu, CloudRain, Wind, ShieldCheck,
    Database, Fingerprint, Microscope, Info, Sun,
    Droplets, RefreshCw, Briefcase, UserCheck, Clock,
-   X
+   X, TrendingDown, BarChart2, EyeOff
 } from 'lucide-react';
 import { dataService } from '../data/dataService';
 import FraudCluster from '../components/FraudCluster';
@@ -24,14 +24,14 @@ const TriggerCard = ({ label, name, value, unit, active, threshold, isStatus }) 
       <div style={{
          textAlign: 'center',
          padding: '12px 8px',
-         background: active ? 'rgba(239, 68, 68, 0.1)' : 'rgba(241, 245, 249, 0.5)',
+         background: active ? 'rgba(59, 130, 246, 0.1)' : 'rgba(241, 245, 249, 0.5)',
          borderRadius: '10px',
-         border: `2px solid ${active ? '#FECACA' : '#E2E8F0'}`,
+         border: `2px solid ${active ? '#BFDBFE' : '#E2E8F0'}`,
          transition: 'all 0.2s ease'
       }}>
-         <div style={{ fontSize: '0.7rem', fontWeight: 800, color: active ? '#DC2626' : '#94A3B8', marginBottom: '4px' }}>{label}</div>
+         <div style={{ fontSize: '0.7rem', fontWeight: 800, color: active ? '#3B82F6' : '#94A3B8', marginBottom: '4px' }}>{label}</div>
          <div style={{ fontSize: '0.6rem', color: '#64748B', marginBottom: '6px', fontWeight: 600 }}>{name}</div>
-         <div style={{ fontSize: '0.9rem', fontWeight: 900, color: active ? '#DC2626' : '#1E293B', marginBottom: '6px', fontFamily: 'monospace' }}>
+         <div style={{ fontSize: '0.9rem', fontWeight: 900, color: active ? '#3B82F6' : '#1E293B', marginBottom: '6px', fontFamily: 'monospace' }}>
             {displayValue}
             {unit && !isStatus && <span style={{ fontSize: '0.6rem', fontWeight: 600, marginLeft: '2px' }}>{unit}</span>}
          </div>
@@ -40,8 +40,8 @@ const TriggerCard = ({ label, name, value, unit, active, threshold, isStatus }) 
             height: '8px',
             borderRadius: '50%',
             margin: '0 auto',
-            background: active ? '#DC2626' : '#CBD5E1',
-            boxShadow: active ? '0 0 8px rgba(220, 38, 38, 0.5)' : 'none',
+            background: active ? '#3B82F6' : '#CBD5E1',
+            boxShadow: active ? '0 0 8px rgba(59, 130, 246, 0.5)' : 'none',
             transition: 'all 0.2s ease'
          }} />
       </div>
@@ -141,9 +141,9 @@ function WeatherMetricItem({ label, value, Icon, color }) {
 }
 
 function PersonaIcon({ persona }) {
-   if (persona === 'Full-Timer') return <Briefcase size={14} color="#3B82F6" />;
-   if (persona === 'Gig-Pro' || persona === 'Gig Pro') return <UserCheck size={14} color="#10B981" />;
-   if (persona === 'Student-Flex') return <Clock size={14} color="#8B5CF6" />;
+   if (persona === 'Full-Timer' || persona === 'Full-timer') return <Briefcase size={14} color="#3B82F6" />;
+   if (persona === 'Gig-Pro' || persona === 'Gig Pro' || persona === 'Gig-pro') return <UserCheck size={14} color="#10B981" />;
+   if (persona === 'Student-Flex' || persona === 'Student-flex') return <Clock size={14} color="#8B5CF6" />;
    if (persona === 'Veteran') return <ShieldCheck size={14} color="#F43F5E" />;
    return <Zap size={14} color="#F59E0B" />;
 }
@@ -355,11 +355,11 @@ export default function Simulation() {
                         ))}
                      </div>
                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                        <span style={{ fontSize: '0.6rem', fontWeight: 800, color: '#94A3B8', letterSpacing: '0.1em' }}>
-                           SYSTEM_AUTH: STABLE
+                        <span style={{ fontSize: '0.6rem', fontWeight: 800, color: '#3B82F6', letterSpacing: '0.1em' }}>
+                           BATCH_SYNC: {new Date().toLocaleTimeString()}
                         </span>
                         <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#64748B', letterSpacing: '0.1em' }}>
-                           BATCH_ID: {Date.now().toString().slice(-8)}
+                           ADAPTIVE_ID: GG-B{Math.floor(Math.random() * 90000) + 10000}
                         </span>
                      </div>
                   </div>
@@ -395,10 +395,15 @@ export default function Simulation() {
                                        </div>
                                     </td>
                                     <td>
-                                       <div className="status-pills-container">
-                                          <CloudRain className={`peril-icon-mini ${r.signals?.heavyRain?.active ? 'active' : ''}`} size={14} />
-                                          <Wind className={`peril-icon-mini ${r.signals?.highWind?.active ? 'active' : ''}`} size={14} />
-                                          <ShieldCheck className={`peril-icon-mini ${r.payout?.status === 'APPROVED' ? 'active' : ''}`} size={14} />
+                                       <div className="status-pills-container" style={{ display: 'flex', gap: '6px' }}>
+                                          {/* Render all 7 trigger icons with Blue highlight logic */}
+                                          <CloudRain    size={14} color={r.signals?.heavyRain?.active ? '#3B82F6' : '#E2E8F0'} />
+                                          <Wind         size={14} color={r.signals?.highWind?.active ? '#3B82F6' : '#E2E8F0'} />
+                                          <TrendingDown size={14} color={r.signals?.orderDrop?.active ? '#3B82F6' : '#E2E8F0'} />
+                                          <Zap          size={14} color={r.signals?.riderInactive?.active ? '#3B82F6' : '#E2E8F0'} />
+                                          <BarChart2    size={14} color={r.signals?.lowOrderVolume?.active ? '#3B82F6' : '#E2E8F0'} />
+                                          <Clock        size={14} color={r.signals?.abnormalDeliveryTime?.active ? '#3B82F6' : '#E2E8F0'} />
+                                          <EyeOff       size={14} color={r.signals?.lowVisibility?.active ? '#3B82F6' : '#E2E8F0'} />
                                        </div>
                                     </td>
                                     <td>
@@ -437,7 +442,7 @@ export default function Simulation() {
                                                       <div className="step-content" style={{ paddingBottom: '32px' }}>
                                                          <div className="step-header" style={{ marginBottom: '20px' }}>
                                                             <span className="step-title">Phase 1: Multi-Peril Disruption Analysis</span>
-                                                            <span className={`step-status-tag ${r.isDisrupted ? 'tag-danger' : 'tag-success'}`}>
+                                                            <span className={`step-status-tag ${r.isDisrupted ? 'tag-warn' : 'tag-success'}`}>
                                                                {r.isDisrupted ? 'BREACHED' : 'NOMINAL_STATE'}
                                                             </span>
                                                          </div>
@@ -462,9 +467,9 @@ export default function Simulation() {
                                                                   { key: 'abnormalDeliveryTime', label: 'T6', name: 'Latency', unit: 'min', val: r.signals?.abnormalDeliveryTime?.value },
                                                                   { key: 'lowVisibility', label: 'T7', name: 'Visibility', unit: 'km', val: r.signals?.lowVisibility?.value }
                                                                ].map(t => (
-                                                                  <div key={t.key} style={{ padding: '12px', background: r.signals?.[t.key]?.active ? 'rgba(239, 68, 68, 0.05)' : 'rgba(241, 245, 249, 0.3)', borderRadius: '10px', border: `1px solid ${r.signals?.[t.key]?.active ? '#FECACA' : '#F1F5F9'}` }}>
+                                                                  <div key={t.key} style={{ padding: '12px', background: r.signals?.[t.key]?.active ? 'rgba(59, 130, 246, 0.05)' : 'rgba(241, 245, 249, 0.3)', borderRadius: '10px', border: `1px solid ${r.signals?.[t.key]?.active ? '#BFDBFE' : '#F1F5F9'}` }}>
                                                                      <div style={{ fontSize: '0.55rem', fontWeight: 800, color: '#94A3B8', marginBottom: '4px' }}>{t.label} {t.name}</div>
-                                                                     <div style={{ fontSize: '0.85rem', fontWeight: 800, color: r.signals?.[t.key]?.active ? '#DC2626' : '#475569' }}>
+                                                                     <div style={{ fontSize: '0.85rem', fontWeight: 800, color: r.signals?.[t.key]?.active ? '#3B82F6' : '#475569' }}>
                                                                         {typeof t.val === 'number' ? t.val.toFixed(1) : t.val}{t.unit}
                                                                      </div>
                                                                   </div>
@@ -477,18 +482,18 @@ export default function Simulation() {
                                                             <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
                                                                <div style={{ display: 'flex', flexDirection: 'column' }}>
                                                                   <span style={{ fontSize: '0.6rem', color: '#94A3B8', fontWeight: 800 }}>ACTIVE SIGNALS</span>
-                                                                  <span style={{ fontSize: '1.1rem', fontWeight: 900, color: r.activeSignalCount >= 2 ? '#DC2626' : '#10B981' }}>{r.activeSignalCount || 0}/7</span>
+                                                                  <span style={{ fontSize: '1.1rem', fontWeight: 900, color: r.activeSignalCount >= 2 ? '#3B82F6' : '#10B981' }}>{r.activeSignalCount || 0}/7</span>
                                                                </div>
                                                                <div style={{ width: '1px', height: '32px', background: '#E2E8F0' }} />
                                                                <div style={{ display: 'flex', flexDirection: 'column' }}>
                                                                   <span style={{ fontSize: '0.6rem', color: '#94A3B8', fontWeight: 800 }}>SEVERITY INDEX</span>
-                                                                  <span style={{ fontSize: '1.1rem', fontWeight: 900, color: (r.severityScore || 0) >= 1.5 ? '#DC2626' : '#1E293B' }}>{(r.severityScore || 0).toFixed(2)}</span>
+                                                                  <span style={{ fontSize: '1.1rem', fontWeight: 900, color: (r.severityScore || 0) >= 1.5 ? '#3B82F6' : '#1E293B' }}>{(r.severityScore || 0).toFixed(2)}</span>
                                                                </div>
                                                             </div>
                                                             <div style={{ textAlign: 'right' }}>
                                                                <span style={{ fontSize: '0.6rem', color: '#94A3B8', fontWeight: 800, display: 'block', marginBottom: '4px' }}>AUDIT RESULT</span>
-                                                               <span style={{ fontSize: '0.75rem', fontWeight: 900, padding: '5px 12px', borderRadius: '8px', background: r.isDisrupted ? '#FEE2E2' : '#DCFCE7', color: r.isDisrupted ? '#DC2626' : '#16A34A', border: `1px solid ${r.isDisrupted ? '#FCA5A5' : '#BBF7D0'}`, letterSpacing: '0.02em' }}>
-                                                                  {r.isDisrupted ? 'PARAMETRIC_BREACH' : 'STABLE_NODE'}
+                                                               <span style={{ fontSize: '0.75rem', fontWeight: 900, padding: '5px 12px', borderRadius: '8px', background: r.trust_score < 40 ? '#FEF2F2' : '#DCFCE7', color: r.trust_score < 40 ? '#EF4444' : '#16A34A', border: `1px solid ${r.trust_score < 40 ? '#FECACA' : '#BBF7D0'}`, letterSpacing: '0.02em' }}>
+                                                                  {r.trust_score < 40 ? 'PARAMETRIC_BREACH' : 'STABLE_NODE'}
                                                                </span>
                                                             </div>
                                                          </div>
@@ -513,10 +518,10 @@ export default function Simulation() {
                                                                <div style={{ marginBottom: '20px' }}>
                                                                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                                                                      <span style={{ fontSize: '0.65rem', fontWeight: 800, color: '#94A3B8', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Fraud Probability Index</span>
-                                                                     <span style={{ fontSize: '1.1rem', fontWeight: 900, color: r.fraud_probability >= 0.5 ? '#EF4444' : '#10B981' }}>{(r.fraud_probability * 100).toFixed(0)}%</span>
+                                                                     <span style={{ fontSize: '1.1rem', fontWeight: 900, color: (Number(r.fraud?.score) || 0) >= 50 ? '#EF4444' : '#10B981' }}>{Math.round(Number(r.fraud?.score) || 0)}%</span>
                                                                   </div>
                                                                   <div style={{ height: '10px', background: '#E2E8F0', borderRadius: '10px', overflow: 'hidden' }}>
-                                                                     <motion.div initial={{ width: 0 }} animate={{ width: `${r.fraud_probability * 100}%` }} transition={{ duration: 1, ease: 'easeOut' }} style={{ height: '100%', background: r.fraud_probability >= 0.5 ? '#EF4444' : '#10B981' }} />
+                                                                     <motion.div initial={{ width: 0 }} animate={{ width: `${Math.max(0, Math.min(100, Number(r.fraud?.score) || 0))}%` }} transition={{ duration: 1, ease: 'easeOut' }} style={{ height: '100%', background: (Number(r.fraud?.score) || 0) >= 50 ? '#EF4444' : '#10B981' }} />
                                                                   </div>
                                                                </div>
                                                                <div>
@@ -538,7 +543,14 @@ export default function Simulation() {
                                                                <div style={{ padding: '20px', background: '#FFFFFF', borderRadius: '18px', border: '1px solid #F1F5F9', boxShadow: '0 8px 24px rgba(0,0,0,0.03)' }}>
                                                                   <span style={{ fontSize: '0.6rem', color: '#94A3B8', fontWeight: 800, display: 'block', marginBottom: '6px' }}>MASTER TRUST SCORE</span>
                                                                   <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
-                                                                     <span style={{ fontSize: '1.8rem', fontWeight: 900, color: r.trust_score >= 70 ? '#10B981' : r.trust_score >= 45 ? '#F59E0B' : '#EF4444' }}>{Math.round(r.trust_score || 0)}</span>
+                                                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                                                        <span style={{ fontSize: '0.85rem', fontWeight: 900, color: (Number(r.trust_score) || 0) >= 70 ? '#10B981' : (Number(r.trust_score) || 0) >= 40 ? '#F59E0B' : '#EF4444' }}>
+                                                                            Level {Math.ceil((Number(r.trust_score) || 0) / 10)}/10
+                                                                        </span>
+                                                                        <div style={{ height: '4px', width: '40px', background: '#E2E8F0', borderRadius: '2px', overflow: 'hidden' }}>
+                                                                            <div style={{ height: '100%', width: `${Math.max(0, Math.min(100, Number(r.trust_score) || 0))}%`, background: (Number(r.trust_score) || 0) >= 70 ? '#10B981' : (Number(r.trust_score) || 0) >= 40 ? '#F59E0B' : '#EF4444' }} />
+                                                                        </div>
+                                                                    </div>
                                                                      <span style={{ fontSize: '0.8rem', color: '#94A3B8', fontWeight: 700 }}>/ 100</span>
                                                                   </div>
                                                                </div>
