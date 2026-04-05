@@ -133,19 +133,19 @@ router.post('/batch', async (req, res) => {
             const fraud = engine.executeAdvancedFraudEngine(rider, batchEnv, behavior);
             const payout = engine.calculateAdaptivePayout(rider, severityData, fraud, batchEnv);
             
-            // Multi-Peril Signal Set (Phase 1)
+            // Multi-Peril Signal Set (Phase 1) - Mapped to match the 7 engine triggers
             const signals = {
-                heavyRain: { value: Number(batchEnv.rainfall.toFixed(1)), active: batchEnv.rainfall >= 10, threshold: 10 },
-                highWind: { value: Number(batchEnv.windSpeed.toFixed(1)), active: batchEnv.windSpeed >= 35, threshold: 35 },
-                orderDrop: { value: Number((behavior.order_drop * 100).toFixed(0)), active: behavior.order_drop > 0.5, threshold: 50 },
-                riderInactive: { value: behavior.session_time_hr < 2 ? 100 : 0, active: behavior.session_time_hr < 2, isStatus: true },
-                lowOrderVolume: { active: batchEnv.trafficLevel === 'Low' },
-                abnormalDeliveryTime: { value: Math.round((behavior.session_time_hr / 8) * 60), active: behavior.session_time_hr < 4 },
-                lowVisibility: { value: Number((batchEnv.rainfall > 20 ? (Math.random() * 2) : (5 + Math.random() * 5)).toFixed(1)), active: batchEnv.rainfall > 15 }
+                heavyRain: { value: Number(batchEnv.rainfall.toFixed(1)), active: severityData.details.rain.active, threshold: 10 },
+                highWind: { value: Number(batchEnv.windSpeed.toFixed(1)), active: severityData.details.wind.active, threshold: 35 },
+                orderDrop: { value: Number((behavior.order_drop * 100).toFixed(0)), active: severityData.details.velocity.active, threshold: 50 },
+                riderInactive: { value: behavior.session_time_hr, active: severityData.details.inactivity.active, threshold: 4 },
+                lowOrderVolume: { active: severityData.details.traffic.active, label: 'Traffic' },
+                abnormalDeliveryTime: { val: severityData.details.social.val, active: severityData.details.social.active, label: 'Curfew' },
+                lowVisibility: { value: severityData.details.visibility.val, active: severityData.details.visibility.active, label: 'Vis' }
             };
 
-            const activeSignalCount = Object.values(signals).filter(s => s.active).length;
-            const currentTrustScore = Number(Math.round(behavior.trust_score)); // Use backend trust score as baseline
+            const activeSignalCount = severityData.breachedCount;
+            const currentTrustScore = Number(rider.trust_score || 85); 
 
             return {
                 ...rider,

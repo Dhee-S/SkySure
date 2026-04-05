@@ -45,67 +45,85 @@ const ACTUARIAL_CONFIG = {
         evaluate: (telemetry, behavior) => {
             let severityScore = 0;
             const activePerils = [];
+            let breachedCount = 0;
             const details = {};
 
             // T1: Precipitation (Max 40)
             let rainPts = 0;
-            if (telemetry.rainfall >= 25) { rainPts = 40; activePerils.push('Severe Rain'); }
-            else if (telemetry.rainfall >= 10) { rainPts = 15; activePerils.push('Moderate Rain'); }
+            if (telemetry.rainfall >= 10) { 
+                rainPts = telemetry.rainfall >= 25 ? 40 : 15; 
+                activePerils.push(telemetry.rainfall >= 25 ? 'Severe Rain' : 'Moderate Rain'); 
+                breachedCount++;
+            }
             severityScore += rainPts;
-            details.rain = { val: telemetry.rainfall, pts: rainPts, label: 'Precipitation' };
+            details.rain = { val: telemetry.rainfall, active: telemetry.rainfall >= 10, pts: rainPts, label: 'Precipitation' };
 
             // T2: Wind Hazard (Max 30)
             let windPts = 0;
-            if (telemetry.windSpeed >= 55) { windPts = 30; activePerils.push('Gale Wind Hazard'); }
-            else if (telemetry.windSpeed >= 35) { windPts = 15; activePerils.push('High Wind'); }
+            if (telemetry.windSpeed >= 35) { 
+                windPts = telemetry.windSpeed >= 55 ? 30 : 15; 
+                activePerils.push(telemetry.windSpeed >= 55 ? 'Gale Wind Hazard' : 'High Wind'); 
+                breachedCount++;
+            }
             severityScore += windPts;
-            details.wind = { val: telemetry.windSpeed, pts: windPts, label: 'Wind Hazard' };
+            details.wind = { val: telemetry.windSpeed, active: telemetry.windSpeed >= 35, pts: windPts, label: 'Wind Hazard' };
 
-            // T3: Logistical Delay (Max 25)
-            let trafficPts = 0;
-            if (telemetry.trafficLevel === 'High') { trafficPts = 25; activePerils.push('Severe Congestion'); }
-            else if (telemetry.trafficLevel === 'Medium') { trafficPts = 10; }
-            severityScore += trafficPts;
-            details.traffic = { val: telemetry.trafficLevel, pts: trafficPts, label: 'Network Delay' };
-
-            // T4: Earning Velocity Drop (Max 35) - The Core 'VelocityGuard' Metric
+            // T3: Earning Volatility Drop (Max 35)
             let velocityPts = 0;
-            const efficiency = behavior.earning_efficiency || 1;
-            if (efficiency < 0.25) { velocityPts = 35; activePerils.push('Critical Income Halt'); }
-            else if (efficiency < 0.50) { velocityPts = 25; activePerils.push('Velocity Drop'); }
+            const drop = (behavior.order_drop || 0) * 100;
+            if (drop > 50) { 
+                velocityPts = drop > 75 ? 35 : 25; 
+                activePerils.push(drop > 75 ? 'Critical Income Halt' : 'Velocity Drop'); 
+                breachedCount++;
+            }
             severityScore += velocityPts;
-            details.velocity = { val: (efficiency * 100).toFixed(0) + '%', pts: velocityPts, label: 'Earning Velocity' };
+            details.velocity = { val: drop.toFixed(0) + '%', active: drop > 50, pts: velocityPts, label: 'Earning Velocity' };
 
-            // T5: Zone Cluster Disruption (Max 15)
-            let zonePts = telemetry.zoneDisruption ? 15 : 0;
-            if (zonePts > 0) activePerils.push('Network Sync Anomaly');
-            severityScore += zonePts;
-            details.zone = { val: telemetry.zoneDisruption ? 'Active' : 'Stable', pts: zonePts, label: 'Zone Cluster' };
+            // T4: Rider Inactivity / Latency (Max 25)
+            let inactivityPts = 0;
+            if (behavior.session_time_hr < 4) {
+                inactivityPts = behavior.session_time_hr < 2 ? 25 : 10;
+                activePerils.push(behavior.session_time_hr < 2 ? 'Node Offline' : 'Latency Delay');
+                breachedCount++;
+            }
+            severityScore += inactivityPts;
+            details.inactivity = { val: behavior.session_time_hr + 'h', active: behavior.session_time_hr < 4, pts: inactivityPts, label: 'Rider Activity' };
 
-            // T6: Zonal Collapse (Social/Curfew) - Randomized Per Judge Feedback
-            let socialPts = 0;
-            const isSocialTrigger = Math.random() > 0.85; // 15% random occurrence in 'Stress'
-            if (isSocialTrigger) {
-                socialPts = 25;
+            // T5: Network / Traffic Density (Max 25)
+            let trafficPts = 0;
+            if (telemetry.trafficLevel === 'High') { 
+                trafficPts = 25; 
+                activePerils.push('Severe Congestion'); 
+                breachedCount++;
+            }
+            severityScore += trafficPts;
+            details.traffic = { val: telemetry.trafficLevel, active: telemetry.trafficLevel === 'High', pts: trafficPts, label: 'Network Delay' };
+
+            // T6: Zonal Social Curfew (Max 25)
+            let socialPts = (telemetry.isStressMode && Math.random() > 0.8) ? 25 : 0;
+            if (socialPts > 0) {
                 activePerils.push('Zonal Social Curfew');
+                breachedCount++;
             }
             severityScore += socialPts;
-            details.social = { val: isSocialTrigger ? 'Active' : 'Nominal', pts: socialPts, label: 'Social Curfew' };
+            details.social = { val: socialPts > 0 ? 'Active' : 'Nominal', active: socialPts > 0, pts: socialPts, label: 'Social Curfew' };
 
-            // T7: Platform App Downtime (Digital Performance)
-            let platformPts = 0;
-            const platformDowntime = telemetry.isStressMode ? (Math.random() > 0.90) : false; 
-            if (platformDowntime) {
-                platformPts = 30;
-                activePerils.push('Platform App Downtime');
+            // T7: Visibility Hazard (Max 20)
+            let visPts = 0;
+            const visibility = telemetry.rainfall > 15 ? 4.5 : 10;
+            if (visibility < 8) {
+                visPts = 20;
+                activePerils.push('Low Visibility');
+                breachedCount++;
             }
-            severityScore += platformPts;
-            details.platform = { val: platformPts > 0 ? 'DOWNTIME' : 'ONLINE', pts: platformPts, label: 'Digital Performance' };
+            severityScore += visPts;
+            details.visibility = { val: visibility + 'km', active: visibility < 8, pts: visPts, label: 'Visibility' };
 
             return {
-                totalSeverity: Math.min(severityScore, 100), // Cap for percentage display
+                totalSeverity: Math.min(severityScore, 100),
                 rawSeverity: severityScore,
                 isTriggered: severityScore >= 40,
+                breachedCount,
                 activePerils,
                 details
             };
@@ -186,22 +204,22 @@ const executeAdvancedFraudEngine = (rider, env, behavior) => {
 };
 
 const calculateAdaptivePayout = (rider, severityData, fraudResult, env) => {
-    const personaKey = rider.persona_type || 'Gig-Pro';
-    const persona = ACTUARIAL_CONFIG.PERSONAS[personaKey] || ACTUARIAL_CONFIG.PERSONAS['Gig-Pro'];
+    // 1. DYNAMIC PAYOUT BASELINE (RIDER DATA DRIVEN)
+    // Pull real income from rider or fallback to tier-based floor
+    const weeklyIncome = Number(rider.weekly_income) || (rider.tier === 'Pro' ? 6000 : rider.tier === 'Standard' ? 4000 : 2000);
+    const dailyReliefBase = weeklyIncome / 6; // 6 working days relief
     
-    // 1. DYNAMIC PAYOUT BASELINE (PERSONA DRIVEN)
-    // Use persona baseIncomeFloor instead of fixed 800rs, add variance
-    const baseFloor = persona.baseIncomeFloor || 800;
-    const variance = 0.85 + (Math.random() * 0.30); // +/- 15% random variance
-    const predictedIncome = Math.round(baseFloor * variance);
-
-    let payoutCap = persona.maxPayoutCap || 500;
+    // Adjust coverage based on premium selection
+    const premium = Number(rider.weekly_premium_inr) || (rider.tier === 'Pro' ? 120 : rider.tier === 'Standard' ? 65 : 35);
+    const coverageMultiplier = premium > 100 ? 1.0 : premium > 50 ? 0.85 : 0.7;
+    
+    let payoutCap = Number(rider.coverage_amount_inr) || (rider.tier === 'Pro' ? 1500 : rider.tier === 'Standard' ? 1000 : 500);
     if (rider.probation_status) payoutCap = Math.min(payoutCap, 150);
 
     const confidenceMultiplier = (10 - fraudResult.threatLevel) / 10;
     const severityMultiplier = severityData.rawSeverity / 100;
 
-    const rawAmount = predictedIncome * severityMultiplier * confidenceMultiplier;
+    const rawAmount = dailyReliefBase * severityMultiplier * confidenceMultiplier * coverageMultiplier;
     const finalAmount = Math.min(payoutCap, Math.round(rawAmount));
 
     // 2. CONTEXTUAL LABEL ENGINE (Based on env)

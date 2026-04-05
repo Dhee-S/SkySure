@@ -487,7 +487,7 @@ export default function Simulation() {
                                                                </div>
                                                                <div style={{ width: '1px', height: '32px', background: '#E2E8F0' }} />
                                                                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                                                  <span style={{ fontSize: '0.6rem', color: '#94A3B8', fontWeight: 800 }}>SEVERITY INDEX</span>
+                                                                  <span style={{ fontSize: '0.6rem', color: '#94A3B8', fontWeight: 800 }}>SEVERITY INDEX / 5.0</span>
                                                                   <span style={{ fontSize: '1.1rem', fontWeight: 900, color: (r.severityScore || 0) >= 1.5 ? '#3B82F6' : '#1E293B' }}>{(r.severityScore || 0).toFixed(2)}</span>
                                                                </div>
                                                             </div>
@@ -519,10 +519,10 @@ export default function Simulation() {
                                                                <div style={{ marginBottom: '20px' }}>
                                                                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                                                                      <span style={{ fontSize: '0.65rem', fontWeight: 800, color: '#94A3B8', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Fraud Probability Index</span>
-                                                                     <span style={{ fontSize: '1.1rem', fontWeight: 900, color: (Number(r.fraud?.score) || 0) >= 50 ? '#EF4444' : '#10B981' }}>{Math.round(Number(r.fraud?.score) || 0)}%</span>
+                                                                     <span style={{ fontSize: '1.1rem', fontWeight: 900, color: (Number(r.fraud?.score) || 0) >= 60 ? '#EF4444' : '#10B981' }}>{Math.round(Number(r.fraud?.score) || 0)}%</span>
                                                                   </div>
                                                                   <div style={{ height: '10px', background: '#E2E8F0', borderRadius: '10px', overflow: 'hidden' }}>
-                                                                     <motion.div initial={{ width: 0 }} animate={{ width: `${Math.max(0, Math.min(100, Number(r.fraud?.score) || 0))}%` }} transition={{ duration: 1, ease: 'easeOut' }} style={{ height: '100%', background: (Number(r.fraud?.score) || 0) >= 50 ? '#EF4444' : '#10B981' }} />
+                                                                     <motion.div initial={{ width: 0 }} animate={{ width: `${Math.max(0, Math.min(100, Number(r.fraud?.score) || 0))}%` }} transition={{ duration: 1, ease: 'easeOut' }} style={{ height: '100%', background: (Number(r.fraud?.score) || 0) >= 60 ? '#EF4444' : '#10B981' }} />
                                                                   </div>
                                                                </div>
                                                                <div>
@@ -543,17 +543,17 @@ export default function Simulation() {
                                                             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                                                                <div style={{ padding: '20px', background: '#FFFFFF', borderRadius: '18px', border: '1px solid #F1F5F9', boxShadow: '0 8px 24px rgba(0,0,0,0.03)' }}>
                                                                   <span style={{ fontSize: '0.6rem', color: '#94A3B8', fontWeight: 800, display: 'block', marginBottom: '6px' }}>MASTER TRUST SCORE</span>
-                                                                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
+                                                                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                                                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                                                                        <span style={{ fontSize: '0.85rem', fontWeight: 900, color: (r.payout?.status === 'MITIGATED') ? '#EF4444' : '#10B981' }}>
-                                                                           Level {Math.ceil((Number(r.trust_score) || 0) / 10)}/10
+                                                                        <span style={{ fontSize: '1.25rem', fontWeight: 900, color: (r.payout?.status === 'MITIGATED') ? '#EF4444' : '#10B981' }}>
+                                                                           Level {Math.max(1, Math.ceil((Number(r.trust_score) || 0) / 10))}/10
                                                                         </span>
-                                                                        <div style={{ height: '4px', width: '40px', background: '#E2E8F0', borderRadius: '2px', overflow: 'hidden' }}>
-                                                                           <div style={{ height: '100%', width: `${Math.max(0, Math.min(100, Number(r.trust_score) || 0))}%`, background: (Number(r.trust_score) || 0) >= 70 ? '#10B981' : (Number(r.trust_score) || 0) >= 40 ? '#F59E0B' : '#EF4444' }} />
+                                                                        <div style={{ height: '6px', width: '80px', background: '#E2E8F0', borderRadius: '3px', overflow: 'hidden' }}>
+                                                                           <div style={{ height: '100%', width: `${Math.max(5, Math.min(100, Number(r.trust_score) || 0))}%`, background: (r.payout?.status === 'MITIGATED') ? '#EF4444' : '#10B981' }} />
                                                                         </div>
                                                                      </div>
-                                                                     <div className="summary-p-value" style={{ border: 'none', color: (r.fraud?.score || 0) > 60 ? '#EF4444' : '#10B981', fontSize: '1.4rem' }}>
-                                                                        {r.fraud?.score || 0}%
+                                                                     <div style={{ fontSize: '1.4rem', fontWeight: 900, color: (r.payout?.status === 'MITIGATED') ? '#EF4444' : '#10B981' }}>
+                                                                        {Math.round(r.trust_score || 0)}%
                                                                      </div>
                                                                   </div>
                                                                </div>
@@ -580,8 +580,9 @@ export default function Simulation() {
                                                             <span className="step-status-tag tag-success">SETTLEMENT_CALCULATED</span>
                                                          </div>
                                                          <div className="calc-flow-container">
-                                                            <CalculationStep label="Baseline Capacity" value={`₹${r.payout?.math?.cap || 1500}`} />
-                                                            <CalculationStep label="Severity Adjustment" value={`x ${(r.payout?.math?.severity || 0.95).toFixed(2)}`} />
+                                                            <CalculationStep label="Baseline Relief" value={`₹${Math.round(r.payout?.math?.base || 0)}`} />
+                                                            <CalculationStep label="Policy Coverage" value={`x ${(r.payout?.math?.cap / r.payout?.math?.base || 1).toFixed(2)}`} />
+                                                            <CalculationStep label="Severity Adjustment" value={`x ${(r.payout?.math?.severity || 0).toFixed(2)}`} />
                                                             <CalculationStep label="Trust Confidence" value={`x ${(r.payout?.math?.confidence || 0).toFixed(2)}`} />
                                                             <div className="calc-final">
                                                                <div className="calc-step-label">Final Disbursement</div>
