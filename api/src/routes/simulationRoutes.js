@@ -81,14 +81,22 @@ router.post('/batch', async (req, res) => {
             if (db) {
                 const snapshot = await db.collection('riders').limit(batchCount).get();
                 if (!snapshot.empty) {
-                    selectedRiders = snapshot.docs.map(d => ({ 
-                        ...d.data(), 
-                        id: d.id,
-                        rider_id: d.data().rider_id || d.id
-                    }));
+                    selectedRiders = snapshot.docs.map(d => {
+                        const data = d.data();
+                        return { 
+                            ...data, 
+                            id: d.id,
+                            rider_id: data.rider_id || data.partner_id || d.id,
+                            // Normalize for engine
+                            weekly_income: parseFloat(data.past_week_earnings || 0),
+                            weekly_premium_inr: parseFloat(data.weekly_premium || 0),
+                            probation_status: data.probationary_tier === true,
+                            coverage_amount_inr: parseFloat(data.predicted_payout || 0) || 1200
+                        };
+                    });
                 }
             }
-        } catch (e) { console.warn("[SIM] Firestore ingest bypassed."); }
+        } catch (e) { console.warn("[SIM] Firestore ingest bypassed.", e.message); }
 
         // Fill with high-fidelity synthetics if needed
         if (selectedRiders.length < batchCount) {
@@ -115,16 +123,16 @@ router.post('/batch', async (req, res) => {
             }
         }
 
-        const nodes = selectedRiders.map((rider, index) => {
+            const nodes = selectedRiders.map((rider, index) => {
             // Behavioral Profile Selection
             const dice = Math.random();
             let behavior = { earning_efficiency: 0.85, session_time_hr: 7, order_drop: 0.05 };
 
-            if (dice > 0.90) {
-                // Ghost Rider Profile: High efficiency, very low time
+            if (dice > 0.85) {
+                // Ghost Rider Profile (15% freq): High efficiency, very low time
                 behavior = { earning_efficiency: 0.99, session_time_hr: 0.5, order_drop: 0.02 };
-            } else if (dice > 0.80) {
-                // Cluster Fraud Profile: High order drop
+            } else if (dice > 0.70) {
+                // Cluster Fraud Profile (15% freq): High order drop
                 behavior = { earning_efficiency: 0.70, session_time_hr: 4, order_drop: 0.85 };
             } else if (batchEnv.isStressMode) {
                 // Storm Condition behavior

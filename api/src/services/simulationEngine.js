@@ -177,13 +177,13 @@ const executeAdvancedFraudEngine = (rider, env, behavior) => {
     
     // Ghost Riding Detection (High Efficiency + Low Session Time)
     if (behavior.earning_efficiency > 0.95 && behavior.session_time_hr < 2) {
-        baseRingScore += 55;
+        baseRingScore += 70; // Guaranteed to hit Level 7
         reasons.push(library.GEOSPOOF[Math.floor(Math.random() * library.GEOSPOOF.length)] || "Potential Ghost Riding Node");
     }
 
     // Cluster Fraud Detection (Synchronized Order Drop without Network Clog)
     if (env.trafficLevel !== 'High' && behavior.order_drop > 0.75) {
-        baseRingScore += 40;
+        baseRingScore += 60; // Guaranteed to hit Level 6
         reasons.push(library.CLUSTER[Math.floor(Math.random() * library.CLUSTER.length)] || "Cluster Sync Anomaly");
     }
 
@@ -209,7 +209,7 @@ const executeAdvancedFraudEngine = (rider, env, behavior) => {
     return {
         threatLevel,
         score: Math.min(rawScore, 100),
-        isBlocked: threatLevel > 6, // Slightly lowered threshold for realism
+        isBlocked: threatLevel >= 6, // Lowered threshold to ensure mitigation shows in simulation
         reasons,
         summary: reasons.length > 0 ? reasons[Math.floor(Math.random()*reasons.length)] : "Biometric and telemetry signals verified."
     };
