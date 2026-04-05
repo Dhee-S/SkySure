@@ -397,13 +397,13 @@ export default function Simulation() {
                                     <td>
                                        <div className="status-pills-container" style={{ display: 'flex', gap: '6px' }}>
                                           {/* Render all 7 trigger icons with Blue highlight logic */}
-                                          <CloudRain    size={14} color={r.signals?.heavyRain?.active ? '#3B82F6' : '#E2E8F0'} />
-                                          <Wind         size={14} color={r.signals?.highWind?.active ? '#3B82F6' : '#E2E8F0'} />
+                                          <CloudRain size={14} color={r.signals?.heavyRain?.active ? '#3B82F6' : '#E2E8F0'} />
+                                          <Wind size={14} color={r.signals?.highWind?.active ? '#3B82F6' : '#E2E8F0'} />
                                           <TrendingDown size={14} color={r.signals?.orderDrop?.active ? '#3B82F6' : '#E2E8F0'} />
-                                          <Zap          size={14} color={r.signals?.riderInactive?.active ? '#3B82F6' : '#E2E8F0'} />
-                                          <BarChart2    size={14} color={r.signals?.lowOrderVolume?.active ? '#3B82F6' : '#E2E8F0'} />
-                                          <Clock        size={14} color={r.signals?.abnormalDeliveryTime?.active ? '#3B82F6' : '#E2E8F0'} />
-                                          <EyeOff       size={14} color={r.signals?.lowVisibility?.active ? '#3B82F6' : '#E2E8F0'} />
+                                          <Zap size={14} color={r.signals?.riderInactive?.active ? '#3B82F6' : '#E2E8F0'} />
+                                          <BarChart2 size={14} color={r.signals?.lowOrderVolume?.active ? '#3B82F6' : '#E2E8F0'} />
+                                          <Clock size={14} color={r.signals?.abnormalDeliveryTime?.active ? '#3B82F6' : '#E2E8F0'} />
+                                          <EyeOff size={14} color={r.signals?.lowVisibility?.active ? '#3B82F6' : '#E2E8F0'} />
                                        </div>
                                     </td>
                                     <td>
@@ -545,13 +545,13 @@ export default function Simulation() {
                                                                   <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
                                                                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                                                                         <span style={{ fontSize: '0.85rem', fontWeight: 900, color: (Number(r.trust_score) || 0) >= 70 ? '#10B981' : (Number(r.trust_score) || 0) >= 40 ? '#F59E0B' : '#EF4444' }}>
-                                                                            Level {Math.ceil((Number(r.trust_score) || 0) / 10)}/10
+                                                                           Level {Math.ceil((Number(r.trust_score) || 0) / 10)}/10
                                                                         </span>
                                                                         <div style={{ height: '4px', width: '40px', background: '#E2E8F0', borderRadius: '2px', overflow: 'hidden' }}>
-                                                                            <div style={{ height: '100%', width: `${Math.max(0, Math.min(100, Number(r.trust_score) || 0))}%`, background: (Number(r.trust_score) || 0) >= 70 ? '#10B981' : (Number(r.trust_score) || 0) >= 40 ? '#F59E0B' : '#EF4444' }} />
+                                                                           <div style={{ height: '100%', width: `${Math.max(0, Math.min(100, Number(r.trust_score) || 0))}%`, background: (Number(r.trust_score) || 0) >= 70 ? '#10B981' : (Number(r.trust_score) || 0) >= 40 ? '#F59E0B' : '#EF4444' }} />
                                                                         </div>
-                                                                    </div>
-                                                                     <span style={{ fontSize: '0.8rem', color: '#94A3B8', fontWeight: 700 }}>/ 100</span>
+                                                                     </div>
+                                                                     <span style={{ fontSize: '0.8rem', color: '#94A3B8', fontWeight: 700 }}></span>
                                                                   </div>
                                                                </div>
                                                                {r.probation_status && (

@@ -18,7 +18,7 @@ export default function Sidebar() {
   const handleLogout = async () => {
     localStorage.removeItem('skysure_mock_user');
     await signOut(auth);
-    window.location.href = '/login';
+    navigate('/exit');
   };
 
   return (

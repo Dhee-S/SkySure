@@ -15,6 +15,7 @@ import RiderPolicy from './pages/RiderPolicy';
 import RiderPayouts from './pages/RiderPayouts';
 import RiderStatus from './pages/RiderStatus';
 import RiderDashboard from './pages/RiderDashboard';
+import Exit from './pages/Exit';
 export const ToastContext = createContext(null);
 
 export function useToast() {
@@ -120,6 +121,7 @@ export default function App() {
           <Route path="status" element={<RiderStatus />} />
         </Route>
 
+        <Route path="/exit" element={<Exit />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </ToastContext.Provider>

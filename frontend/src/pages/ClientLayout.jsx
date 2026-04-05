@@ -13,7 +13,7 @@ export default function ClientLayout() {
     try {
       localStorage.removeItem('skysure_mock_user');
       await signOut(auth);
-      navigate('/');
+      navigate('/exit');
     } catch (error) {
       showToast('Error logging out', 'error');
     }

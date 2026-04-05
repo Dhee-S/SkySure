@@ -15,7 +15,7 @@ export default function RiderLayout() {
 
   const handleLogout = async () => {
     localStorage.removeItem('skysure_mock_user');
-    window.location.href = '/login';
+    navigate('/exit');
   };
 
   useEffect(() => {
