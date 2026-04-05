@@ -133,33 +133,43 @@ router.post('/batch', async (req, res) => {
             const fraud = engine.executeAdvancedFraudEngine(rider, batchEnv, behavior);
             const payout = engine.calculateAdaptivePayout(rider, severityData, fraud, batchEnv);
             
-            // UI Signals mapping
+            // Multi-Peril Signal Set (Phase 1)
             const signals = {
-                heavyRain: { value: batchEnv.rainfall, active: batchEnv.rainfall >= 10, threshold: 10 },
-                highWind: { value: batchEnv.windSpeed, active: batchEnv.windSpeed >= 35, threshold: 35 },
-                orderDrop: { value: behavior.order_drop * 100, active: behavior.order_drop > 0.5, threshold: 50 },
+                heavyRain: { value: Number(batchEnv.rainfall.toFixed(1)), active: batchEnv.rainfall >= 10, threshold: 10 },
+                highWind: { value: Number(batchEnv.windSpeed.toFixed(1)), active: batchEnv.windSpeed >= 35, threshold: 35 },
+                orderDrop: { value: Number((behavior.order_drop * 100).toFixed(0)), active: behavior.order_drop > 0.5, threshold: 50 },
                 riderInactive: { value: behavior.session_time_hr < 2 ? 100 : 0, active: behavior.session_time_hr < 2, isStatus: true },
                 lowOrderVolume: { active: batchEnv.trafficLevel === 'Low' },
-                abnormalDeliveryTime: { value: (behavior.session_time_hr / 8) * 60, active: behavior.session_time_hr < 4 },
-                lowVisibility: { value: batchEnv.rainfall > 20 ? 1 : 10, active: batchEnv.rainfall > 20 }
+                abnormalDeliveryTime: { value: Math.round((behavior.session_time_hr / 8) * 60), active: behavior.session_time_hr < 4 },
+                lowVisibility: { value: Number((batchEnv.rainfall > 20 ? (Math.random() * 2) : (5 + Math.random() * 5)).toFixed(1)), active: batchEnv.rainfall > 15 }
             };
 
             const activeSignalCount = Object.values(signals).filter(s => s.active).length;
-            const currentTrustScore = Number(Math.round((1 - (fraud.score / 100)) * 100)) || 0;
+            const currentTrustScore = Number(Math.round(behavior.trust_score)); // Use backend trust score as baseline
 
             return {
                 ...rider,
                 name: rider.rider_name || rider.name || `Partner ${rider.rider_id?.split('_').pop()}`,
                 persona: rider.persona_type || 'Gig-Pro',
                 env: batchEnv,
-                behavior,
-                fraud,
                 signals,
                 activeSignalCount,
-                severityScore: severityData.totalSeverity,
-                isDisrupted: severityData.isTriggered,
-                trust_score: currentTrustScore,
-                payout: payout
+                severityScore: Number((activeSignalCount * 0.45).toFixed(2)), // Max severity logic
+                fraud: {
+                    score: Math.round(fraud.score),
+                    isBlocked: fraud.isBlocked,
+                    reasons: fraud.reasons
+                },
+                trust_score: fraud.isBlocked ? Math.max(5, currentTrustScore - 40) : Math.min(98, currentTrustScore + 10),
+                payout: {
+                    status: fraud.isBlocked ? 'MITIGATED' : (activeSignalCount > 0 ? 'APPROVED' : 'NOMINAL'),
+                    amount: payout.finalAmount,
+                    math: {
+                        cap: payout.payoutCap,
+                        severity: payout.severityMultiplier,
+                        confidence: payout.confidenceMultiplier
+                    }
+                }
             };
         });
 

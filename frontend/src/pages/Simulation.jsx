@@ -545,14 +545,16 @@ export default function Simulation() {
                                                                   <span style={{ fontSize: '0.6rem', color: '#94A3B8', fontWeight: 800, display: 'block', marginBottom: '6px' }}>MASTER TRUST SCORE</span>
                                                                   <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
                                                                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                                                                        <span style={{ fontSize: '0.85rem', fontWeight: 900, color: (Number(r.trust_score) || 0) >= 70 ? '#10B981' : (Number(r.trust_score) || 0) >= 40 ? '#F59E0B' : '#EF4444' }}>
+                                                                        <span style={{ fontSize: '0.85rem', fontWeight: 900, color: (r.payout?.status === 'MITIGATED') ? '#EF4444' : '#10B981' }}>
                                                                            Level {Math.ceil((Number(r.trust_score) || 0) / 10)}/10
                                                                         </span>
                                                                         <div style={{ height: '4px', width: '40px', background: '#E2E8F0', borderRadius: '2px', overflow: 'hidden' }}>
                                                                            <div style={{ height: '100%', width: `${Math.max(0, Math.min(100, Number(r.trust_score) || 0))}%`, background: (Number(r.trust_score) || 0) >= 70 ? '#10B981' : (Number(r.trust_score) || 0) >= 40 ? '#F59E0B' : '#EF4444' }} />
                                                                         </div>
                                                                      </div>
-                                                                     <span style={{ fontSize: '0.8rem', color: '#94A3B8', fontWeight: 700 }}></span>
+                                                                     <div className="summary-p-value" style={{ border: 'none', color: (r.fraud?.score || 0) > 60 ? '#EF4444' : '#10B981', fontSize: '1.4rem' }}>
+                                                                        {r.fraud?.score || 0}%
+                                                                     </div>
                                                                   </div>
                                                                </div>
                                                                {r.probation_status && (
@@ -577,17 +579,13 @@ export default function Simulation() {
                                                             <span className="step-title">Phase 3: Adaptive Parametric Settlement</span>
                                                             <span className="step-status-tag tag-success">SETTLEMENT_CALCULATED</span>
                                                          </div>
-                                                         <div className="calc-flow-container" style={{ background: '#F8FAFC', padding: '20px', borderRadius: '18px', border: '1px solid #F1F5F9' }}>
-                                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                                                               <CalculationStep label="Baseline Capacity" value={`₹${r.payout?.math?.cap || 0}`} />
-                                                               {r.probation_status && <span style={{ fontSize: '0.65rem', color: '#EF4444', fontWeight: 800, marginLeft: '12px', textTransform: 'uppercase' }}>Probationary Adjustment Applied</span>}
-                                                            </div>
-                                                            <CalculationStep label="Severity Adjustment" value={`x ${(r.payout?.math?.severity || 0).toFixed(2)}`} />
+                                                         <div className="calc-flow-container">
+                                                            <CalculationStep label="Baseline Capacity" value={`₹${r.payout?.math?.cap || 1500}`} />
+                                                            <CalculationStep label="Severity Adjustment" value={`x ${(r.payout?.math?.severity || 0.95).toFixed(2)}`} />
                                                             <CalculationStep label="Trust Confidence" value={`x ${(r.payout?.math?.confidence || 0).toFixed(2)}`} />
-                                                            <div style={{ margin: '12px 0', height: '1px', background: '#E2E8F0' }} />
-                                                            <CalculationStep label="Final Disbursement" value={`₹${(r.payout?.amount || 0).toLocaleString()}`} isFinal={true} />
-                                                            <div style={{ marginTop: '12px', fontSize: '0.65rem', color: '#64748B', fontWeight: 700, fontStyle: 'italic', letterSpacing: '0.02em', background: '#f1f5f9', padding: '10px', borderRadius: '8px' }}>
-                                                               <span style={{ opacity: 0.7 }}>PROPRIETARY_LEDGER_HASH:</span> <span style={{ color: '#1e293b' }}>SKYSURE-TXN-{r.id?.toUpperCase() || 'UNKNOWN'}</span>
+                                                            <div className="calc-final">
+                                                               <div className="calc-step-label">Final Disbursement</div>
+                                                               <div className="calc-step-value">₹{r.payout?.amount || 0}</div>
                                                             </div>
                                                          </div>
                                                       </div>
