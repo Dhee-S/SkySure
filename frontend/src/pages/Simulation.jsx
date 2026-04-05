@@ -206,7 +206,8 @@ export default function Simulation() {
       try {
          const response = await dataService.runSimulation({
             location,
-            isLiveMode: isLiveMode
+            isLiveMode: isLiveMode,
+            isStressMode: isStressMode
          });
 
          await new Promise(r => setTimeout(r, 2200));

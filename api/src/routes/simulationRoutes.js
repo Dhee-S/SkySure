@@ -66,7 +66,7 @@ const generateSyntheticRiders = (count, city) => {
 
 router.post('/batch', async (req, res) => {
     try {
-        const { location, isLiveMode } = req.body;
+        const { location, isLiveMode, isStressMode } = req.body;
         const targetCity = location || 'Chennai';
         const batchCount = 15; 
         
@@ -98,8 +98,8 @@ router.post('/batch', async (req, res) => {
             const coords = CITY_COORDS[targetCity];
             if (coords) batchEnv = await getLiveWeather(coords.lat, coords.lon);
         } else {
-            // Force a 'Storm Scenario' for 60% of simulations for exciting audit data
-            const isStorm = Math.random() > 0.4;
+            // Force a 'Storm Scenario' if Stress Mode is ON or 60% probability
+            const isStorm = isStressMode || Math.random() > 0.4;
             if (isStorm) {
                 batchEnv = { 
                     rainfall: 15 + (Math.random() * 20), 
@@ -194,7 +194,8 @@ router.post('/batch', async (req, res) => {
             summary: {
                 total: nodes.length,
                 approved: nodes.filter(n => n.payout.status === 'APPROVED').length,
-                mitigated: nodes.filter(n => n.payout.status === 'MITIGATED').length
+                mitigated: nodes.filter(n => n.payout.status === 'MITIGATED').length,
+                nominal: nodes.filter(n => n.payout.status === 'NOMINAL').length
             }
         });
 
