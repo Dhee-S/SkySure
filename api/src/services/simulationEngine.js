@@ -174,21 +174,33 @@ const executeAdvancedFraudEngine = (rider, env, behavior) => {
         baseRingScore += 40;
         reasons.push(getRandom(library.GHOSTING));
     }
-    if (sessionHr > (persona.targetSessionMins / 60) * 1.5) {
-        baseRingScore += 35;
-        reasons.push(getRandom(library.SHARING));
+    
+    // Ghost Riding Detection (High Efficiency + Low Session Time)
+    if (behavior.earning_efficiency > 0.95 && behavior.session_time_hr < 2) {
+        baseRingScore += 55;
+        reasons.push(library.GEOSPOOF[Math.floor(Math.random() * library.GEOSPOOF.length)] || "Potential Ghost Riding Node");
     }
-    if (env.rainfall > 10 && efficiency > 0.95) {
-        baseRingScore += 45;
-        reasons.push(getRandom(library.GEOSPOOF));
+
+    // Cluster Fraud Detection (Synchronized Order Drop without Network Clog)
+    if (env.trafficLevel !== 'High' && behavior.order_drop > 0.75) {
+        baseRingScore += 40;
+        reasons.push(library.CLUSTER[Math.floor(Math.random() * library.CLUSTER.length)] || "Cluster Sync Anomaly");
     }
-    if (env.trafficLevel !== 'High' && behavior.order_drop > 0.85) {
+
+    // Persona Mismatch (Veteran behavior on a Student-Flex account, etc.)
+    if (rider.persona_type === 'Student-Flex' && behavior.session_time_hr > 10) {
         baseRingScore += 30;
-        reasons.push(getRandom(library.CLUSTER));
+        reasons.push("Persona Activity Mismatch (Overtime)");
+    }
+
+    // Climate Multiplier (Existing)
+    if (env.rainfall > 20 && behavior.earning_efficiency > 0.90) {
+        baseRingScore += 35;
+        reasons.push(library.BIOMETRIC[Math.floor(Math.random() * library.BIOMETRIC.length)]);
     }
 
     // Impact of Trust Score & Probation
-    const probationModifier = isProbation ? 1.5 : 1.0;
+    const probationModifier = isProbation ? 1.6 : 1.0;
     let rawScore = baseRingScore * (persona.trustModifier || 1.0) * probationModifier;
     rawScore += (100 - trustScore) / 4; 
 
@@ -237,7 +249,7 @@ const calculateAdaptivePayout = (rider, severityData, fraudResult, env) => {
             status: 'MITIGATED', 
             reason: 'FRAUD_BLOCK', 
             context: contextLabel,
-            math: { cap: payoutCap, base: predictedIncome, severity: severityMultiplier, confidence: 0 } 
+            math: { cap: payoutCap, base: dailyReliefBase, severity: severityMultiplier, confidence: 0 } 
         };
     }
 
@@ -247,22 +259,22 @@ const calculateAdaptivePayout = (rider, severityData, fraudResult, env) => {
             status: 'NOMINAL', 
             reason: 'THRESHOLD_NOT_MET', 
             context: contextLabel,
-            math: { cap: payoutCap, base: predictedIncome, severity: severityMultiplier, confidence: confidenceMultiplier } 
+            math: { cap: payoutCap, base: dailyReliefBase, severity: severityMultiplier, confidence: confidenceMultiplier } 
         };
     }
 
-    return {
-        amount: finalAmount,
-        status: 'APPROVED',
-        reason: 'VelocityGuard Threshold Breached.',
+    return { 
+        amount: finalAmount, 
+        status: 'APPROVED', 
+        reason: 'TRIGGER_VERIFIED', 
         context: contextLabel,
-        math: {
-            cap: payoutCap,
-            base: predictedIncome,
-            severity: parseFloat(severityMultiplier.toFixed(2)),
+        math: { 
+            cap: payoutCap, 
+            base: dailyReliefBase, 
+            severity: parseFloat(severityMultiplier.toFixed(2)), 
             confidence: parseFloat(confidenceMultiplier.toFixed(2)),
             final: finalAmount
-        }
+        } 
     };
 };
 

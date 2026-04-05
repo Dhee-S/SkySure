@@ -39,14 +39,15 @@ const generateSyntheticRiders = (count, city) => {
     
     return Array.from({ length: count }, (_, i) => {
         const persona = personas[Math.floor(Math.random() * personas.length)];
-        const isProbation = Math.random() > 0.85; // 15% probation rate
+        const isProbation = Math.random() > 0.85; 
         const efficiency = 0.6 + (Math.random() * 0.35);
         
-        // Match the 'Synthetic Actuarial Engine' logic from api/index.js
-        const baseRisk = 0.05;
-        const probationRisk = isProbation ? 0.65 : 0;
-        const efficiencyRisk = (1.0 - efficiency) * 0.4;
-        const derivedFraud = Math.min(0.98, Math.max(0.02, baseRisk + probationRisk + efficiencyRisk));
+        // Randomize Finance for Variety
+        const incomes = [3200, 4500, 5800, 7200, 8500];
+        const premiums = [35, 65, 85, 120];
+        const income = incomes[Math.floor(Math.random() * incomes.length)];
+        const premium = premiums[Math.floor(Math.random() * premiums.length)];
+        const tier = premium > 100 ? 'Pro' : premium > 50 ? 'Standard' : 'Basic';
 
         return {
             rider_id: `TN_RID_SYN_${1000 + i}`,
@@ -54,11 +55,15 @@ const generateSyntheticRiders = (count, city) => {
             city: city,
             persona_type: persona,
             persona: persona,
+            weekly_income: income,
+            weekly_premium_inr: premium,
+            coverage_amount_inr: Math.round(income * 0.25),
+            tier: tier,
             session_time_hhmm: "06:30",
             earning_efficiency: efficiency,
             probation_status: isProbation,
-            fraud_probability: derivedFraud,
-            trust_score: Math.round((1 - derivedFraud) * 100),
+            fraud_probability: 0.1,
+            trust_score: 85,
             id: `syn_${1000 + i}`
         };
     });
@@ -111,21 +116,19 @@ router.post('/batch', async (req, res) => {
         }
 
         const nodes = selectedRiders.map((rider, index) => {
-            // Behavioral Simulation: Some riders are 'Stable', some 'Risky'
-            const isRiskyBehavior = Math.random() > 0.7; // 30% anomaly rate
-            
-            let behavior = {};
-            const baseEfficiency = parseFloat(rider.earning_efficiency) || 0.85;
-            
-            if (isRiskyBehavior && batchEnv.isStressMode) {
-                // Anomaly: High efficiency during a storm (Ghost Riding / Spoofing)
-                behavior = { earning_efficiency: 0.98, session_time_hr: 1, order_drop: 0.05 };
+            // Behavioral Profile Selection
+            const dice = Math.random();
+            let behavior = { earning_efficiency: 0.85, session_time_hr: 7, order_drop: 0.05 };
+
+            if (dice > 0.90) {
+                // Ghost Rider Profile: High efficiency, very low time
+                behavior = { earning_efficiency: 0.99, session_time_hr: 0.5, order_drop: 0.02 };
+            } else if (dice > 0.80) {
+                // Cluster Fraud Profile: High order drop
+                behavior = { earning_efficiency: 0.70, session_time_hr: 4, order_drop: 0.85 };
             } else if (batchEnv.isStressMode) {
-                // Normal reaction: Slow down during storm
-                behavior = { earning_efficiency: baseEfficiency * 0.3, session_time_hr: 4, order_drop: 0.65 };
-            } else {
-                // Standard conditions
-                behavior = { earning_efficiency: baseEfficiency, session_time_hr: 7, order_drop: 0.02 };
+                // Storm Condition behavior
+                behavior = { earning_efficiency: 0.4, session_time_hr: 3, order_drop: 0.60 };
             }
 
             // ─── THE ACTUARIAL CORE (Truth Source) ───────────────────────────
@@ -163,12 +166,8 @@ router.post('/batch', async (req, res) => {
                 trust_score: fraud.isBlocked ? Math.max(5, currentTrustScore - 40) : Math.min(98, currentTrustScore + 10),
                 payout: {
                     status: fraud.isBlocked ? 'MITIGATED' : (activeSignalCount > 0 ? 'APPROVED' : 'NOMINAL'),
-                    amount: payout.finalAmount,
-                    math: {
-                        cap: payout.payoutCap,
-                        severity: payout.severityMultiplier,
-                        confidence: payout.confidenceMultiplier
-                    }
+                    amount: payout.amount,
+                    math: payout.math
                 }
             };
         });

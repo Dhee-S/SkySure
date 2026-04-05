@@ -525,18 +525,12 @@ export default function Simulation() {
                                                                      <motion.div initial={{ width: 0 }} animate={{ width: `${Math.max(0, Math.min(100, Number(r.fraud?.score) || 0))}%` }} transition={{ duration: 1, ease: 'easeOut' }} style={{ height: '100%', background: (Number(r.fraud?.score) || 0) >= 60 ? '#EF4444' : '#10B981' }} />
                                                                   </div>
                                                                </div>
-                                                               <div>
-                                                                  <div style={{ fontSize: '0.65rem', fontWeight: 800, color: '#94A3B8', letterSpacing: '0.1em', marginBottom: '10px', textTransform: 'uppercase' }}>Anomaly Detection Engine</div>
-                                                                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                                                                     {r.fraud?.reasons?.length > 0 ? r.fraud.reasons.map((res, i) => (
-                                                                        <span key={i} style={{ fontSize: '0.65rem', fontWeight: 700, padding: '5px 12px', background: 'rgba(239, 68, 68, 0.08)', color: '#DC2626', borderRadius: '8px', border: '1px solid rgba(220, 38, 38, 0.2)' }}>
-                                                                           {res}
-                                                                        </span>
-                                                                     )) : (
-                                                                        <span style={{ fontSize: '0.65rem', fontWeight: 700, padding: '5px 12px', background: 'rgba(16, 185, 129, 0.08)', color: '#059669', borderRadius: '8px', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
-                                                                           CLEAN_TELEMETRY_SIGNATURE
-                                                                        </span>
-                                                                     )}
+                                                               <div style={{ padding: '12px', background: '#F8FAFC', borderRadius: '12px', borderLeft: `4px solid ${Number(r.fraud?.score) >= 60 ? '#EF4444' : '#10B981'}` }}>
+                                                                  <div style={{ fontSize: '0.65rem', fontWeight: 800, color: '#94A3B8', marginBottom: '4px', textTransform: 'uppercase' }}>Anomaly Detection Engine</div>
+                                                                  <div style={{ fontSize: '0.8rem', color: '#1E293B', fontWeight: 600, lineHeight: 1.4 }}>
+                                                                     {r.fraud?.reasons && r.fraud.reasons.length > 0 
+                                                                        ? r.fraud.reasons[0] 
+                                                                        : (Number(r.fraud?.score) >= 25 ? "Behavioral Outlier Detected" : "Identity & Logic Verified")}
                                                                   </div>
                                                                </div>
                                                             </div>
@@ -581,7 +575,7 @@ export default function Simulation() {
                                                          </div>
                                                          <div className="calc-flow-container">
                                                             <CalculationStep label="Baseline Relief" value={`₹${Math.round(r.payout?.math?.base || 0)}`} />
-                                                            <CalculationStep label="Policy Coverage" value={`x ${(r.payout?.math?.cap / r.payout?.math?.base || 1).toFixed(2)}`} />
+                                                            <CalculationStep label="Policy Tier Scale" value={`x ${(r.payout?.math?.cap / r.payout?.math?.base || 1).toFixed(2)}`} />
                                                             <CalculationStep label="Severity Adjustment" value={`x ${(r.payout?.math?.severity || 0).toFixed(2)}`} />
                                                             <CalculationStep label="Trust Confidence" value={`x ${(r.payout?.math?.confidence || 0).toFixed(2)}`} />
                                                             <div className="calc-final">
