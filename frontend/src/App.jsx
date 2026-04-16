@@ -55,13 +55,26 @@ export default function App() {
     const hasMock = handleAuthUpdate();
 
     // 2. Listen for Firebase Auth
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       // Only use Firebase if no Mock user is active
       if (!localStorage.getItem('skysure_mock_user')) {
         setUser(currentUser);
         if (currentUser) {
-          const email = currentUser.email?.toLowerCase() || '';
-          setUserRole(email.includes('admin') ? 'admin' : 'rider');
+          try {
+            const { doc, getDoc } = await import('firebase/firestore');
+            const { db } = await import('./firebase');
+            const userSnap = await getDoc(doc(db, 'users', currentUser.uid));
+            if (userSnap.exists()) {
+              setUserRole(userSnap.data().role);
+            } else {
+              // Fallback for new users
+              const email = currentUser.email?.toLowerCase() || '';
+              setUserRole(email.includes('admin') ? 'admin' : 'rider');
+            }
+          } catch (err) {
+            console.error("Profile fetch error:", err);
+            setUserRole('rider');
+          }
         } else {
           setUserRole(null);
         }

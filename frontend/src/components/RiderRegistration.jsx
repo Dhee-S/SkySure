@@ -4,7 +4,7 @@ import {
   User, Shield, MapPin, CreditCard, 
   CheckCircle, ArrowRight, ArrowLeft, 
   Zap, Mail, Phone, Map, Briefcase,
-  Smartphone, Truck, Navigation, DollarSign
+  Smartphone, Truck, Navigation, DollarSign, Bike, Fuel
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { auth, googleProvider } from '../firebase';
@@ -81,8 +81,9 @@ export default function RiderRegistration() {
       });
 
       if (response.ok) {
-        // Carry selection to payment page
-        navigate('/payment', { state: { formData, premium: calculatePremium() } });
+        // Bypass payment and go straight to dashboard
+        showToast("Registration Successful! Welcome to SkySure.", "success");
+        navigate('/rider');
       } else {
         const err = await response.json();
         throw new Error(err.error || "Registration failed");
@@ -216,10 +217,10 @@ export default function RiderRegistration() {
               <p style={{ color: 'rgba(255, 255, 255, 0.5)', marginBottom: '32px', fontWeight: 500 }}>Select your primary delivery machine.</p>
               
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '32px' }}>
-                <SelectCard active={formData.vehicle === 'bike'} onClick={() => setFormData({...formData, vehicle: 'bike'})} icon={Truck} title="Petrol Bike" desc="Standard IC Engine" />
-                <SelectCard active={formData.vehicle === 'scooter'} onClick={() => setFormData({...formData, vehicle: 'scooter'})} icon={Smartphone} title="Scooter" desc="Light transit" />
+                <SelectCard active={formData.vehicle === 'bike'} onClick={() => setFormData({...formData, vehicle: 'bike'})} icon={Fuel} title="Petrol Bike" desc="Standard IC Engine" />
+                <SelectCard active={formData.vehicle === 'scooter'} onClick={() => setFormData({...formData, vehicle: 'scooter'})} icon={Navigation} title="Scooter" desc="Light transit" />
                 <SelectCard active={formData.vehicle === 'ev'} onClick={() => setFormData({...formData, vehicle: 'ev'})} icon={Zap} title="Electric" desc="Eco-efficient" />
-                <SelectCard active={formData.vehicle === 'bicycle'} onClick={() => setFormData({...formData, vehicle: 'bicycle'})} icon={Navigation} title="Bicycle" desc="Short range" />
+                <SelectCard active={formData.vehicle === 'bicycle'} onClick={() => setFormData({...formData, vehicle: 'bicycle'})} icon={Bike} title="Bicycle" desc="Short range" />
               </div>
 
               <Input label="Mobile Number" icon={Phone} value={formData.phone} onChange={v => setFormData({...formData, phone: v})} placeholder="+91 XXXXX XXXXX" />
@@ -235,12 +236,38 @@ export default function RiderRegistration() {
                 <PersonaCard active={formData.persona === 'Full-Timer'} onClick={() => setFormData({...formData, persona: 'Full-Timer'})} title="Full-Timer" desc="10+ hrs/day" />
                 <PersonaCard active={formData.persona === 'Gig-Pro'} onClick={() => setFormData({...formData, persona: 'Gig-Pro'})} title="Gig-Pro" desc="5-8 hrs/day" />
                 <PersonaCard active={formData.persona === 'Student-Flex'} onClick={() => setFormData({...formData, persona: 'Student-Flex'})} title="Flex" desc="Weekend focus" />
-                <PersonaCard active={formData.persona === 'High-Risk'} onClick={() => setFormData({...formData, persona: 'High-Risk'})} title="Storm Rider" desc="Hazard specialist" />
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                <Input label="City" icon={MapPin} value={formData.city} onChange={v => setFormData({...formData, city: v})} />
-                <Input label="Partner App" icon={Briefcase} value={formData.partnerApp} onChange={v => setFormData({...formData, partnerApp: v})} placeholder="Zomato / Swiggy" />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <label style={{ fontSize: '11px', fontWeight: 900, color: 'rgba(255, 255, 255, 0.4)', textTransform: 'uppercase' }}>City</label>
+                  <select 
+                    value={formData.city} 
+                    onChange={e => setFormData({...formData, city: e.target.value})}
+                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '14px', borderRadius: '14px', outline: 'none' }}
+                  >
+                    <option value="Chennai">Chennai</option>
+                    <option value="Bangalore">Bangalore</option>
+                    <option value="Delhi">Delhi</option>
+                    <option value="Mumbai">Mumbai</option>
+                    <option value="Hyderabad">Hyderabad</option>
+                  </select>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <label style={{ fontSize: '11px', fontWeight: 900, color: 'rgba(255, 255, 255, 0.4)', textTransform: 'uppercase' }}>Partner App</label>
+                  <select 
+                    value={formData.partnerApp} 
+                    onChange={e => setFormData({...formData, partnerApp: e.target.value})}
+                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '14px', borderRadius: '14px', outline: 'none' }}
+                  >
+                    <option value="Zomato">Zomato</option>
+                    <option value="Swiggy">Swiggy</option>
+                    <option value="Uber Eats">Uber Eats</option>
+                    <option value="Dunzo">Dunzo</option>
+                    <option value="Zepto">Zepto</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
               </div>
             </motion.div>
           )}

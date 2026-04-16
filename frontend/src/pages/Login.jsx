@@ -38,12 +38,6 @@ export default function Login({ onLoginProp }) {
         }
       } else {
         // New User Registration
-        if (selectedRole === 'admin') {
-          showToast("New Admin accounts must be pre-authorized. Please contact support.", "warning");
-          await auth.signOut();
-          setLoading(false);
-          return false;
-        }
 
         // Auto-register Riders
         await setDoc(userRef, {

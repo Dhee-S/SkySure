@@ -13,9 +13,8 @@
   },
   "auth": {
     "providers": {
-      "emailPassword": true,
       "googleSignIn": {
-        "oAuthBrandDisplayName": "SkySure AI",
+        "oAuthBrandDisplayName": "SkySure",
         "supportEmail": "sdheepak62@gmail.com"
       }
     }
