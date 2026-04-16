@@ -72,7 +72,7 @@ export default function RiderRegistration() {
   const handleRegister = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/rider/register', {
+      const response = await fetch('/api/rider/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

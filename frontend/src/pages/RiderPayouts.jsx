@@ -87,7 +87,8 @@ export default function RiderPayouts() {
             </motion.div>
          ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-               <AnimatePresence>                   {payouts.map((p, i) => (
+               <AnimatePresence>
+                  {payouts.map((p, i) => (
                      <motion.div 
                         key={p.id || i} 
                         variants={itemVariants}
@@ -122,7 +123,6 @@ export default function RiderPayouts() {
                         </div>
                      </motion.div>
                   ))}
-)}
                </AnimatePresence>
             </div>
          )}
