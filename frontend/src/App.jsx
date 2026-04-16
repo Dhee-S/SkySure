@@ -16,6 +16,8 @@ import RiderPayouts from './pages/RiderPayouts';
 import RiderStatus from './pages/RiderStatus';
 import RiderDashboard from './pages/RiderDashboard';
 import Exit from './pages/Exit';
+import RiderRegistration from './components/RiderRegistration';
+import RiderPayment from './pages/RiderPayment';
 export const ToastContext = createContext(null);
 
 export function useToast() {
@@ -106,6 +108,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={user ? <Navigate to={userRole === 'admin' ? '/client/overview' : '/rider'} replace /> : <Login onLoginProp={handleAuthUpdate} />} />
+        <Route path="/register" element={<RiderRegistration />} />
+        <Route path="/payment" element={<RiderPayment />} />
 
         <Route path="/client" element={user && userRole === 'admin' ? <ClientLayout /> : <Navigate to="/login" replace />}>
           <Route index element={<Navigate to="/client/overview" replace />} />

@@ -154,13 +154,41 @@ export default function Simulation() {
    const [isLiveMode, setIsLiveMode] = useState(false);
    const [isStressMode, setIsStressMode] = useState(true);
    const [results, setResults] = useState(null);
-   const [simulating, setSimulating] = useState(false);
-   const [loadingStage, setLoadingStage] = useState(0);
-   const [expandedId, setExpandedId] = useState(null);
-   const [filter, setFilter] = useState('All');
-   const cities = ['Chennai', 'Coimbatore', 'Salem', 'Madurai', 'Trichy'];
-   const [cityWeather, setCityWeather] = useState(null);
-   const [weatherLoading, setWeatherLoading] = useState(false);
+   const [autoMode, setAutoMode] = useState(false);
+   const [countdown, setCountdown] = useState(0);
+   const [nextRunTime, setNextRunTime] = useState(null);
+
+   useEffect(() => {
+      let interval;
+      if (autoMode) {
+         // Random 1-5 mins (60-300 seconds)
+         const triggerNext = () => {
+            const delay = Math.floor(Math.random() * (300 - 60 + 1) + 60);
+            setCountdown(delay);
+            setNextRunTime(Date.now() + delay * 1000);
+            executeEngineRun();
+         };
+
+         // Start first run immediately if results are null
+         if (!results && !simulating) {
+            triggerNext();
+         }
+
+         interval = setInterval(() => {
+            setCountdown(prev => {
+               if (prev <= 1) {
+                  triggerNext();
+                  return 0;
+               }
+               return prev - 1;
+            });
+         }, 1000);
+      } else {
+         setCountdown(0);
+         setNextRunTime(null);
+      }
+      return () => clearInterval(interval);
+   }, [autoMode]);
 
    useEffect(() => {
       fetchCityWeather();
@@ -236,14 +264,14 @@ export default function Simulation() {
    return (
       <div className="dash-container simulation-page">
          {/* HORIZONTAL HUD */}
-         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="dash-toolbar" style={{ border: 'none', background: 'white', padding: '1.25rem 1.5rem', borderRadius: '16px', marginBottom: '2rem', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', overflow: 'hidden' }}>
+         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="neural-hud-glance">
             <div style={{ display: 'flex', alignItems: 'center', flex: 1, gap: '1.5rem' }}>
                <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#3B82F6', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
-                     Geospatial Sync
+                     Satellite Node Sync
                   </span>
-                  <span style={{ fontSize: '1.4rem', fontWeight: 900, color: '#1E293B', letterSpacing: '-0.02em', margin: '2px 0 8px 0' }}>
-                     {location} Cluster
+                  <span className="city-title neural-trace-text" style={{ fontSize: '1.4rem', fontWeight: 900, letterSpacing: '-0.02em', margin: '2px 0 8px 0' }}>
+                     {location} Regional Feed
                   </span>
                   <div className="location-pills" style={{ display: 'flex', gap: '8px' }}>
                      {cities.map(c => (
@@ -276,9 +304,38 @@ export default function Simulation() {
                   <button onClick={() => setIsStressMode(!isStressMode)} style={{ border: 'none', padding: '8px 16px', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer', background: isStressMode ? 'white' : 'transparent', color: isStressMode ? '#1E293B' : '#64748B', boxShadow: isStressMode ? '0 2px 8px rgba(0,0,0,0.06)' : 'none' }}>Stress</button>
                   <button onClick={() => setIsLiveMode(!isLiveMode)} style={{ border: 'none', padding: '8px 16px', borderRadius: '8px', fontSize: '0.75rem', fontWeight: 800, cursor: 'pointer', background: isLiveMode ? 'white' : 'transparent', color: isLiveMode ? '#1E293B' : '#64748B', boxShadow: isLiveMode ? '0 2px 8px rgba(0,0,0,0.06)' : 'none' }}>Live</button>
                </div>
+
+               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: autoMode ? 'rgba(16, 185, 129, 0.1)' : '#F8FAFC', padding: '6px 12px', borderRadius: '12px', border: `1px solid ${autoMode ? '#10B981' : '#F1F5F9'}`, transition: 'all 0.3s ease' }}>
+                  <div style={{ position: 'relative' }}>
+                     <Zap size={16} color={autoMode ? '#10B981' : '#64748B'} fill={autoMode ? '#10B981' : 'none'} />
+                     {autoMode && <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }} transition={{ duration: 1.5, repeat: Infinity }} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: '#10B981', borderRadius: '50%' }} />}
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                     <span style={{ fontSize: '0.6rem', fontWeight: 800, color: autoMode ? '#059669' : '#64748B' }}>AUTO-PILOT</span>
+                     <span style={{ fontSize: '0.7rem', fontWeight: 900, color: '#1E293B' }}>{autoMode ? `${Math.floor(countdown / 60)}:${(countdown % 60).toString().padStart(2, '0')}` : 'OFF'}</span>
+                  </div>
+                  <button 
+                     onClick={() => setAutoMode(!autoMode)}
+                     className={`toggle-switch ${autoMode ? 'on' : ''}`}
+                     style={{
+                        width: '36px',
+                        height: '20px',
+                        borderRadius: '20px',
+                        background: autoMode ? '#10B981' : '#CBD5E1',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: '2px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: autoMode ? 'flex-end' : 'flex-start'
+                     }}
+                  >
+                     <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: 'white' }} />
+                  </button>
+               </div>
                {(results || simulating) && (
                   <button
-                     onClick={() => navigate('/client/simulation')}
+                     onClick={() => navigate('/client/overview')}
                      style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -384,9 +441,38 @@ export default function Simulation() {
                                     onClick={() => setExpandedId(expandedId === r.id ? null : r.id)}
                                  >
                                     <td>
-                                       <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                          <span style={{ fontWeight: 800, color: '#1E293B', fontSize: '1rem' }}>{r.id}</span>
-                                          <span style={{ fontSize: '0.6rem', color: '#94A3B8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>ID Verified</span>
+                                       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                          <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                             <span style={{ fontWeight: 800, color: '#1E293B', fontSize: '1rem' }}>{r.id}</span>
+                                             <span style={{ fontSize: '0.6rem', color: '#94A3B8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>ID Verified</span>
+                                          </div>
+                                          {(Number(r.trust_score) < 25 || r.payout?.status === 'MITIGATED') ? (
+                                             <div style={{ 
+                                                display: 'flex', 
+                                                alignItems: 'center', 
+                                                gap: '4px', 
+                                                background: '#FEF2F2', 
+                                                padding: '4px 8px', 
+                                                borderRadius: '6px',
+                                                border: '1px solid #FEE2E2'
+                                             }}>
+                                                <ShieldAlert size={10} color="#EF4444" fill="#EF4444" />
+                                                <span style={{ fontSize: '0.65rem', fontWeight: 800, color: '#EF4444', whiteSpace: 'nowrap' }}>High-Risk</span>
+                                             </div>
+                                          ) : Number(r.trust_score) < 55 ? (
+                                             <div style={{ 
+                                                display: 'flex', 
+                                                alignItems: 'center', 
+                                                gap: '4px', 
+                                                background: '#FFFBEB', 
+                                                padding: '4px 8px', 
+                                                borderRadius: '6px',
+                                                border: '1px solid #FEF3C7'
+                                             }}>
+                                                <AlertTriangle size={10} color="#D97706" fill="#D97706" />
+                                                <span style={{ fontSize: '0.65rem', fontWeight: 800, color: '#D97706', whiteSpace: 'nowrap' }}>At-Risk</span>
+                                             </div>
+                                          ) : null}
                                        </div>
                                     </td>
                                     <td>
@@ -535,20 +621,28 @@ export default function Simulation() {
                                                                </div>
                                                             </div>
                                                             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                                                               <div style={{ padding: '20px', background: '#FFFFFF', borderRadius: '18px', border: '1px solid #F1F5F9', boxShadow: '0 8px 24px rgba(0,0,0,0.03)' }}>
-                                                                  <span style={{ fontSize: '0.6rem', color: '#94A3B8', fontWeight: 800, display: 'block', marginBottom: '6px' }}>MASTER TRUST SCORE</span>
-                                                                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                                                                        <span style={{ fontSize: '1.25rem', fontWeight: 900, color: (r.payout?.status === 'MITIGATED') ? '#EF4444' : '#10B981' }}>
-                                                                           Level {Math.max(1, Math.ceil((Number(r.trust_score) || 0) / 10))}/10
-                                                                        </span>
-                                                                        <div style={{ height: '6px', width: '80px', background: '#E2E8F0', borderRadius: '3px', overflow: 'hidden' }}>
-                                                                           <div style={{ height: '100%', width: `${Math.max(5, Math.min(100, Number(r.trust_score) || 0))}%`, background: (r.payout?.status === 'MITIGATED') ? '#EF4444' : '#10B981' }} />
-                                                                        </div>
+                                                               <div className="telemetry-card" style={{ flex: 1.2, minWidth: '220px' }}>
+                                                                  <div className="telemetry-card-header">
+                                                                     <div className="telemetry-icon-box" style={{ background: (r.payout?.status === 'MITIGATED') ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)' }}>
+                                                                        <UserCheck size={18} color={(r.payout?.status === 'MITIGATED') ? '#EF4444' : '#10B981'} />
                                                                      </div>
-                                                                     <div style={{ fontSize: '1.4rem', fontWeight: 900, color: (r.payout?.status === 'MITIGATED') ? '#EF4444' : '#10B981' }}>
-                                                                        {Math.round(r.trust_score || 0)}%
-                                                                     </div>
+                                                                     <span className="telemetry-card-title">MASTER TRUST SCORE</span>
+                                                                  </div>
+                                                                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', marginTop: '1rem' }}>
+                                                                     <span style={{ fontSize: '1.5rem', fontWeight: 900, color: (r.payout?.status === 'MITIGATED') ? '#EF4444' : '#10B981' }}>
+                                                                        Level {Math.max(1, Math.ceil((Number(r.trust_score) || 0) / 10))}/10
+                                                                     </span>
+                                                                     <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#64748B', opacity: 0.6 }}>
+                                                                        {Math.round(Number(r.trust_score) || 0)}%
+                                                                     </span>
+                                                                  </div>
+                                                                  <div className="trust-progress-bg" style={{ marginTop: '12px' }}>
+                                                                     <motion.div
+                                                                        initial={{ width: 0 }}
+                                                                        animate={{ width: `${Math.round(Number(r.trust_score) || 0)}%` }}
+                                                                        className="trust-progress-fill"
+                                                                        style={{ background: (r.payout?.status === 'MITIGATED') ? '#EF4444' : '#10B981' }}
+                                                                     />
                                                                   </div>
                                                                </div>
                                                                {r.probation_status && (
@@ -574,13 +668,20 @@ export default function Simulation() {
                                                             <span className="step-status-tag tag-success">SETTLEMENT_CALCULATED</span>
                                                          </div>
                                                          <div className="calc-flow-container">
-                                                            <CalculationStep label="Baseline Relief" value={`₹${Math.round(r.payout?.math?.base || 0)}`} />
-                                                            <CalculationStep label="Policy Tier Scale" value={`x ${(r.payout?.math?.cap / r.payout?.math?.base || 1).toFixed(2)}`} />
-                                                            <CalculationStep label="Severity Adjustment" value={`x ${(r.payout?.math?.severity || 0).toFixed(2)}`} />
-                                                            <CalculationStep label="Trust Confidence" value={`x ${(r.payout?.math?.confidence || 0).toFixed(2)}`} />
-                                                            <div className="calc-final">
-                                                               <div className="calc-step-label">Final Disbursement</div>
-                                                               <div className="calc-step-value">₹{r.payout?.amount || 0}</div>
+                                                            <CalculationStep label="Daily Baseline (Historical)" value={`₹${Math.round(r.payout?.math?.baseline || 0)}`} />
+                                                            <div className="calc-operator">×</div>
+                                                            <CalculationStep label="Velocity Impact Factor" value={`${(r.payout?.math?.impact || 1).toFixed(2)}`} />
+                                                            <div className="calc-operator">×</div>
+                                                            <CalculationStep label="Gap Multiplier (Severity)" value={`${(r.payout?.math?.severity || 0).toFixed(2)}`} />
+                                                            <div className="calc-operator">×</div>
+                                                            <CalculationStep label="Trust Confidence" value={`${(r.payout?.math?.confidence || 0).toFixed(2)}`} />
+                                                            
+                                                            <div className="calc-final" style={{ background: '#F0F9FF', border: '1px solid #BAE6FD' }}>
+                                                               <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
+                                                                  <div className="calc-step-label" style={{ color: '#0369A1' }}>Final Disbursement</div>
+                                                                  <Info size={10} color="#0369A1" title="Disbursement is the actual amount paid to the rider's wallet." />
+                                                               </div>
+                                                               <div className="calc-step-value" style={{ color: '#0369A1' }}>₹{r.payout?.amount || 0}</div>
                                                             </div>
                                                          </div>
                                                       </div>

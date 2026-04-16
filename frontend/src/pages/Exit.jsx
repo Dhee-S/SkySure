@@ -9,6 +9,20 @@ export default function Exit() {
   const [stage, setStage] = useState('decom'); // decom, final
 
   useEffect(() => {
+    // Force clear everything on exit
+    const performExit = async () => {
+      localStorage.removeItem('skysure_mock_user');
+      localStorage.clear();
+      sessionStorage.clear();
+      try {
+        await signOut(auth);
+      } catch (e) {
+        console.error("Signout failed during exit", e);
+      }
+    };
+    
+    performExit();
+
     const timer = setTimeout(() => {
       setStage('final');
     }, 2800);

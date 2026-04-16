@@ -42,21 +42,37 @@ const ACTUARIAL_CONFIG = {
     TRIGGERS: {
         ACTIVATION_THRESHOLD: 40, // Minimum cumulative score to initiate payout
 
-        evaluate: (telemetry, behavior) => {
+    evaluate: (telemetry, behavior, incidents = []) => {
             let severityScore = 0;
             const activePerils = [];
             let breachedCount = 0;
             const details = {};
+            const proofOfCause = [];
+
+            // Helper to build proof
+            const addProof = (trigger, value, threshold, source) => {
+                proofOfCause.push({
+                    trigger,
+                    observed: value,
+                    threshold,
+                    verification_source: source,
+                    status: 'VERIFIED'
+                });
+            };
 
             // T1: Precipitation (Max 40)
             let rainPts = 0;
-            if (telemetry.rainfall >= 10) { 
+            const rainIncident = incidents.find(i => i.subtype === 'Precipitation');
+            const rainThreshold = rainIncident?.severity_threshold || 10;
+            
+            if (telemetry.rainfall >= rainThreshold) { 
                 rainPts = telemetry.rainfall >= 25 ? 40 : 15; 
                 activePerils.push(telemetry.rainfall >= 25 ? 'Severe Rain' : 'Moderate Rain'); 
                 breachedCount++;
+                addProof('Precipitation', `${telemetry.rainfall}mm`, rainThreshold, rainIncident?.source || 'OpenMeteo-Node');
             }
             severityScore += rainPts;
-            details.rain = { val: telemetry.rainfall, active: telemetry.rainfall >= 10, pts: rainPts, label: 'Precipitation' };
+            details.rain = { val: telemetry.rainfall, active: telemetry.rainfall >= rainThreshold, pts: rainPts, label: 'Precipitation' };
 
             // T2: Wind Hazard (Max 30)
             let windPts = 0;
@@ -64,6 +80,7 @@ const ACTUARIAL_CONFIG = {
                 windPts = telemetry.windSpeed >= 55 ? 30 : 15; 
                 activePerils.push(telemetry.windSpeed >= 55 ? 'Gale Wind Hazard' : 'High Wind'); 
                 breachedCount++;
+                addProof('WindHazard', `${telemetry.windSpeed}km/h`, 35, 'WeatherAPI-V3');
             }
             severityScore += windPts;
             details.wind = { val: telemetry.windSpeed, active: telemetry.windSpeed >= 35, pts: windPts, label: 'Wind Hazard' };
@@ -75,35 +92,41 @@ const ACTUARIAL_CONFIG = {
                 velocityPts = drop > 75 ? 35 : 25; 
                 activePerils.push(drop > 75 ? 'Critical Income Halt' : 'Velocity Drop'); 
                 breachedCount++;
+                addProof('OrderVelocity', `${drop}% Drop`, 50, 'Platform-Order-Store');
             }
             severityScore += velocityPts;
             details.velocity = { val: drop.toFixed(0) + '%', active: drop > 50, pts: velocityPts, label: 'Earning Velocity' };
 
-            // T4: Rider Inactivity / Latency (Max 25)
+            // T4: Rider Inactivity (Max 25)
             let inactivityPts = 0;
             if (behavior.session_time_hr < 4) {
                 inactivityPts = behavior.session_time_hr < 2 ? 25 : 10;
                 activePerils.push(behavior.session_time_hr < 2 ? 'Node Offline' : 'Latency Delay');
                 breachedCount++;
+                addProof('RiderInactivity', `${behavior.session_time_hr}h`, 4, 'Identity-Heartbeat');
             }
             severityScore += inactivityPts;
             details.inactivity = { val: behavior.session_time_hr + 'h', active: behavior.session_time_hr < 4, pts: inactivityPts, label: 'Rider Activity' };
 
             // T5: Network / Traffic Density (Max 25)
             let trafficPts = 0;
-            if (telemetry.trafficLevel === 'High') { 
+            const trafficIncident = incidents.find(i => i.type === 'TRAFFIC');
+            if (telemetry.trafficLevel === 'High' || trafficIncident) { 
                 trafficPts = 25; 
                 activePerils.push('Severe Congestion'); 
                 breachedCount++;
+                addProof('TrafficDensity', telemetry.trafficLevel, 'High', trafficIncident?.source || 'Internal-Traffic-Node');
             }
             severityScore += trafficPts;
             details.traffic = { val: telemetry.trafficLevel, active: telemetry.trafficLevel === 'High', pts: trafficPts, label: 'Network Delay' };
 
             // T6: Zonal Social Curfew (Max 25)
-            let socialPts = (telemetry.isStressMode && Math.random() > 0.8) ? 25 : 0;
+            const socialIncident = incidents.find(i => i.type === 'SOCIAL');
+            let socialPts = (socialIncident || (telemetry.isStressMode && Math.random() > 0.8)) ? 25 : 0;
             if (socialPts > 0) {
                 activePerils.push('Zonal Social Curfew');
                 breachedCount++;
+                addProof('SocialCurfew', 'Active', 'Incident-Registry', socialIncident?.description || 'Stress Mode Induced');
             }
             severityScore += socialPts;
             details.social = { val: socialPts > 0 ? 'Active' : 'Nominal', active: socialPts > 0, pts: socialPts, label: 'Social Curfew' };
@@ -115,6 +138,7 @@ const ACTUARIAL_CONFIG = {
                 visPts = 20;
                 activePerils.push('Low Visibility');
                 breachedCount++;
+                addProof('Visibility', `${visibility}km`, 8, 'Haze-Sensor-Proxy');
             }
             severityScore += visPts;
             details.visibility = { val: visibility + 'km', active: visibility < 8, pts: visPts, label: 'Visibility' };
@@ -122,15 +146,20 @@ const ACTUARIAL_CONFIG = {
             return {
                 totalSeverity: Math.min(severityScore, 100),
                 rawSeverity: severityScore,
-                isTriggered: severityScore >= 40,
+                isTriggered: severityScore >= 43, // Slightly higher threshold for "Advanced" mode
                 breachedCount,
                 activePerils,
-                details
+                details,
+                proofOfCause
             };
         }
     }
 };
 
+/**
+ * [LEGACY] Redundant but kept for backward compatibility. 
+ * Use FraudIntelligenceService.analyze for new builds.
+ */
 const executeAdvancedFraudEngine = (rider, env, behavior) => {
     // 1. PERSONA CONTEXT
     const personaKey = rider.persona_type || 'Gig-Pro';
@@ -143,97 +172,34 @@ const executeAdvancedFraudEngine = (rider, env, behavior) => {
     let baseRingScore = 5; 
     const reasons = [];
 
-    // 2. RANDOMIZED ANOMALY REASON GENERATOR (Higher fidelity per trigger)
-    const library = {
-        GHOSTING: [
-            "Ghost Riding: Kinematic inconsistency. Moving faster than traffic congestion signals spoofing.",
-            "Efficiency Outlier: GPS velocity trajectory exceeds neighborhood physics baseline.",
-            "Velocity Spoofing: Machine learning model predicts output ceiling breach."
-        ],
-        SHARING: [
-            "Account Sharing: Logistical footprint mismatch. Impossible session duration for identified persona.",
-            "Biometric Dropout: Periodic telemetry gaps suggest multi-user device switching.",
-            "Fatigue Logic: Session activity exceeds algorithmic safety threshold for 'Gig-Pro' profile."
-        ],
-        GEOSPOOF: [
-            "Geo-Spoofing: Telemetry-weather mismatch. High-velocity in severe precipitation suggests hardware spoofing.",
-            "GPS Jitter: Satellite signal consistency is too perfect for urban canyon environments.",
-            "Location Mocking: Synthetic GPS heartbeat detected by platform security node."
-        ],
-        CLUSTER: [
-            "Network Sync Anomaly: Coordinated inactivity detected in local geofence.",
-            "Group Migration: Cluster movement pattern suggests non-organic agent behavior.",
-            "Social Curfew Trigger: Collective node disconnection in high-order density zone."
-        ]
-    };
-
-    const getRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
-
-    // ─── TRIGGERS ────────────────────────────────────────────────────────────
+    // Simple logic for immediate simulation feedback
     if (env.trafficLevel === 'High' && efficiency > 0.90) {
         baseRingScore += 40;
-        reasons.push(getRandom(library.GHOSTING));
+        reasons.push("Kinematic mismatch in traffic");
     }
     
-    // Ghost Riding Detection (High Efficiency + Low Session Time)
     if (behavior.earning_efficiency > 0.95 && behavior.session_time_hr < 2) {
-        baseRingScore += 70; // Guaranteed to hit Level 7
-        reasons.push(library.GEOSPOOF[Math.floor(Math.random() * library.GEOSPOOF.length)] || "Potential Ghost Riding Node");
+        baseRingScore += 70; 
+        reasons.push("Synthetic GPS heartbeat detected");
     }
 
-    // Cluster Fraud Detection (Synchronized Order Drop without Network Clog)
-    if (env.trafficLevel !== 'High' && behavior.order_drop > 0.75) {
-        baseRingScore += 60; // Guaranteed to hit Level 6
-        reasons.push(library.CLUSTER[Math.floor(Math.random() * library.CLUSTER.length)] || "Cluster Sync Anomaly");
-    }
-
-    // Persona Mismatch (Veteran behavior on a Student-Flex account, etc.)
-    if (rider.persona_type === 'Student-Flex' && behavior.session_time_hr > 10) {
-        baseRingScore += 30;
-        reasons.push("Persona Activity Mismatch (Overtime)");
-    }
-
-    // Climate Multiplier (Existing)
-    if (env.rainfall > 20 && behavior.earning_efficiency > 0.90) {
-        baseRingScore += 35;
-        reasons.push(library.BIOMETRIC[Math.floor(Math.random() * library.BIOMETRIC.length)]);
-    }
-
-    // Impact of Trust Score & Probation
-    const probationModifier = isProbation ? 1.6 : 1.0;
-    let rawScore = baseRingScore * (persona.trustModifier || 1.0) * probationModifier;
-    rawScore += (100 - trustScore) / 4; 
-
+    const rawScore = baseRingScore * (persona.trustModifier || 1.0) * (isProbation ? 1.6 : 1.0);
     const threatLevel = Math.min(Math.ceil(rawScore / 10), 10);
 
     return {
         threatLevel,
         score: Math.min(rawScore, 100),
-        isBlocked: threatLevel >= 6, // Lowered threshold to ensure mitigation shows in simulation
+        isBlocked: threatLevel >= 6,
         reasons,
-        summary: reasons.length > 0 ? reasons[Math.floor(Math.random()*reasons.length)] : "Biometric and telemetry signals verified."
+        summary: reasons.length > 0 ? reasons[0] : "Biometric and telemetry signals verified."
     };
 };
 
 const calculateAdaptivePayout = (rider, severityData, fraudResult, env) => {
-    // 1. DYNAMIC PAYOUT BASELINE (RIDER DATA DRIVEN)
-    // Pull real income from rider or fallback to tier-based floor
-    const weeklyIncome = Number(rider.weekly_income) || (rider.tier === 'Pro' ? 6000 : rider.tier === 'Standard' ? 4000 : 2000);
-    const dailyReliefBase = weeklyIncome / 6; // 6 working days relief
+    // 1. Differentiated Persona Matrix for Caps
+    const persona = ACTUARIAL_CONFIG.PERSONAS[rider.persona_type] || ACTUARIAL_CONFIG.PERSONAS['Gig-Pro'];
+    const payoutCap = persona.maxPayoutCap || 500;
     
-    // Adjust coverage based on premium selection
-    const premium = Number(rider.weekly_premium_inr) || (rider.tier === 'Pro' ? 120 : rider.tier === 'Standard' ? 65 : 35);
-    const coverageMultiplier = premium > 100 ? 1.0 : premium > 50 ? 0.85 : 0.7;
-    
-    let payoutCap = Number(rider.coverage_amount_inr) || (rider.tier === 'Pro' ? 1500 : rider.tier === 'Standard' ? 1000 : 500);
-    if (rider.probation_status) payoutCap = Math.min(payoutCap, 150);
-
-    const confidenceMultiplier = (10 - fraudResult.threatLevel) / 10;
-    const severityMultiplier = severityData.rawSeverity / 100;
-
-    const rawAmount = dailyReliefBase * severityMultiplier * confidenceMultiplier * coverageMultiplier;
-    const finalAmount = Math.min(payoutCap, Math.round(rawAmount));
-
     // 2. CONTEXTUAL LABEL ENGINE (Based on env)
     let contextLabel = "Partly Cloudy";
     if (env.rainfall > 20) contextLabel = "Severe Storm / Flash Flood";
@@ -249,7 +215,7 @@ const calculateAdaptivePayout = (rider, severityData, fraudResult, env) => {
             status: 'MITIGATED', 
             reason: 'FRAUD_BLOCK', 
             context: contextLabel,
-            math: { cap: payoutCap, base: dailyReliefBase, severity: severityMultiplier, confidence: 0 } 
+            math: { baseline: 0, impact: 0, severity: 0, confidence: 0 } 
         };
     }
 
@@ -259,22 +225,43 @@ const calculateAdaptivePayout = (rider, severityData, fraudResult, env) => {
             status: 'NOMINAL', 
             reason: 'THRESHOLD_NOT_MET', 
             context: contextLabel,
-            math: { cap: payoutCap, base: dailyReliefBase, severity: severityMultiplier, confidence: confidenceMultiplier } 
+            math: { baseline: 0, impact: 0, severity: 0, confidence: 0 } 
         };
     }
 
-    return { 
-        amount: finalAmount, 
-        status: 'APPROVED', 
-        reason: 'TRIGGER_VERIFIED', 
+    // 3. INCOME PROTECTION (VELOCITY GAP) LOGIC
+    // Get the Historical Daily Baseline (weekly / 7)
+    const weeklyTotal = parseFloat(rider.past_week_earnings) || 4500;
+    const dailyBaseline = weeklyTotal / 7;
+
+    // App Downtime (T4 Offline) and Social Curfews (T6) are 'High Impact'
+    let impactFactor = 0.55; 
+    if (severityData.activePerils.includes('Node Offline')) impactFactor = 0.92;
+    if (severityData.activePerils.includes('Zonal Social Curfew')) impactFactor = 0.85;
+    if (severityData.totalSeverity > 75) impactFactor = 0.88;
+
+    const lossEstimate = dailyBaseline * impactFactor;
+
+    // 4. APPLY ACTUARIAL MULTIPLIERS
+    const severityMultiplier = severityData.totalSeverity / 100;
+    const confidenceMultiplier = (100 - (fraudResult.score || (fraudResult.threatLevel * 10) || 15)) / 100;
+
+    const rawSettlement = lossEstimate * severityMultiplier * confidenceMultiplier;
+    
+    // Final Adaptive Cap (Ensuring the pool stays solvent)
+    const finalAmount = Math.min(payoutCap * 1.5, Math.round(rawSettlement));
+
+    return {
+        status: 'APPROVED',
+        amount: finalAmount,
         context: contextLabel,
-        math: { 
-            cap: payoutCap, 
-            base: dailyReliefBase, 
-            severity: parseFloat(severityMultiplier.toFixed(2)), 
-            confidence: parseFloat(confidenceMultiplier.toFixed(2)),
+        math: {
+            baseline: Math.round(dailyBaseline),
+            impact: impactFactor,
+            severity: severityMultiplier,
+            confidence: confidenceMultiplier,
             final: finalAmount
-        } 
+        }
     };
 };
 

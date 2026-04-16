@@ -91,13 +91,14 @@ export default function Sidebar() {
 
       <div className="sidebar-footer">
         <button 
-          onClick={() => navigate('/')}
+          onClick={handleLogout}
           className="home-btn"
+          title="Sign Out & Return to Landing"
         >
           <div className="home-icon">
             <Home size={18} />
           </div>
-          <span>Back to Landing</span>
+          <span>Exit to Landing</span>
         </button>
         <button 
           onClick={handleLogout}

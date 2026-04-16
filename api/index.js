@@ -33,10 +33,10 @@ app.use(express.json());
    serve stale module-level state across cold/warm boundaries.
    Priority: Firestore → CSV fallback.
 ──────────────────────────────────────────────────────────────────────────── */
-const CSV_PATH = path.resolve(__dirname, '..', 'data', 'pre-final_dataset_cleaned.csv');
+const CSV_PATH = path.resolve(__dirname, '..', 'data', 'skysure_v4_1k.csv');
 
 function normaliseRider(raw, id) {
-  const [lat, lng] = (raw.coordinates || '13.0,80.2')
+  const [lat, lng] = (raw.coordinates || '13.0827,80.2707')
     .split(',')
     .map(v => parseFloat(v.trim()));
 
@@ -44,34 +44,33 @@ function normaliseRider(raw, id) {
   const efficiency = parseFloat(raw.earning_efficiency) || 0.8;
   const isProbation = raw.probationary_tier === 'True' || raw.probationary_tier === true;
   
-  // 2. SYNTHETIC ACTUARIAL ENGINE: Derive fraud risk since it's missing in some datasets
-  // Base Risk (5%) + Probation Surcharge (65%) + Efficiency Penalty (up to 40%)
-  const baseRisk = 0.05;
-  const probationRisk = isProbation ? 0.65 : 0;
-  const efficiencyRisk = (1.0 - Math.min(1.0, efficiency)) * 0.4;
-  
-  const derivedFraud = Math.min(0.98, Math.max(0.02, baseRisk + probationRisk + efficiencyRisk));
+  // 2. ACTUARIAL / ML DATA
+  const fraudProb = parseFloat(raw.fraud_probability) || 0.05;
+  const isFraud = raw.is_fraud === 1 || raw.is_fraud === '1' || raw.is_fraud === true;
 
   return {
     ...raw,
     id:                raw.rider_id || id,
     rider_id:          raw.rider_id || id,
-    trust_score:       Math.round((1 - derivedFraud) * 100),
-    fraud_probability: derivedFraud,
+    name:              raw.name || `Partner ${id.slice(-4)}`,
+    trust_score:       raw.trust_score || Math.round((1 - fraudProb) * 100),
+    fraud_probability: fraudProb,
+    is_fraud:          isFraud,
     weekly_premium:    parseFloat(raw.weekly_premium)    || 120,
     earning_efficiency:efficiency,
     ring_score:        parseFloat(raw.ring_score)        || 0,
     predicted_payout:  parseFloat(raw.predicted_payout)  || 450,
     probation_status:  isProbation,
     coordinates:       { lat, lng },
-    session_time_hhmm: raw.session_time_hhmm || raw.session_time || '06:30',
+    session_time_hhmm: raw.session_time_hhmm || '06:30',
+    payout_history:    raw.payout_history || []
   };
 }
 
 async function getFirestoreRiders() {
   if (!db) throw new Error('Firestore unavailable');
 
-  const snapshot = await db.collection('riders').limit(500).get();
+  const snapshot = await db.collection('rider_profiles').limit(1000).get();
   if (snapshot.empty) throw new Error('Firestore collection empty');
 
   return snapshot.docs.map(doc => normaliseRider({ ...doc.data() }, doc.id));
@@ -120,7 +119,12 @@ async function getriders() {
    index.js must NOT define any route under that prefix.
 ──────────────────────────────────────────────────────────────────────────── */
 const simulationRoutes = require('./src/routes/simulationRoutes');
+const riderRoutes = require('./src/routes/riderRoutes');
+const paymentRoutes = require('./src/routes/paymentRoutes');
+
 app.use('/api/simulation', simulationRoutes);
+app.use('/api/rider', riderRoutes);
+app.use('/api/payment', paymentRoutes);
 
 /* ─── ROUTE: GET /api/health ─────────────────────────────────────────────
    Quick liveness probe for Vercel / uptime monitors.
@@ -241,81 +245,38 @@ app.get('/api/riders/:id', async (req, res) => {
 });
 
 /* ─── ROUTE: GET /api/payouts ──────────────────────────────────────────────
-   Audit Ledger: Generates varied, data-driven logs for the UI.
+   Audit Ledger: pulls from the payout_events collection.
 ──────────────────────────────────────────────────────────────────────────── */
 app.get('/api/payouts', async (req, res) => {
   try {
-    const { riders } = await getriders();
     const { riderId } = req.query;
-
-    let pool = riders || [];
+    
+    let query = db.collection('payout_events').orderBy('feed_timestamp', 'desc');
     if (riderId) {
-      pool = pool.filter(r => r.rider_id === riderId);
+      query = query.where('rider_id', '==', riderId);
     }
-
-    const logs = [];
-    pool.forEach((r, i) => {
-      const fraudVal = parseFloat(r.fraud_probability || 0.1);
-      const isProbation = r.probation_status === true || r.probationary_tier === 'True';
-      const persona = r.persona_type || 'Gig-Pro';
-      
-      // Actuarial Configuration Mapping
-      const baseFloor = persona === 'Full-Timer' ? 1200 : (persona === 'Veteran' ? 1000 : 800);
-      const cap = persona === 'Student-Flex' ? 250 : 850;
-
-      // Generate 2-3 logs per rider for a rich audit history
-      [0, 1, 2].forEach(offset => {
-        const timestamp = Date.now() - (i * 3600000) - (offset * 86400000);
-        const isSettled = fraudVal < 0.25 && !isProbation && (i + offset) % 3 !== 0; // Natural variability
-        
-        let reason, weather, status, amount;
-        
-        if (isSettled) {
-          status = 'approved';
-          // Add +/- 15% random variance to payouts
-          const variance = 0.85 + (Math.random() * 0.30);
-          amount = Math.min(cap, Math.round(baseFloor * variance));
-          
-          const reasons = ['Parametric Trigger: Heavy Rainfall', 'Gale Wind Safety Activation', 'Zonal Social Curfew Payout', 'Network Latency Compensation'];
-          const contexts = ['Severe Storm | 15mm/h', 'Gale Wind | 45km/h', 'Stormy | Heavy Rain', 'Network Delay | Traffic High'];
-          
-          reason = reasons[Math.floor(Math.random() * reasons.length)];
-          weather = contexts[Math.floor(Math.random() * contexts.length)];
-        } else {
-          status = 'blocked';
-          amount = 0;
-          
-          if (isProbation || fraudVal > 0.6) {
-            const reasons = ['Ghost Riding: Kinematic Inconsistency', 'Geo-Spoofing: Telemetry Mismatch', 'Account Sharing: Fatigue Threshold', 'GPS Jitter: Synthetic Heartbeat'];
-            const contexts = ['Clear | Physics Anomaly', 'Partly Cloudy | Jitter Detected', 'Static | Logistical Signal Mismatch', 'Low Rain | AI Outlier'];
-            
-            reason = reasons[Math.floor(Math.random() * reasons.length)];
-            weather = contexts[Math.floor(Math.random() * contexts.length)];
-          } else {
-            reason = 'Parametric Signal: Below Threshold';
-            weather = 'Nominal | 2mm Rainfall';
-          }
-        }
-
-        logs.push({
-          id:         `TRX-${r.rider_id.toUpperCase().replace(/[^A-Z0-9]/g, '')}-${5000 + i + offset}`,
-          riderId:    r.rider_id,
-          riderName:  r.name || r.rider_name || `Partner ${r.rider_id.split('_').pop()}`,
-          timestamp:  new Date(timestamp).toISOString(),
-          status:     status,
-          amount:     amount,
-          reason:     reason,
-          weather:    weather,
-          location:   r.city || 'Chennai'
-        });
-      });
+    
+    const snapshot = await query.limit(100).get();
+    const logs = snapshot.docs.map(doc => {
+      const d = doc.data();
+      return {
+        id:         d.payout_txn_id || doc.id,
+        riderId:    d.rider_id,
+        riderName:  d.rider_name || `Partner ${d.rider_id?.split('_').pop()}`,
+        timestamp:  d.feed_timestamp,
+        status:     d.payout_status?.toLowerCase(),
+        amount:     d.payout_amount,
+        reason:     d.environmental_trigger || d.reason || 'Parametric Trigger',
+        weather:    d.weather_at_trigger || d.weather,
+        location:   d.location || 'Chennai'
+      };
     });
 
-    logs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-    res.json(riderId ? logs : logs.slice(0, 50));
+    res.json(logs);
   } catch (e) {
     console.error('[/api/payouts]', e);
-    res.status(500).json({ error: 'Audit ledger fetch failed' });
+    // Silent Fallback: if payout_events empty, return empty array instead of 500
+    res.json([]);
   }
 });
 

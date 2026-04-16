@@ -2,7 +2,9 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 const engine = require('../services/simulationEngine');
-const { db } = require('../../firebase');
+const TriggerRegistry = require('../services/TriggerRegistry');
+const FraudIntelligenceService = require('../services/FraudIntelligenceService');
+const { admin, db } = require('../../firebase');
 
 const CITY_COORDS = {
     'Chennai': { lat: 13.0827, lon: 80.2707 },
@@ -79,24 +81,26 @@ router.post('/batch', async (req, res) => {
         // [LOGIC] Pull from Firestore first for "Real" flavor
         try {
             if (db) {
-                const snapshot = await db.collection('riders').limit(batchCount).get();
+                const snapshot = await db.collection('rider_profiles').limit(batchCount).get();
                 if (!snapshot.empty) {
                     selectedRiders = snapshot.docs.map(d => {
                         const data = d.data();
                         return { 
                             ...data, 
                             id: d.id,
-                            rider_id: data.rider_id || data.partner_id || d.id,
+                            rider_id: data.rider_id || d.id,
                             // Normalize for engine
-                            weekly_income: parseFloat(data.past_week_earnings || 0),
-                            weekly_premium_inr: parseFloat(data.weekly_premium || 0),
-                            probation_status: data.probationary_tier === true,
-                            coverage_amount_inr: parseFloat(data.predicted_payout || 0) || 1200
+                            weekly_income: parseFloat(data.past_week_earnings || 5000),
+                            weekly_premium_inr: parseFloat(data.weekly_premium || 120),
+                            probation_status: data.probation_status === true || data.probationary_tier === true,
+                            coverage_amount_inr: parseFloat(data.predicted_payout || 1200)
                         };
                     });
                 }
             }
-        } catch (e) { console.warn("[SIM] Firestore ingest bypassed.", e.message); }
+        } catch (e) { 
+            console.warn("[SIM] Firestore ingest bypassed.", e.message); 
+        }
 
         // Fill with high-fidelity synthetics if needed
         if (selectedRiders.length < batchCount) {
@@ -123,7 +127,7 @@ router.post('/batch', async (req, res) => {
             }
         }
 
-            const nodes = selectedRiders.map((rider, index) => {
+        const nodes = await Promise.all(selectedRiders.map(async (rider, index) => {
             // Behavioral Profile Selection
             const dice = Math.random();
             let behavior = { earning_efficiency: 0.85, session_time_hr: 7, order_drop: 0.05 };
@@ -140,8 +144,19 @@ router.post('/batch', async (req, res) => {
             }
 
             // ─── THE ACTUARIAL CORE (Truth Source) ───────────────────────────
-            const severityData = engine.ACTUARIAL_CONFIG.TRIGGERS.evaluate(batchEnv, behavior);
-            const fraud = engine.executeAdvancedFraudEngine(rider, batchEnv, behavior);
+            const incidents = await TriggerRegistry.getActiveIncidents(targetCity);
+            const severityData = engine.ACTUARIAL_CONFIG.TRIGGERS.evaluate(batchEnv, behavior, incidents);
+            
+            // Advanced Fraud Analysis (XAI Driven)
+            const fraudAnalysis = await FraudIntelligenceService.analyze(rider, batchEnv, behavior);
+            const fraud = {
+                score: fraudAnalysis.anomalyScore,
+                isBlocked: fraudAnalysis.isBlocked,
+                reasons: fraudAnalysis.analysisDetails.map(d => d.explanation),
+                xai_report: fraudAnalysis.analysisDetails,
+                model_version: fraudAnalysis.modelVersion
+            };
+
             const payout = engine.calculateAdaptivePayout(rider, severityData, fraud, batchEnv);
             
             // Multi-Peril Signal Set (Phase 1) - Mapped to match the 7 engine triggers
@@ -175,33 +190,112 @@ router.post('/batch', async (req, res) => {
                 payout: {
                     status: fraud.isBlocked ? 'MITIGATED' : (activeSignalCount > 0 ? 'APPROVED' : 'NOMINAL'),
                     amount: payout.amount,
-                    math: payout.math
+                    math: payout.math,
+                    proof_of_cause: severityData.proofOfCause
                 }
             };
-        });
+        }));
 
-        // Batch Update Trust Scores in Firestore
+        // ─── MULTI-TABLE SYNCHRONIZATION ──────────────────────────────────────
         if (db) {
             try {
                 const batch = db.batch();
-                nodes.forEach(r => {
-                    if (r.id && !r.id.startsWith('TN_RID_SYN_')) {
-                        const ref = db.collection('riders').doc(r.id);
-                        // Delta: +10 for good behavior, -10 for a risk event (APPROVED payout)
-                        const delta = r.payout.status === 'APPROVED' ? -10 : 10;
-                        const initialScore = parseFloat(r.trust_score) || 75;
-                        const newScore = Math.max(0, Math.min(100, initialScore + delta));
-                        
-                        batch.set(ref, { 
-                            trust_score: newScore,
-                            trustScore:  newScore
+                const now = new Date().toISOString();
+
+                for (const r of nodes) {
+                    // Skip synthetics for DB persistence
+                    if (r.id && r.id.startsWith('TN_RID_SYN_')) continue;
+
+                    const riderRef = db.collection('rider_profiles').doc(r.id);
+                    const policyId = r.policy_id || `POL-${r.city.substring(0,2).toUpperCase()}-2026-${r.id.slice(-4)}`;
+                    const policyRef = db.collection('policies').doc(policyId);
+                    
+                    const eventId = `EVT-${Date.now()}-${r.id.slice(-4)}`;
+                    const eventRef = db.collection('payout_events').doc(eventId);
+
+                    // Logic for Adaptive Trust and Intensity Tiers
+                    const fraudScore = r.fraud.score;
+                    let intensityStatus = 'CLEAN';
+                    let trustDelta = 0;
+
+                    if (r.payout.status === 'APPROVED' && fraudScore < 40) {
+                        trustDelta = 5;
+                        intensityStatus = 'CLEAN';
+                    } else if (fraudScore >= 40 && fraudScore < 60) {
+                        intensityStatus = 'ALERT';
+                        trustDelta = -10;
+                    } else if (fraudScore >= 60 && fraudScore < 80) {
+                        intensityStatus = 'PROBATION';
+                        trustDelta = -25;
+                    } else if (fraudScore >= 80) {
+                        intensityStatus = 'BLOCKED';
+                        trustDelta = -50;
+                    }
+
+                    const finalTrustScore = Math.max(0, Math.min(100, (rider.trust_score || 85) + trustDelta));
+
+                    // 1. Audit Log Persistence
+                    batch.set(eventRef, {
+                        event_id: eventId,
+                        rider_id: r.rider_id,
+                        rider_name: r.name,
+                        payout_amount: r.payout.amount,
+                        payout_status: intensityStatus === 'CLEAN' ? r.payout.status : 'MITIGATED',
+                        payout_txn_id: `TXN-${eventId.split('-').pop()}`,
+                        feed_timestamp: now,
+                        weather_at_trigger: r.env.rainfall > 0 ? `${r.env.rainfall.toFixed(1)}mm Rain` : 'Nominal',
+                        environmental_trigger: r.payout.amount > 0 ? 'Parametric Trigger' : 'Below Threshold',
+                        fraud_status: intensityStatus,
+                        fraud_score: fraudScore,
+                        location: r.city,
+                        intensity_level: intensityStatus,
+                        proof_of_cause: r.payout.proof_of_cause || []
+                    });
+
+                    // [AUDIT] Persist specific Fraud Intelligence Report
+                    if (intensityStatus !== 'CLEAN') {
+                        const fraudReportRef = db.collection('fraud_analysis_reports').doc(`XAI-${eventId}`);
+                        batch.set(fraudReportRef, {
+                            event_id: eventId,
+                            rider_id: r.rider_id,
+                            anomaly_score: fraudScore,
+                            analysis_details: r.fraud.xai_report || [],
+                            model_version: r.fraud.model_version,
+                            timestamp: now
+                        });
+                    }
+
+                    // 2. Rider Profile Sync (Trust Score + History + Status)
+                    const payoutEntry = {
+                        amount: r.payout.amount,
+                        status: intensityStatus === 'CLEAN' ? r.payout.status.toLowerCase() : 'mitigated',
+                        timestamp: now,
+                        id: eventId,
+                        intensity: intensityStatus
+                    };
+
+                    batch.set(riderRef, {
+                        trust_score: finalTrustScore,
+                        status: intensityStatus === 'BLOCKED' ? 'BLOCKED' : (rider.status || 'ACTIVE'),
+                        probationary_tier: intensityStatus === 'PROBATION' || rider.probationary_tier === true,
+                        fraud_alert: intensityStatus === 'ALERT' || rider.fraud_alert === true,
+                        payout_history: admin.firestore.FieldValue.arrayUnion(payoutEntry),
+                        last_sync: now
+                    }, { merge: true });
+
+                    // 3. Policy Tracking
+                    if (r.payout.amount > 0 && intensityStatus === 'CLEAN') {
+                        batch.set(policyRef, {
+                            total_received: admin.firestore.FieldValue.increment(r.payout.amount),
+                            last_payout: now
                         }, { merge: true });
                     }
-                });
+                }
+                
                 await batch.commit();
-                console.log(`[SIM] Persistent Trust Scores (Delta: +/-10) committed for ${nodes.length} nodes.`);
+                console.log(`[SIM] Multi-Table Sync complete for ${nodes.length} nodes.`);
             } catch (err) {
-                console.warn("[SIM] Trust score batch update failed:", err.message);
+                console.warn("[SIM] Multi-Table Synchronization failed:", err.message);
             }
         }
 

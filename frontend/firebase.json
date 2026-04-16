@@ -10,5 +10,14 @@
       "**/.*",
       "**/node_modules/**"
     ]
+  },
+  "auth": {
+    "providers": {
+      "emailPassword": true,
+      "googleSignIn": {
+        "oAuthBrandDisplayName": "SkySure AI",
+        "supportEmail": "sdheepak62@gmail.com"
+      }
+    }
   }
 }

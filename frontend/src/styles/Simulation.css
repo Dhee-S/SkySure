@@ -7,18 +7,55 @@
     font-family: var(--font-body);
 }
 
-/* --- HORIZONTAL WEATHER HUD --- */
-.horizontal-weather-hud {
-    background: var(--dash-card-bg);
-    backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--dash-border);
-    border-radius: var(--dash-radius-md);
-    padding: 12px 24px;
+/* --- NEURAL GLASS HUD (V7.0 PREMIUM) --- */
+.neural-hud-glance {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    padding: 16px 32px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: var(--shadow-base);
-    margin-bottom: 24px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+    margin-bottom: 28px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.neural-hud-glance:hover {
+    background: rgba(255, 255, 255, 0.75);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.12);
+}
+
+.audit-glow-nominal { box-shadow: 0 0 15px rgba(148, 163, 184, 0.3); }
+.audit-glow-approved { 
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+    animation: glow-pulse-green 2s infinite alternate;
+}
+.audit-glow-mitigated { 
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+    animation: glow-pulse-orange 2s infinite alternate;
+}
+
+@keyframes glow-pulse-green {
+    from { box-shadow: 0 0 5px rgba(16, 185, 129, 0.2); }
+    to { box-shadow: 0 0 20px rgba(16, 185, 129, 0.6); }
+}
+
+@keyframes glow-pulse-orange {
+    from { box-shadow: 0 0 5px rgba(245, 158, 11, 0.2); }
+    to { box-shadow: 0 0 20px rgba(245, 158, 11, 0.6); }
+}
+
+.neural-trace-text {
+    background: linear-gradient(120deg, #1e293b, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 900;
 }
 
 .weather-hud-label {
@@ -108,6 +145,14 @@
     border-color: #1E293B;
     color: white;
     box-shadow: 0 4px 12px rgba(30, 41, 59, 0.2);
+}
+
+.toggle-switch {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toggle-switch div {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .trigger-btn-primary {
@@ -351,6 +396,16 @@
 .payout-status.approved, .status-pill.approved { background: rgba(16, 185, 129, 0.1); color: #10B981; }
 .payout-status.mitigated, .status-pill.mitigated { background: rgba(245, 158, 11, 0.1); color: #F59E0B; }
 .payout-status.nominal, .status-pill.nominal { background: #F1F5F9; color: #64748B; }
+
+.badge-warning {
+    background: #FFFBEB;
+    color: #D97706;
+    border: 1px solid #FEF3C7;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 0.65rem;
+    font-weight: 800;
+}
 
 /* --- FILTER SEGMENTED CONTROL --- */
 .filter-pills {

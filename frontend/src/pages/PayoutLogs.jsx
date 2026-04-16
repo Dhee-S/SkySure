@@ -11,27 +11,34 @@ import '../styles/dashboard.css';
 
 export default function PayoutLogs() {
   const [payouts, setPayouts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState('All');
+  const [isLive, setIsLive] = useState(true);
+  const [syncCount, setSyncCount] = useState(0);
 
-  // Pagination State
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 25;
+  const loadData = async (isQuiet = false) => {
+    if (!isQuiet) setLoading(true);
+    try {
+      const data = await dataService.getPayouts();
+      setPayouts(Array.isArray(data) ? data : []);
+      setSyncCount(prev => prev + 1);
+    } catch (error) {
+      console.error("Error loading payouts:", error);
+    }
+    if (!isQuiet) setLoading(false);
+  }
 
   useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      try {
-        const data = await dataService.getPayouts();
-        setPayouts(Array.isArray(data) ? data : []);
-      } catch (error) {
-        console.error("Error loading payouts:", error);
-      }
-      setLoading(false);
-    }
     loadData();
   }, []);
+
+  useEffect(() => {
+    let interval;
+    if (isLive) {
+      interval = setInterval(() => {
+        loadData(true);
+      }, 5000); // 5s Auto-sync for Neural Feed
+    }
+    return () => clearInterval(interval);
+  }, [isLive]);
 
   const filteredLogs = useMemo(() => {
     return payouts.filter(log => {
@@ -65,15 +72,46 @@ export default function PayoutLogs() {
     <div className="dash-container">
       <header className="dash-header">
         <div>
-          <h1 className="dash-title">Audit Ledger</h1>
-          <p className="dash-subtitle">Real-time immutable record of parametric triggers and security mitigations.</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+            <motion.div 
+               animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+               transition={{ duration: 2, repeat: Infinity }}
+               style={{ width: '8px', height: '8px', background: '#3B82F6', borderRadius: '50%', boxShadow: '0 0 10px #3B82F6' }}
+            />
+            <span style={{ fontSize: '0.65rem', fontWeight: 800, color: '#3B82F6', letterSpacing: '0.15em', textTransform: 'uppercase' }}>Neural Node Connected</span>
+          </div>
+          <h1 className="dash-title">Neural Feed Logger</h1>
+          <p className="dash-subtitle">Synchronized autonomous telemetry and adaptive settlement ledger.</p>
         </div>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <button className="dash-btn dash-btn-outline">
-            <Download size={14} /> Export Transaction PDF
-          </button>
-          <button className="dash-btn dash-btn-primary">
-            Sync Ledger
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <div 
+             onClick={() => setIsLive(!isLive)}
+             style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px', 
+                background: isLive ? 'rgba(16, 185, 129, 0.1)' : '#F1F5F9', 
+                padding: '8px 16px', 
+                borderRadius: '12px', 
+                border: `1px solid ${isLive ? '#10B981' : '#E2E8F0'}`,
+                cursor: 'pointer',
+                transition: 'all 0.3s ease'
+             }}
+          >
+            <div style={{ position: 'relative' }}>
+               <RefreshCw size={14} className={isLive ? 'animate-spin' : ''} color={isLive ? '#10B981' : '#64748B'} />
+            </div>
+            <span style={{ fontSize: '0.75rem', fontWeight: 800, color: isLive ? '#059669' : '#64748B' }}>
+               {isLive ? 'LIVE FEED ACTIVE' : 'FEED PAUSED'}
+            </span>
+          </div>
+          <button onClick={() => loadData()} className="dash-btn dash-btn-primary" style={{ position: 'relative', overflow: 'hidden' }}>
+            <span style={{ position: 'relative', zIndex: 1 }}>Force Update Ledger</span>
+            <motion.div 
+               animate={{ x: ['-100%', '200%'] }}
+               transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+               style={{ position: 'absolute', top: 0, left: 0, width: '50%', height: '100%', background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)' }}
+            />
           </button>
         </div>
       </header>
@@ -148,17 +186,33 @@ export default function PayoutLogs() {
                   </td>
                   <td>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, color: '#0f172a' }}>
-                      <ShieldCheck size={14} color="#10b981" />
-                      <span>{log.reason}</span>
+                      <CloudRain size={14} color="#3b82f6" />
+                      <span>{log.location} - {log.reason}</span>
                     </div>
                     <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginLeft: '22px' }}>
-                      Context: {log.weather} | {log.location}
+                      Sensors: {log.weather || 'Nominal'} | Velocity 44km/h
                     </div>
                   </td>
                   <td>
-                    <span className={log.status === 'blocked' ? 'badge-danger' : 'badge-success'}>
-                      {log.status === 'blocked' ? 'Mitigated' : 'Settled'}
-                    </span>
+                    <div style={{ position: 'relative', display: 'inline-block' }}>
+                      <span 
+                         className={`badge-${log.status === 'blocked' || log.intensity === 'BLOCKED' ? 'danger' : log.intensity === 'PROBATION' ? 'warning' : log.intensity === 'ALERT' ? 'warning' : 'success'}`}
+                         style={{ 
+                            textTransform: 'uppercase', 
+                            letterSpacing: '0.05em',
+                            boxShadow: log.intensity === 'BLOCKED' ? '0 0 10px rgba(239, 68, 68, 0.3)' : 'none'
+                         }}
+                      >
+                        {log.intensity || (log.status === 'blocked' ? 'Mitigated' : 'Settled')}
+                      </span>
+                      {log.intensity === 'BLOCKED' && (
+                         <motion.div 
+                            animate={{ opacity: [0.3, 0.7, 0.3] }}
+                            transition={{ duration: 1, repeat: Infinity }}
+                            style={{ position: 'absolute', top: '-4px', right: '-4px', width: '8px', height: '8px', background: '#EF4444', borderRadius: '50%' }}
+                         />
+                      )}
+                    </div>
                   </td>
                   <td>
                     <div style={{ display: 'flex', flexDirection: 'column' }}>

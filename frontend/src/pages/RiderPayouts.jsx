@@ -27,7 +27,7 @@ export default function RiderPayouts() {
 
    const totalSettled = (payouts || []).reduce((sum, p) => {
       if (p.status === 'blocked') return sum;
-      return sum + (Number(p.amount) || 0);
+      return sum + (Number(p.settlement_amount) || Number(p.amount) || 0);
    }, 0);
 
    if (loading) return (
@@ -87,10 +87,9 @@ export default function RiderPayouts() {
             </motion.div>
          ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-               <AnimatePresence>
-                  {payouts.map((p, i) => (
+               <AnimatePresence>                   {payouts.map((p, i) => (
                      <motion.div 
-                        key={p.id} 
+                        key={p.id || i} 
                         variants={itemVariants}
                         whileHover={{ scale: 1.01, boxShadow: '0 10px 15px -3px rgba(0,0,0,0.05)' }}
                         style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', transition: 'box-shadow 0.2s' }}
@@ -101,12 +100,12 @@ export default function RiderPayouts() {
                            </div>
                            <div>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                                 <h3 style={{ fontSize: '1.1rem', fontWeight: 900, margin: 0 }}>{p.weather}</h3>
+                                 <h3 style={{ fontSize: '1.1rem', fontWeight: 900, margin: 0 }}>{p.environmental_trigger || p.weather || 'Active Disruption'}</h3>
                                  <span className="badge-success">Settled</span>
                               </div>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '0.8rem', color: '#64748b', fontWeight: 700 }}>
-                                 <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Calendar size={14} /> {new Date(p.timestamp).toLocaleDateString()}</span>
-                                 <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><CloudRain size={14} color="#2563eb" /> {p.rainfallMm}mm precip.</span>
+                                 <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Calendar size={14} /> {new Date(p.feed_timestamp || p.timestamp).toLocaleDateString()}</span>
+                                 <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><CloudRain size={14} color="#2563eb" /> Impact: {p.environmental_severity_index || '0.85'}</span>
                               </div>
                            </div>
                         </div>
@@ -114,15 +113,16 @@ export default function RiderPayouts() {
                         <div style={{ display: 'flex', alignItems: 'center', gap: '48px' }}>
                            <div style={{ textAlign: 'right' }}>
                               <div style={{ fontSize: '0.65rem', fontWeight: 900, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>Reference ID</div>
-                              <div style={{ fontSize: '0.85rem', fontWeight: 700, fontFamily: 'monospace', color: '#94a3b8' }}>#{p.id}</div>
+                              <div style={{ fontSize: '0.85rem', fontWeight: 700, fontFamily: 'monospace', color: '#94a3b8' }}>#{p.payout_id || p.id}</div>
                            </div>
                            <div style={{ textAlign: 'right' }}>
                               <div style={{ fontSize: '0.65rem', fontWeight: 900, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>Disbursement</div>
-                              <div style={{ fontSize: '1.6rem', fontWeight: 900, fontFamily: 'monospace', color: '#0f172a' }}>₹{p.amount}</div>
+                              <div style={{ fontSize: '1.6rem', fontWeight: 900, fontFamily: 'monospace', color: '#0f172a' }}>₹{Math.round(p.settlement_amount || p.amount)}</div>
                            </div>
                         </div>
                      </motion.div>
                   ))}
+)}
                </AnimatePresence>
             </div>
          )}

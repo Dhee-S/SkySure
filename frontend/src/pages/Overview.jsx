@@ -21,39 +21,50 @@ export default function Overview() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  const fetchStats = async (isQuiet = false) => {
+    if (!isQuiet) setLoading(true);
+    try {
+      const stats = await dataService.getDashboardStats();
+      const riderList = await dataService.getRiders();
+
+      setData(stats);
+
+      // Map live riders to spotlight (High Risk, Probation, or Blocked)
+      const highRisk = riderList.filter(r => 
+        (r.risk?.level === 'High') || 
+        (r.status === 'BLOCKED') || 
+        (r.probationary_tier === true)
+      );
+      setSpotlightRiders(highRisk.slice(0, 5));
+
+      // Fetch real payout feed from backend
+      const recentPayouts = await dataService.getPayouts();
+      setPayouts(recentPayouts.slice(0, 5));
+
+      // Generate Risk vs Efficiency temporal trend for the chart
+      const baseTrust = parseFloat(stats.avgTrustScore || 75);
+      const baseRisk = parseFloat(stats.highRiskRiders || 0);
+      
+      const trend = Array.from({length: 12}).map((_, i) => ({
+          time: `${i*2}h ago`,
+          Trust: Math.max(0, Math.min(100, baseTrust + (Math.random() * 10 - 5))),
+          RiskProfile: Math.max(0, baseRisk + (Math.random() * 4 - 2))
+      })).reverse();
+      setChartData(trend);
+    } catch (err) {
+      console.error('Fetch error:', err);
+    }
+    if (!isQuiet) setLoading(false);
+  };
+
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const stats = await dataService.getDashboardStats();
-        const riderList = await dataService.getRiders();
-
-        setData(stats);
-
-        // Map live riders to spotlight
-        const highRisk = riderList.filter(r => r.risk?.level === 'High');
-        setSpotlightRiders(highRisk.slice(0, 5));
-
-        // Fetch real payout feed from backend
-        const recentPayouts = await dataService.getPayouts();
-        setPayouts(recentPayouts.slice(0, 5));
-
-        // Generate Risk vs Efficiency temporal trend for the chart
-        const baseTrust = parseFloat(stats.avgTrustScore || 75);
-        const baseRisk = parseFloat(stats.highRiskRiders || 0);
-        
-        const trend = Array.from({length: 12}).map((_, i) => ({
-            time: `${i*2}h ago`,
-            Trust: Math.max(0, Math.min(100, baseTrust + (Math.random() * 10 - 5))),
-            RiskProfile: Math.max(0, baseRisk + (Math.random() * 4 - 2))
-        })).reverse();
-        setChartData(trend);
-
-        setLoading(false);
-      } catch (err) {
-        console.error('Fetch error:', err);
-      }
-    };
     fetchStats();
+    
+    const interval = setInterval(() => {
+      fetchStats(true);
+    }, 15000); // 15s refresh for oversight
+    
+    return () => clearInterval(interval);
   }, []);
 
   if (loading) return (
