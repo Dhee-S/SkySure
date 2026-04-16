@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Shield, Lock, ArrowRight, ShieldCheck, Zap } from 'lucide-react';
+import { signOut } from 'firebase/auth';
+import { auth } from '../firebase';
 import '../styles/landing.css';
 
 export default function Exit() {
@@ -112,7 +114,10 @@ export default function Exit() {
             transition={{ delay: 0.2 }}
           >
             <button 
-              onClick={() => navigate('/')}
+              onClick={() => {
+                localStorage.clear();
+                window.location.href = '/';
+              }}
               className="btn btn-primary"
               style={{ width: '100%', padding: '16px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', fontWeight: 800 }}
             >
@@ -120,7 +125,10 @@ export default function Exit() {
             </button>
             
             <button 
-              onClick={() => navigate('/login')}
+              onClick={() => {
+                localStorage.clear();
+                window.location.href = '/login';
+              }}
               style={{ 
                 marginTop: '16px',
                 background: 'transparent',

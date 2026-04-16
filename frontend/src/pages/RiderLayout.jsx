@@ -5,6 +5,8 @@ import {
   Shield, CreditCard, Activity,
   LogOut, ChevronDown, Zap
 } from 'lucide-react';
+import { signOut } from 'firebase/auth';
+import { auth } from '../firebase';
 
 export default function RiderLayout() {
   const [riders, setRiders] = useState([]);
@@ -14,8 +16,14 @@ export default function RiderLayout() {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    localStorage.removeItem('skysure_mock_user');
-    navigate('/exit');
+    try {
+      localStorage.removeItem('skysure_mock_user');
+      await signOut(auth);
+      navigate('/exit');
+    } catch (error) {
+      console.error("Logout failed:", error);
+      navigate('/exit');
+    }
   };
 
   useEffect(() => {
