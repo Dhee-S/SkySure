@@ -63,7 +63,7 @@ export default function RiderRegistration() {
       } else if (error.code === 'auth/popup-blocked') {
         msg = "ERROR: Browser blocked the popup. Please enable popups for this site.";
       }
-      alert(`${msg} (${error.code})`);
+      alert(`${msg} (${error.code})\n\nCURRENT DOMAIN: ${window.location.hostname}\n(Please ensure this EXACT hostname is added to 'Authorized Domains' in Firebase console)`);
     } finally {
       setLoading(false);
     }
