@@ -64,3 +64,12 @@ test_results/
 frontend/test_results/
 backend/build_error.log
 frontend/nul
+
+# ML & Security (v5)
+*.csv
+ml/data/
+ml/models/
+!api-python/src/models/fraud_model.joblib
+ml/results/*.png
+log_*.txt
+*.log
