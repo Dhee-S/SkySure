@@ -45,26 +45,29 @@ export default function RiderLayout() {
         try {
           const mockUser = JSON.parse(mockUserStr);
           foundRider = ridersList.find(r => r.id === mockUser.uid || r.rider_id === mockUser.uid);
+          
+          if (!foundRider) {
+            // New user not in verified registry - use auth data
+            foundRider = {
+              id: mockUser.uid,
+              rider_id: mockUser.uid,
+              name: mockUser.name || mockUser.displayName || 'Anonymous Partner',
+              email: mockUser.email,
+              city: 'Unconfigured',
+              tier: 'No Policy',
+              active_policy: false,
+              is_new_node: true
+            };
+            setIsProfileIncomplete(true);
+          } else {
+            setIsProfileIncomplete(false);
+          }
         } catch (e) {
           console.error('Failed to parse mock user:', e);
         }
       }
 
-      if (foundRider) {
-        setSelectedRider(foundRider);
-        setIsProfileIncomplete(false);
-      } else {
-        // No profile in DB
-        setIsProfileIncomplete(true);
-        // Provide a placeholder rider for the UI to use
-        setSelectedRider({ 
-          name: 'Anonymous Partner', 
-          city: 'Unconfigured',
-          tier: 'No Policy',
-          active_policy: false 
-        });
-      }
-      
+      setSelectedRider(foundRider);
       setLoading(false);
     }
     load();

@@ -77,49 +77,40 @@ export default function App() {
       }
     } catch (err) {
       console.error("Mock auth parsing failed:", err);
-      localStorage.removeItem('skysure_mock_user');
-    }
-    return false;
-  };
-
   useEffect(() => {
-    const hasMock = handleAuthUpdate();
-
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      if (!localStorage.getItem('skysure_mock_user')) {
-        setUser(currentUser);
-        if (currentUser) {
-          try {
-            const { doc, getDoc, getFirestore } = await import('firebase/firestore');
-            const { app } = await import('./firebase');
-            const db = getFirestore(app);
-            const userSnap = await getDoc(doc(db, 'users', currentUser.uid));
-            
-            let role = 'rider';
-            let userData = { uid: currentUser.uid, email: currentUser.email };
+      setUser(currentUser);
+      if (currentUser) {
+        setLoading(true);
+        try {
+          const { doc, getDoc, getFirestore } = await import('firebase/firestore');
+          const { app } = await import('./firebase');
+          const db = getFirestore(app);
+          const userSnap = await getDoc(doc(db, 'users', currentUser.uid));
+          
+          let role = 'rider';
+          let userData = { uid: currentUser.uid, email: currentUser.email };
 
-            if (userSnap.exists()) {
-              const data = userSnap.data();
-              role = data.role || 'rider';
-              userData = { ...userData, ...data };
-            } else {
-              role = currentUser.email?.toLowerCase().includes('admin') ? 'admin' : 'rider';
-              userData.role = role;
-            }
-
-            setUserRole(role);
-            localStorage.setItem('skysure_mock_user', JSON.stringify(userData));
-          } catch (err) {
-            console.error("Profile sync error:", err);
-            setUserRole('rider');
+          if (userSnap.exists()) {
+            const data = userSnap.data();
+            role = data.role || 'rider';
+            userData = { ...userData, ...data };
+          } else {
+            role = currentUser.email?.toLowerCase().includes('admin') ? 'admin' : 'rider';
+            userData.role = role;
           }
-        } else {
-          setUserRole(null);
+
+          setUserRole(role);
+          localStorage.setItem('skysure_mock_user', JSON.stringify(userData));
+        } catch (err) {
+          console.error("Profile sync error:", err);
+          setUserRole('rider');
+        } finally {
+          setLoading(false);
         }
-        setLoading(false);
       } else {
-        // Even if we have a mock, sync the raw firebase user object
-        if (currentUser) setUser(prev => ({ ...prev, ...currentUser }));
+        setUserRole(null);
+        localStorage.removeItem('skysure_mock_user');
         setLoading(false);
       }
     });

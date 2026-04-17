@@ -80,10 +80,20 @@ export default function RiderPayouts() {
          </motion.header>
 
          {payouts.length === 0 ? (
-            <motion.div variants={itemVariants} className="sim-launch-card">
-               <div className="sim-launch-icon"><Zap size={32} /></div>
-               <h3 style={{ fontSize: '1.25rem', fontWeight: 900, marginBottom: '8px' }}>No Events Detected</h3>
-               <p style={{ color: '#64748b', fontSize: '0.9rem' }}>Your node is active. Payouts trigger automatically during qualifying events.</p>
+            <motion.div variants={itemVariants} className="sim-launch-card" style={{ background: 'rgba(255,255,255,0.4)', border: '1px dashed #cbd5e1' }}>
+               <div className="sim-launch-icon" style={{ background: '#f8fafc', color: '#3b82f6' }}>
+                  <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ repeat: Infinity, duration: 2 }}>
+                     <Zap size={32} />
+                  </motion.div>
+               </div>
+               <h3 style={{ fontSize: '1.25rem', fontWeight: 900, marginBottom: '8px', color: '#1e293b' }}>Active Telemetry Monitoring</h3>
+               <p style={{ color: '#64748b', fontSize: '0.9rem', maxWidth: '400px', margin: '0 auto' }}>
+                  Your partner node is synced with the SkySure grid. Payouts will trigger automatically during qualifying weather disruptions.
+               </p>
+               <div style={{ marginTop: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontSize: '0.7rem', fontWeight: 800, color: '#3b82f6', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                  <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#3b82f6', boxShadow: '0 0 8px #3b82f6' }} />
+                  Live Feed Status: NOMINAL
+               </div>
             </motion.div>
          ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>

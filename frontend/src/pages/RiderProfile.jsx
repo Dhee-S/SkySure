@@ -44,14 +44,15 @@ export default function RiderProfile() {
 
         setLoading(true);
         try {
+            const { setDoc } = await import('firebase/firestore');
             const userRef = doc(db, 'users', rider.id);
-            await updateDoc(userRef, {
+            await setDoc(userRef, {
                 name: formData.name,
                 city: formData.city,
                 partner_app: formData.partnerApp,
                 phone: formData.phone,
-                // email usually immutable from auth side
-            });
+                updated_at: new Date().toISOString()
+            }, { merge: true });
             showToast("Profile identity synchronized successfully.", "success");
         } catch (err) {
             console.error("Profile update error:", err);
