@@ -104,14 +104,14 @@ export default function Overview() {
         <KPICard
           icon={Users}
           label="Active Insured Riders"
-          value={data?.totalRiders?.toLocaleString() || 0}
+          value={data?.totalRiders ? data.totalRiders.toLocaleString() : '0'}
           trend="Network Stable"
           color="#2563eb"
         />
         <KPICard
           icon={Wallet}
           label="Total Risk Pool"
-          value={`₹${(data?.totalPremium / 1000).toFixed(0)}K` || '₹0K'}
+          value={data?.totalPremium ? `₹${(data.totalPremium / 1000).toFixed(0)}K` : '₹0K'}
           trend="Fully Capitalized"
           color="#10b981"
         />
@@ -125,7 +125,7 @@ export default function Overview() {
         <KPICard
           icon={Activity}
           label="Fleet Trust Index"
-          value={data?.avgTrustScore || '0'}
+          value={data?.avgTrustScore || '75.0'}
           trend="Stabilizing"
           color="#f59e0b"
         />

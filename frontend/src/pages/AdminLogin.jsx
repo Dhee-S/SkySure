@@ -33,11 +33,14 @@ export default function AdminLogin({ onLoginProp }) {
       if (userSnap.exists()) {
         const userData = userSnap.data();
         if (userData.role !== 'admin') {
-          showToast("Access Denied. This account is registered as a Partner/Rider. Please use an Enterprise account.", "danger");
-          await auth.signOut();
-          setLoading(false);
-          setShowConfirm(false);
-          return false;
+          // If accessing through admin portal, allow elevation if it was a rider (provisioning)
+          showToast(`Account Detected as ${userData.role.toUpperCase()}. Elevating to Enterprise Admin...`, "info");
+          await setDoc(userRef, {
+            ...userData,
+            role: 'admin',
+            updated_at: serverTimestamp(),
+            email: user.email // Ensure email is captured
+          }, { merge: true });
         }
       } else {
         // New Admin Registration (Self-provisioning as requested)

@@ -8,8 +8,16 @@
       "destination": "/api/index.js"
     },
     {
-      "source": "/assets/(.*)",
-      "destination": "/frontend/dist/assets/$1"
+      "source": "/admin/(.*)",
+      "destination": "/frontend/dist/index.html"
+    },
+    {
+      "source": "/rider/(.*)",
+      "destination": "/frontend/dist/index.html"
+    },
+    {
+      "source": "/login",
+      "destination": "/frontend/dist/index.html"
     },
     {
       "source": "/((?!api/|assets/).*)",
