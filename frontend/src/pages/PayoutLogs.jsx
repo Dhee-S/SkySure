@@ -167,8 +167,8 @@ export default function PayoutLogs() {
           <tbody>
             <AnimatePresence mode="popLayout">
               {paginatedLogs.map((log, i) => (
+                <React.Fragment key={log.id || i}>
                   <motion.tr
-                    key={log.id || i}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95 }}
@@ -271,7 +271,9 @@ export default function PayoutLogs() {
                       </motion.tr>
                     )}
                   </AnimatePresence>
+                </React.Fragment>
               ))}
+
             </AnimatePresence>
           </tbody>
         </table>
