@@ -111,20 +111,23 @@ export default function Simulation() {
    const [isLiveMode, setIsLiveMode] = useState(false);
    const [autoMode, setAutoMode] = useState(false);
    
-   const [simulating, setSimulating] = useState(false);
-   const [loadingStage, setLoadingStage] = useState(0);
-   const [results, setResults] = useState(null);
-   const [expandedId, setExpandedId] = useState(null);
-   const [filter, setFilter] = useState('All');
-   
-   const [weatherLoading, setWeatherLoading] = useState(false);
-   const [cityWeather, setCityWeather] = useState(null);
-   const [liveQueue, setLiveQueue] = useState([]); // Active Ingestion Pulse
-   const [processedHistory, setProcessedHistory] = useState([]); // Validated Ledger
-   
-   const [isSyncing, setIsSyncing] = useState(false);
-   const [lastSyncTime, setLastSyncTime] = useState(null);
-   const [countdown, setCountdown] = useState(0);
+    const [simulating, setSimulating] = useState(false);
+    const [isPaused, setIsPaused] = useState(false);
+    const [loadingStage, setLoadingStage] = useState(0);
+    const [results, setResults] = useState(null);
+    const [expandedId, setExpandedId] = useState(null);
+    const [filter, setFilter] = useState('All');
+    
+    const [weatherLoading, setWeatherLoading] = useState(false);
+    const [cityWeather, setCityWeather] = useState(null);
+    const [liveQueue, setLiveQueue] = useState([]); // Active Ingestion Pulse
+    const [processedHistory, setProcessedHistory] = useState([]); // Validated Ledger
+    
+    const [isSyncing, setIsSyncing] = useState(false);
+    const [lastSyncTime, setLastSyncTime] = useState(null);
+    const [countdown, setCountdown] = useState(0);
+    const [auditLog, setAuditLog] = useState([]); // Real-time model checking log
+
 
    const cities = ['Chennai', 'Coimbatore', 'Salem', 'Madurai', 'Trichy'];
 
@@ -178,44 +181,61 @@ export default function Simulation() {
       }
    }
 
-   async function executeEngineRun() {
-      setSimulating(true);
-      setLoadingStage(0);
-      setResults(null);
-      setLiveQueue([]);
-      setProcessedHistory([]);
-      setExpandedId(null);
+    async function executeEngineRun() {
+        setSimulating(true);
+        setIsPaused(false);
+        setLoadingStage(0);
+        setResults(null);
+        setLiveQueue([]);
+        setProcessedHistory([]);
+        setExpandedId(null);
+        setAuditLog([]);
 
-      // UI Sequential Loading
-      for (let i = 0; i < 4; i++) {
-         setLoadingStage(i);
-         await new Promise(r => setTimeout(r, 800));
-      }
+        // UI Sequential Loading
+        for (let i = 0; i < 4; i++) {
+            setLoadingStage(i);
+            await new Promise(r => setTimeout(r, 600));
+        }
 
-      try {
-         const data = await dataService.runSimulation({ 
-            location, 
-            mode: isStressMode ? 'STRESS' : 'NORMAL' 
-         });
+        try {
+            const data = await dataService.runSimulation({ 
+                location, 
+                mode: isStressMode ? 'STRESS' : 'NORMAL' 
+            });
 
-         if (data && data.nodes) {
-            setResults(data);
-            
-            // PULSE INGESTION SEQUENCE
-            for (let i = 0; i < data.nodes.length; i++) {
-               const node = data.nodes[i];
-               setLiveQueue([node]); // Flash in "Active Ingestion"
-               await new Promise(r => setTimeout(r, 1500)); // Visible ingestion period
-               setProcessedHistory(prev => [node, ...prev]); // Commit to historical ledger
+            if (data && data.nodes) {
+                setResults(data);
+                
+                // PULSE INGESTION SEQUENCE (Controlled Slower Cadence)
+                for (let i = 0; i < data.nodes.length; i++) {
+                    const node = data.nodes[i];
+                    
+                    // Pause Lock
+                    while (isPaused) {
+                        await new Promise(r => setTimeout(r, 500));
+                    }
+
+                    setLiveQueue([node]); 
+                    
+                    // Simulate Model Heuristic Passes
+                    const checks = node.heuristicChecks || [];
+                    for (const check of checks) {
+                        setAuditLog(prev => [...prev.slice(-4), { ...check, timestamp: new Date().toLocaleTimeString() }]);
+                        await new Promise(r => setTimeout(r, 800)); // Show each check
+                    }
+
+                    await new Promise(r => setTimeout(r, 2000)); // Final look at node
+                    setProcessedHistory(prev => [node, ...prev]); 
+                }
+                setLiveQueue([]);
             }
-            setLiveQueue([]);
-         }
-      } catch (err) {
-         console.error("Simulation Fault:", err);
-      } finally {
-         setSimulating(false);
-      }
-   }
+        } catch (err) {
+            console.error("Simulation Fault:", err);
+        } finally {
+            setSimulating(false);
+        }
+    }
+
 
    const syncToLedger = async () => {
       setIsSyncing(true);
@@ -239,10 +259,10 @@ export default function Simulation() {
             <div style={{ display: 'flex', alignItems: 'center', flex: 1, gap: '1.5rem' }}>
                <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <span style={{ fontSize: '0.6rem', fontWeight: 800, color: '#3B82F6', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
-                     Live Resilience Feed node
+                     Risk Lab / Resilience Monitor
                   </span>
                   <span className="city-title neural-trace-text" style={{ fontSize: '1.4rem', fontWeight: 900, letterSpacing: '-0.02em', margin: '2px 0 8px 0' }}>
-                     {location} Regional Ingestion
+                     {location} Ingestion Pulse
                   </span>
                   <div className="location-pills" style={{ display: 'flex', gap: '8px' }}>
                      {cities.map(c => (
@@ -251,43 +271,44 @@ export default function Simulation() {
                   </div>
                </div>
 
-               <div style={{ width: '1px', height: '48px', background: 'rgba(226, 232, 240, 0.5)' }} />
+               <div style={{ width: '1px', height: '40px', background: 'rgba(226, 232, 240, 0.5)' }} />
 
-               <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-                  <WeatherMetricItem label="Temp" value={`${cityWeather?.temp || '--'}°`} Icon={Sun} color="#F59E0B" />
-                  <WeatherMetricItem label="Wind" value={`${cityWeather?.wind || '--'}km/h`} Icon={Wind} color="#3B82F6" />
-                  <WeatherMetricItem label="Precip" value={`${cityWeather?.rain || '0'}mm`} Icon={Droplets} color="#0EA5E9" />
+               <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+                  <WeatherMetricItem label="Condition" value={cityWeather?.rain > 0 ? 'Stormy' : 'Nominal'} Icon={Droplets} color="#0EA5E9" />
                </div>
 
-               <button onClick={fetchCityWeather} className={`${weatherLoading ? 'animate-spin' : ''}`} style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: '#CBD5E1', marginLeft: '24px' }}>
-                  <RefreshCw size={16} />
-               </button>
-
-               <div style={{ width: '1px', height: '48px', background: 'rgba(226, 232, 240, 0.5)', marginLeft: '1rem' }} />
+               <div style={{ width: '1px', height: '40px', background: 'rgba(226, 232, 240, 0.5)', marginLeft: '1rem' }} />
 
                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginLeft: '1rem' }}>
-                    <div className="switch-group" style={{ display: 'flex', background: 'rgba(241, 245, 249, 0.8)', padding: '4px', borderRadius: '10px' }}>
-                        <button onClick={() => setIsStressMode(!isStressMode)} className={`pill-btn-mini ${isStressMode ? 'active' : ''}`} style={{ border: 'none' }}>Stress Mode</button>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: autoMode ? 'rgba(16, 185, 129, 0.1)' : '#F1F5F9', padding: '6px 12px', borderRadius: '10px', border: `1px solid ${autoMode ? '#10B981' : 'transparent'}` }}>
-                        <Zap size={14} color={autoMode ? '#10B981' : '#64748B'} />
-                        <span style={{ fontSize: '0.65rem', fontWeight: 800, color: autoMode ? '#059669' : '#64748B' }}>{autoMode ? `AUTO: ${countdown}s` : 'MANUAL'}</span>
-                        <button onClick={() => setAutoMode(!autoMode)} style={{ width: '28px', height: '14px', borderRadius: '10px', background: autoMode ? '#10B981' : '#CBD5E1', border: 'none', cursor: 'pointer', position: 'relative' }}>
-                            <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'white', position: 'absolute', left: autoMode ? '16px' : '2px', top: '2px', transition: 'all 0.2s' }} />
-                        </button>
-                    </div>
+                    {simulating && (
+                        <div style={{ display: 'flex', gap: '8px', background: 'white', padding: '4px', borderRadius: '10px', border: '1px solid #E2E8F0 shadow-sm' }}>
+                            <button 
+                                onClick={() => setIsPaused(!isPaused)} 
+                                className="pill-btn-mini" 
+                                style={{ 
+                                    background: isPaused ? '#10B981' : '#F59E0B', 
+                                    color: 'white', 
+                                    border: 'none',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '4px',
+                                    padding: '6px 14px'
+                                }}
+                            >
+                                {isPaused ? <Play size={12} fill="currentColor" /> : <Activity size={12} />}
+                                {isPaused ? 'RESUME FEED' : 'PAUSE FEED'}
+                            </button>
+                        </div>
+                    )}
                </div>
 
                <div style={{ marginLeft: 'auto', display: 'flex', gap: '12px' }}>
-                  <button onClick={syncToLedger} disabled={isSyncing || processedHistory.length === 0} className="trigger-btn-primary" style={{ padding: '8px 20px', fontSize: '0.75rem', background: '#3B82F6', border: 'none', borderRadius: '10px', display: 'flex', gap: '8px', opacity: processedHistory.length === 0 ? 0.5 : 1 }}>
-                     {isSyncing ? <RefreshCw size={14} className="animate-spin" /> : <Database size={14} />} 
-                     {isSyncing ? 'Syncing...' : 'Commit to Ledger'}
-                  </button>
                   <button onClick={() => navigate('/client/overview')} style={{ background: 'transparent', border: '1px solid #E2E8F0', padding: '8px', borderRadius: '10px' }}>
                      <X size={16} />
                   </button>
                </div>
             </div>
+
          </motion.div>
 
          <AnimatePresence mode="wait">
@@ -311,68 +332,80 @@ export default function Simulation() {
             ) : (
                <div className="results-view" style={{ display: 'grid', gridTemplateColumns: '380px 1fr', gap: '2rem', alignItems: 'start' }}>
                   
-                  {/* LEFT: ACTIVE INGESTION / STATS */}
-                  <div className="sidebar-controls" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                     
-                     <div style={{ background: 'white', borderRadius: '20px', padding: '24px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
-                           <Terminal size={18} color="#3B82F6" />
-                           <span style={{ fontSize: '0.7rem', fontWeight: 900, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Signal Ingestion</span>
-                        </div>
-                        
-                        <AnimatePresence mode="wait">
-                           {liveQueue.length > 0 ? (
-                              <motion.div 
-                                 key={liveQueue[0].id}
-                                 initial={{ opacity: 0, x: -20 }}
-                                 animate={{ opacity: 1, x: 0 }}
-                                 exit={{ opacity: 0, x: 20 }}
-                                 className="ingestion-pulsing-card"
-                                 style={{ padding: '20px', borderRadius: '16px', background: 'linear-gradient(135deg, #EFF6FF 0%, #D8E7FF 100%)', border: '1px solid #BFDBFE' }}
-                              >
-                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                       <Activity size={16} color="#3B82F6" className="animate-pulse" />
-                                       <span style={{ fontWeight: 900, fontSize: '1rem' }}>{liveQueue[0].id}</span>
-                                    </div>
-                                    <span style={{ fontSize: '0.65rem', fontWeight: 800, color: '#3B82F6', background: 'white', padding: '4px 8px', borderRadius: '6px' }}>AUDITING...</span>
-                                 </div>
-                                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
-                                    <TriggerCard label="Rain" value={liveQueue[0].signals?.heavyRain?.value} unit="mm" active={liveQueue[0].signals?.heavyRain?.active} threshold={liveQueue[0].signals?.heavyRain?.threshold} />
-                                    <TriggerCard label="Wind" value={liveQueue[0].signals?.highWind?.value} unit="km" active={liveQueue[0].signals?.highWind?.active} threshold={liveQueue[0].signals?.highWind?.threshold} />
-                                 </div>
-                              </motion.div>
-                           ) : (
-                              <div style={{ padding: '32px 20px', textAlign: 'center', background: '#F8FAFC', borderRadius: '16px', border: '1px dashed #E2E8F0' }}>
-                                 <span style={{ fontSize: '0.7rem', color: '#94A3B8', fontWeight: 700 }}>{simulating ? 'AWAITING NODE PULSE...' : 'INGESTION COMPLETE'}</span>
-                              </div>
-                           )}
-                        </AnimatePresence>
-                     </div>
+                   {/* LEFT: FRAUD INTELLIGENCE CONSOLE */}
+                   <div className="sidebar-controls" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                      
+                      <div style={{ background: 'white', borderRadius: '20px', padding: '24px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
+                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                               <Microscope size={18} color="#3B82F6" />
+                               <span style={{ fontSize: '0.7rem', fontWeight: 900, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Fraud Intel Console</span>
+                            </div>
+                            {isPaused && <div className="pulse-dot" style={{ background: '#F59E0B' }} />}
+                         </div>
+                         
+                         <div className="audit-log-sequence" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            <AnimatePresence mode="popLayout">
+                               {auditLog.length > 0 ? (
+                                  auditLog.map((log, i) => (
+                                     <motion.div 
+                                        key={`${log.label}-${i}`}
+                                        initial={{ opacity: 0, x: -10 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        className={`audit-log-item ${log.status}`}
+                                        style={{ 
+                                            display: 'flex', 
+                                            alignItems: 'start', 
+                                            gap: '12px', 
+                                            padding: '12px', 
+                                            borderRadius: '12px', 
+                                            background: log.status === 'fail' ? '#FEF2F2' : (log.status === 'warn' ? '#FFFBEB' : '#F0FDF4'),
+                                            border: `1px solid ${log.status === 'fail' ? '#FEE2E2' : (log.status === 'warn' ? '#FEF3C7' : '#DCFCE7')}`
+                                        }}
+                                     >
+                                        <div style={{ color: log.status === 'fail' ? '#EF4444' : (log.status === 'warn' ? '#F59E0B' : '#22C55E'), marginTop: '2px' }}>
+                                           {log.status === 'fail' ? <AlertTriangle size={14} /> : (log.status === 'warn' ? <ShieldAlert size={14} /> : <ShieldCheck size={14} />)}
+                                        </div>
+                                        <div style={{ flex: 1 }}>
+                                           <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#1E293B' }}>{log.label}</div>
+                                           <div style={{ fontSize: '0.6rem', color: '#64748B', fontWeight: 600 }}>{log.detail}</div>
+                                        </div>
+                                        <span style={{ fontSize: '0.55rem', opacity: 0.4, fontWeight: 700 }}>{log.timestamp}</span>
+                                     </motion.div>
+                                  ))
+                               ) : (
+                                  <div style={{ padding: '40px 20px', textAlign: 'center', opacity: 0.5 }}>
+                                     <Activity size={24} color="#94A3B8" style={{ margin: '0 auto 12px' }} className="animate-pulse" />
+                                     <span style={{ fontSize: '0.65rem', fontWeight: 700 }}>AWAITING HEURISTIC PULSE...</span>
+                                  </div>
+                                )}
+                            </AnimatePresence>
+                         </div>
+                      </div>
 
-                     <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
-                        <div style={{ background: '#1E293B', borderRadius: '20px', padding: '20px', color: 'white', position: 'relative', overflow: 'hidden' }}>
-                           <div style={{ position: 'absolute', top: '-10px', right: '-10px', opacity: 0.1 }}><Layers size={80} /></div>
-                           <span style={{ fontSize: '0.65rem', fontWeight: 700, opacity: 0.6, textTransform: 'uppercase' }}>Batch Resilience</span>
-                           <div style={{ fontSize: '1.8rem', fontWeight: 900, marginTop: '4px' }}>
-                              {processedHistory.length > 0 
-                                 ? `${Math.round((processedHistory.filter(n => n.payout?.status === 'APPROVED').length / processedHistory.length) * 100)}%` 
-                                 : '--'}
-                           </div>
-                           <span style={{ fontSize: '0.65rem', fontWeight: 600, opacity: 0.6 }}>Operational Stability Index</span>
-                        </div>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                           <div style={{ background: 'white', borderRadius: '15px', padding: '16px', border: '1px solid #E2E8F0' }}>
-                              <span style={{ fontSize: '0.6rem', color: '#64748B', display: 'block' }}>AUDITED</span>
-                              <span style={{ fontSize: '1.2rem', fontWeight: 900 }}>{processedHistory.length}</span>
-                           </div>
-                           <div style={{ background: 'white', borderRadius: '15px', padding: '16px', border: '1px solid #E2E8F0' }}>
-                              <span style={{ fontSize: '0.6rem', color: '#64748B', display: 'block' }}>APPROVED</span>
-                              <span style={{ fontSize: '1.2rem', fontWeight: 900, color: '#10B981' }}>{processedHistory.filter(n => n.payout?.status === 'APPROVED').length}</span>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
+                      <div style={{ background: '#1E293B', borderRadius: '20px', padding: '24px', color: 'white' }}>
+                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+                            <div>
+                               <span style={{ fontSize: '0.65rem', fontWeight: 700, opacity: 0.6, textTransform: 'uppercase' }}>Consolidated Risk</span>
+                               <div style={{ fontSize: '2rem', fontWeight: 900, marginTop: '4px' }}>
+                                  {processedHistory.length > 0 
+                                     ? `${Math.round((processedHistory.filter(n => n.payout?.status === 'APPROVED').length / processedHistory.length) * 100)}%` 
+                                     : '--'}
+                               </div>
+                            </div>
+                            <div style={{ background: 'rgba(255,255,255,0.1)', padding: '10px', borderRadius: '12px' }}>
+                               <Fingerprint size={24} />
+                            </div>
+                         </div>
+                         <div style={{ marginTop: '20px', height: '4px', background: 'rgba(255,255,255,0.1)', borderRadius: '2px' }}>
+                            <motion.div 
+                                initial={{ width: 0 }}
+                                animate={{ width: processedHistory.length > 0 ? `${(processedHistory.length / 10) * 100}%` : 0 }}
+                                style={{ height: '100%', background: '#3B82F6', borderRadius: '2px shadow-lg' }} 
+                            />
+                         </div>
+                      </div>
+                   </div>
 
                   {/* RIGHT: DETAILED VALIDATION LEDGER */}
                   <div className="validation-ledger" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -388,38 +421,66 @@ export default function Simulation() {
                         </div>
                      </div>
 
-                     <div className="table-container-executive" style={{ maxHeight: '600px', overflowY: 'auto', border: '1px solid #E2E8F0' }}>
-                        <table>
-                           <thead style={{ position: 'sticky', top: 0, zIndex: 10 }}>
-                              <tr>
-                                 <th>Verifed Identity</th>
-                                 <th>Audit Status</th>
-                                 <th style={{ textAlign: 'right' }}>Disbursement</th>
-                              </tr>
-                           </thead>
-                           <tbody>
-                              {filteredResults.map((r, idx) => (
-                                 <React.Fragment key={r.id}>
-                                    <tr className={`exec-row ${expandedId === r.id ? 'expanded' : ''}`} onClick={() => setExpandedId(expandedId === r.id ? null : r.id)}>
-                                       <td>
-                                          <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                             <span style={{ fontWeight: 800, color: '#1E293B', fontSize: '0.95rem' }}>{r.id}</span>
-                                             <span style={{ fontSize: '0.55rem', fontWeight: 900, color: '#94A3B8', letterSpacing: '0.1em' }}>{r.persona?.toUpperCase()}</span>
-                                          </div>
-                                       </td>
-                                       <td>
-                                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                             <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: r.payout?.status === 'APPROVED' ? '#10B981' : r.payout?.status === 'MITIGATED' ? '#F59E0B' : '#94A3B8' }} />
-                                             <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#64748B' }}>{r.payout?.status}</span>
-                                          </div>
-                                       </td>
-                                       <td style={{ textAlign: 'right' }}>
-                                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '10px' }}>
-                                             <span style={{ fontWeight: 900, color: '#1E293B' }}>₹{r.payout?.amount?.toLocaleString()}</span>
-                                             <ChevronDown size={14} style={{ opacity: 0.3, transform: expandedId === r.id ? 'rotate(180deg)' : 'none' }} />
-                                          </div>
-                                       </td>
-                                    </tr>
+                      <div className="table-container-executive" style={{ maxHeight: '600px', overflowY: 'auto', border: '1px solid #E2E8F0 shadow-sm', borderRadius: '16px' }}>
+                         <table>
+                            <thead style={{ position: 'sticky', top: 0, zIndex: 10 }}>
+                               <tr>
+                                  <th>Verified Identity</th>
+                                  <th>Trigger Cause</th>
+                                  <th>Audit Status</th>
+                                  <th style={{ textAlign: 'right' }}>Disbursement</th>
+                               </tr>
+                            </thead>
+                            <tbody>
+                               {filteredResults.map((r, idx) => (
+                                  <React.Fragment key={r.id}>
+                                     <tr className={`exec-row ${expandedId === r.id ? 'expanded' : ''}`} onClick={() => setExpandedId(expandedId === r.id ? null : r.id)}>
+                                        <td>
+                                           <div className="id-privacy-node" style={{ position: 'relative' }}>
+                                              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                                 <span style={{ fontWeight: 800, color: '#1E293B', fontSize: '0.95rem', fontFamily: 'monospace' }}>{r.id}</span>
+                                                 <span style={{ fontSize: '0.55rem', fontWeight: 900, color: '#94A3B8', letterSpacing: '0.1em' }}>{r.persona?.toUpperCase()}</span>
+                                              </div>
+                                              <div className="reveal-on-hover" style={{ 
+                                                  position: 'absolute', 
+                                                  left: 0, 
+                                                  top: '100%', 
+                                                  background: '#1E293B', 
+                                                  color: 'white', 
+                                                  padding: '4px 8px', 
+                                                  borderRadius: '6px', 
+                                                  fontSize: '0.65rem', 
+                                                  zIndex: 20,
+                                                  pointerEvents: 'none',
+                                                  opacity: 0,
+                                                  transition: 'opacity 0.2s'
+                                              }}>
+                                                  Full Name: {r.rider_name || `Partner ${r.id.slice(-4)}`}
+                                              </div>
+                                           </div>
+                                        </td>
+                                        <td>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                {r.payout?.status === 'APPROVED' ? <CloudRain size={14} color="#3B82F6" /> : <AlertTriangle size={14} color="#F59E0B" />}
+                                                <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#475569' }}>
+                                                    {r.payout?.status === 'APPROVED' ? 'Parametric Trigger' : (r.payout?.status === 'MITIGATED' ? 'Fraud Heuristic' : 'Nominal Baseline')}</span><br/><span style={{fontSize: '0.6rem', opacity: 0.6}}>Velocity: {r.velocity || '42km/h'}</span><span>
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                              <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: r.payout?.status === 'APPROVED' ? '#10B981' : r.payout?.status === 'MITIGATED' ? '#EF4444' : '#94A3B8' }} />
+                                              <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#64748B' }}>{r.payout?.status}</span>
+                                           </div>
+                                        </td>
+                                        <td style={{ textAlign: 'right' }}>
+                                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '10px' }}>
+                                              <span style={{ fontWeight: 900, color: '#1E293B' }}>₹{r.payout?.amount?.toLocaleString()}</span>
+                                              <ChevronDown size={14} style={{ opacity: 0.3, transform: expandedId === r.id ? 'rotate(180deg)' : 'none' }} />
+                                           </div>
+                                        </td>
+                                     </tr>
+
                                     <AnimatePresence>
                                        {expandedId === r.id && (
                                           <tr>

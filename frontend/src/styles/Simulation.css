@@ -1325,3 +1325,52 @@
         display: none;
     }
 }
+
+/* ============================================
+   NEW AUDIT & PRIVACY ENHANCEMENTS (V8.0)
+   ============================================ */
+
+.audit-log-item {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.audit-log-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.id-privacy-node:hover .reveal-on-hover {
+    opacity: 1 !important;
+    transform: translateY(5px) !important;
+}
+
+.pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: p-orange 1.5s infinite;
+}
+
+@keyframes p-orange {
+    0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+}
+
+.table-container-executive tr:hover .id-privacy-node .reveal-on-hover {
+    opacity: 0.8;
+}
+
+.audit-log-sequence::-webkit-scrollbar {
+    width: 4px;
+}
+
+.audit-log-sequence::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.audit-log-sequence::-webkit-scrollbar-thumb {
+    background: #E2E8F0;
+    border-radius: 10px;
+}

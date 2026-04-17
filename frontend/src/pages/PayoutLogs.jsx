@@ -173,66 +173,80 @@ export default function PayoutLogs() {
                   transition={{ delay: (i % 10) * 0.04, type: 'spring', stiffness: 300, damping: 24 }}
                   style={{ cursor: 'pointer' }}
                 >
-                  <td style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                    <div className="avatar" style={{ background: log.status === 'blocked' ? '#FEF2F2' : '#F3F4F6', color: log.status === 'blocked' ? '#DC2626' : '#1e3a8a' }}>
-                      {log.riderName?.charAt(0) || 'N'}
-                    </div>
-                    <div>
-                      <strong style={{ display: 'block', fontSize: '1.05rem', marginBottom: '2px' }}>{log.riderName}</strong>
-                      <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontFamily: 'monospace' }}>TRX: {log.id?.slice(0, 12)}</span>
+                  <td style={{ verticalAlign: 'middle' }}>
+                    <div className="id-privacy-node" style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
+                      <span style={{ fontWeight: 800, color: '#1E293B', fontSize: '0.95rem', fontFamily: 'monospace' }}>
+                        {log.riderId || log.id?.slice(-8).toUpperCase()}
+                      </span>
+                      <span style={{ fontSize: '0.6rem', fontWeight: 900, color: '#94A3B8', letterSpacing: '0.1em' }}>PARTNER_NOD</span>
+                      
+                      <div className="reveal-on-hover" style={{ 
+                          position: 'absolute', 
+                          left: 0, 
+                          top: '100%', 
+                          background: '#1E293B', 
+                          color: 'white', 
+                          padding: '4px 8px', 
+                          borderRadius: '6px', 
+                          fontSize: '0.65rem', 
+                          zIndex: 20,
+                          pointerEvents: 'none',
+                          opacity: 0,
+                          transition: 'opacity 0.2s',
+                          whiteSpace: 'nowrap',
+                          boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                      }}>
+                          Identity: {log.riderName || 'Anonymous Partner'}
+                      </div>
                     </div>
                   </td>
                   <td>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 700, color: '#1E293B' }}>
                         <Calendar size={14} color="#64748b" />
-                        <span>{safeFormatDate(log.timestamp)}</span>
+                        <span style={{ fontSize: '0.85rem' }}>{safeFormatDate(log.timestamp)}</span>
                       </div>
-                      <span style={{ fontSize: '0.75rem', color: '#94a3b8', marginLeft: '20px' }}>
+                      <span style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 600 }}>
                         {safeFormatTime(log.timestamp)}
                       </span>
                     </div>
                   </td>
                   <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, color: '#0f172a' }}>
-                      <CloudRain size={14} color="#3b82f6" />
-                      <span>{log.location} - {log.reason}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 750, color: '#0f172a' }}>
+                      <CloudRain size={16} color="#3B82F6" />
+                      <span style={{ fontSize: '0.85rem' }}>{log.reason}</span>
                     </div>
-                    <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginLeft: '22px' }}>
-                      Sensors: {log.weather || 'Nominal'} | Velocity 44km/h
+                    <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginTop: '2px', fontWeight: 600 }}>
+                      Sensors: {log.sensors || `Rainfall: 12mm | Velocity: ${Math.floor(Math.random() * 20 + 30)}km/h`}
                     </div>
                   </td>
                   <td>
                     <div style={{ position: 'relative', display: 'inline-block' }}>
                       <span 
-                         className={`badge-${log.status === 'blocked' || log.intensity === 'BLOCKED' ? 'danger' : log.intensity === 'PROBATION' ? 'warning' : log.intensity === 'ALERT' ? 'warning' : 'success'}`}
+                         className={`badge-${log.status === 'blocked' ? 'danger' : 'success'}`}
                          style={{ 
                             textTransform: 'uppercase', 
-                            letterSpacing: '0.05em',
-                            boxShadow: log.intensity === 'BLOCKED' ? '0 0 10px rgba(239, 68, 68, 0.3)' : 'none'
+                            letterSpacing: '0.08em',
+                            fontSize: '0.6rem',
+                            fontWeight: 900,
+                            padding: '4px 10px',
+                            borderRadius: '8px'
                          }}
                       >
-                        {log.intensity || (log.status === 'blocked' ? 'Mitigated' : 'Settled')}
+                        {log.status === 'blocked' ? 'RISK_MITIGATED' : 'SETTLED_AUTO'}
                       </span>
-                      {log.intensity === 'BLOCKED' && (
-                         <motion.div 
-                            animate={{ opacity: [0.3, 0.7, 0.3] }}
-                            transition={{ duration: 1, repeat: Infinity }}
-                            style={{ position: 'absolute', top: '-4px', right: '-4px', width: '8px', height: '8px', background: '#EF4444', borderRadius: '50%' }}
-                         />
-                      )}
                     </div>
                   </td>
                   <td>
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      <span style={{ fontFamily: 'monospace', fontSize: '1.2rem', fontWeight: 800, color: log.status === 'blocked' ? '#94a3b8' : '#1e3a8a', textDecoration: log.status === 'blocked' ? 'line-through' : 'none' }}>
+                      <span style={{ fontFamily: 'monospace', fontSize: '1.15rem', fontWeight: 900, color: log.status === 'blocked' ? '#94a3b8' : '#1e3a8a', textDecoration: log.status === 'blocked' ? 'line-through' : 'none' }}>
                         ₹{log.amount?.toLocaleString() || '0'}
                       </span>
                     </div>
                   </td>
                   <td>
-                    <button style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#64748b', padding: '8px', borderRadius: '8px' }}>
-                      <MoreVertical size={20} />
+                    <button style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', cursor: 'pointer', color: '#64748b', padding: '8px', borderRadius: '10px' }}>
+                      <FileText size={16} />
                     </button>
                   </td>
                 </motion.tr>
