@@ -21,6 +21,7 @@ const steps = [
 export default function RiderRegistration() {
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [displayText, setDisplayText] = useState('');
   const navigate = useNavigate();
   
   const [formData, setFormData] = useState({
@@ -40,6 +41,55 @@ export default function RiderRegistration() {
 
   const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 5));
   const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
+
+  // Terminal Typewriter Effect
+  useEffect(() => {
+    if (currentStep !== 1) return;
+
+    const sequence = [
+      { text: "INITIALIZING NODE...", delay: 50 },
+      { text: "ACCESSING GATEWAY...", delay: 40 },
+      { text: "IDENTITY VERIFIED: READY", delay: 30 }
+    ];
+
+    let currentIdx = 0;
+    let charIdx = 0;
+    let isDeleting = false;
+    let timeout;
+
+    const type = () => {
+      const fullText = sequence[currentIdx].text;
+      
+      if (!isDeleting) {
+        setDisplayText(fullText.substring(0, charIdx + 1));
+        charIdx++;
+
+        if (charIdx === fullText.length) {
+          if (currentIdx < sequence.length - 1) {
+            timeout = setTimeout(() => {
+              isDeleting = true;
+              type();
+            }, 1500);
+            return;
+          }
+        }
+      } else {
+        setDisplayText(fullText.substring(0, charIdx - 1));
+        charIdx--;
+
+        if (charIdx === 0) {
+          isDeleting = false;
+          currentIdx++;
+        }
+      }
+
+      const speed = isDeleting ? 30 : sequence[currentIdx].delay;
+      timeout = setTimeout(type, speed);
+    };
+
+    type();
+    return () => clearTimeout(timeout);
+  }, [currentStep]);
 
   const handleGoogleLogin = async () => {
     setLoading(true);
@@ -83,7 +133,6 @@ export default function RiderRegistration() {
       if (response.ok) {
         // Bypass payment and go straight to dashboard
         localStorage.removeItem('skysure_profile_incomplete');
-        showToast("Registration Successful! Welcome to SkySure.", "success");
         navigate('/rider');
       } else {
         const err = await response.json();
@@ -178,6 +227,10 @@ export default function RiderRegistration() {
           {currentStep === 1 && (
             <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
               <div style={{ marginBottom: '32px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#3b82f6', boxShadow: '0 0 10px #3b82f6' }} />
+                  <span style={{ fontFamily: 'monospace', fontSize: '12px', color: '#3b82f6', fontWeight: 800, letterSpacing: '0.1em' }}>{displayText}<span className="cursor">_</span></span>
+                </div>
                 <h2 style={{ fontSize: '2.2rem', fontWeight: 900, marginBottom: '12px', letterSpacing: '-0.03em' }}>Welcome to SkySure</h2>
                 <p style={{ color: 'rgba(255, 255, 255, 0.5)', fontWeight: 500, lineHeight: 1.6 }}>Secure your digital rider identity with Google OAuth for instant parametric payouts.</p>
               </div>

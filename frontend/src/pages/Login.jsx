@@ -20,47 +20,65 @@ export default function Login({ onLoginProp }) {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [pendingUser, setPendingUser] = useState(null);
+  
   const navigate = useNavigate();
   const showToast = useToast();
 
   const processRoleAuth = async (user, selectedRole) => {
     try {
+      const email = user.email?.toLowerCase() || '';
+      
+      // Auto-promote to admin if email contains the keyword
+      const effectiveRole = email.includes('admin') ? 'admin' : selectedRole;
+      
       const userRef = doc(db, 'users', user.uid);
       const userSnap = await getDoc(userRef);
 
+      let isNewUser = false;
       if (userSnap.exists()) {
         const userData = userSnap.data();
-        if (userData.role !== selectedRole) {
-          showToast(`This account is registered as a ${userData.role.toUpperCase()}. Please use another Gmail to register as ${selectedRole.toUpperCase()}.`, "danger");
+        if (userData.role !== effectiveRole) {
+          showToast(`This account is registered as a ${userData.role.toUpperCase()}. Please use another Gmail to register as ${effectiveRole.toUpperCase()}.`, "danger");
           await auth.signOut();
           setLoading(false);
+          setShowConfirm(false);
           return false;
         }
       } else {
         // New User Registration
-
-        // Auto-register Users with selected role
+        isNewUser = true;
         await setDoc(userRef, {
           uid: user.uid,
           email: user.email,
-          role: selectedRole,
-          name: user.displayName || (selectedRole === 'admin' ? 'Enterprise Admin' : 'New Partner'),
-          created_at: serverTimestamp()
+          role: effectiveRole,
+          name: user.displayName || (effectiveRole === 'admin' ? 'Enterprise Admin' : 'New Partner'),
+          created_at: serverTimestamp(),
+          tier: 'Basic', // Default tier
+          is_active: true
         });
 
-        // Initialize a rider profile if needed
-        // (In a real app, we'd redirect to a setup wizard)
-        showToast("Welcome! Your Partner account has been initialized.", "success");
+        // Add to local riders cache if it's a rider
+        if (effectiveRole === 'rider') {
+           // We could trigger a backend initialization here
+        }
+        
+        showToast("Welcome! Your SkySure account has been initialized.", "success");
       }
 
-      // Store in local storage for legacy component compatibility
-      const finalUser = userSnap.exists() ? userSnap.data() : { uid: user.uid, email: user.email, role: 'rider', name: user.displayName };
+      const finalUser = userSnap.exists() ? userSnap.data() : { uid: user.uid, email: user.email, role: effectiveRole, name: user.displayName };
       localStorage.setItem('skysure_mock_user', JSON.stringify(finalUser));
       
       if (onLoginProp) onLoginProp();
       
       setTimeout(() => {
-        navigate(selectedRole === 'admin' ? '/client/overview' : '/rider');
+        // First time users go to profile to complete setup
+        if (isNewUser && effectiveRole === 'rider') {
+           navigate('/rider/profile');
+        } else {
+           navigate(effectiveRole === 'admin' ? '/client/overview' : '/rider');
+        }
       }, 500);
       return true;
     } catch (err) {
@@ -89,7 +107,8 @@ export default function Login({ onLoginProp }) {
     try {
       setLoading(true);
       const result = await signInWithPopup(auth, googleProvider);
-      await processRoleAuth(result.user, role);
+      setPendingUser(result.user);
+      setShowConfirm(true);
     } catch (error) {
       console.error("Google Login error:", error);
       if (error.code === 'auth/configuration-not-found') {
@@ -101,6 +120,13 @@ export default function Login({ onLoginProp }) {
       setLoading(false);
     }
   };
+
+  const finalizeLogin = async () => {
+    if (!pendingUser) return;
+    setLoading(true);
+    await processRoleAuth(pendingUser, role);
+    setLoading(false);
+  };
   return (
     <div className="login-page">
       {/* Background Effects */}
@@ -111,12 +137,16 @@ export default function Login({ onLoginProp }) {
         <div className="bg-glow" />
       </div>
 
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="login-container"
-      >
+      <AnimatePresence mode="wait">
+        {!showConfirm ? (
+          <motion.div 
+            key="login-form"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95, y: -20 }}
+            transition={{ duration: 0.4 }}
+            className="login-container"
+          >
         {/* Left Panel - Branding */}
         <div className="login-branding">
           <motion.div 
@@ -331,7 +361,71 @@ export default function Login({ onLoginProp }) {
             </div>
           </motion.div>
         </div>
-      </motion.div>
+          </motion.div>
+        ) : (
+          <motion.div 
+            key="confirm-step"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="login-container confirmation-step"
+            style={{ maxWidth: '450px', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '48px', textAlign: 'center' }}
+          >
+            <div className="branding-header" style={{ marginBottom: '32px' }}>
+              <div style={{ padding: '12px', background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)', borderRadius: '16px', boxShadow: '0 10px 15px -3px rgba(59, 130, 246, 0.3)' }}>
+                  <ShieldCheck size={28} color="white" />
+              </div>
+            </div>
+
+            <h2 style={{ fontSize: '1.75rem', fontWeight: 900, color: '#0f172a', marginBottom: '8px' }}>Confirm Identity</h2>
+            <p style={{ color: '#64748b', marginBottom: '40px', fontSize: '0.95rem' }}>Secure handshake established. Verify your uplink parameters.</p>
+
+            <div style={{ width: '100%', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '20px', padding: '24px', marginBottom: '40px', textAlign: 'left' }}>
+               <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                  <img 
+                    src={pendingUser?.photoURL || 'https://via.placeholder.com/48'} 
+                    alt="User" 
+                    style={{ width: '56px', height: '56px', borderRadius: '50%', border: '3px solid white', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}
+                  />
+                  <div>
+                    <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '1.1rem' }}>{pendingUser?.displayName}</div>
+                    <div style={{ color: '#94a3b8', fontSize: '0.85rem', fontWeight: 600 }}>{pendingUser?.email}</div>
+                  </div>
+               </div>
+               <div style={{ marginTop: '20px', height: '1px', background: '#e2e8f0' }} />
+               <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase' }}>Access Level</span>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#3b82f6', background: 'rgba(59, 130, 246, 0.1)', padding: '4px 10px', borderRadius: '6px' }}>
+                    {pendingUser?.email?.includes('admin') ? 'ENTERPRISE ADMIN' : role.toUpperCase()}
+                  </span>
+               </div>
+            </div>
+
+            <button 
+              className="submit-btn" 
+              onClick={finalizeLogin}
+              disabled={loading}
+              style={{ width: '100%', padding: '18px' }}
+            >
+              {loading ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+                  <div className="spinner" style={{ width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+                  <span>Configuring Node...</span>
+                </div>
+              ) : (
+                <>Confirm & Enter Platform <ArrowRight size={18} /></>
+              )}
+            </button>
+
+            <button 
+              onClick={() => { setShowConfirm(false); setPendingUser(null); auth.signOut(); }}
+              style={{ marginTop: '20px', background: 'none', border: 'none', color: '#94a3b8', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer' }}
+            >
+              Use another account
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
