@@ -152,7 +152,7 @@ export default function Landing() {
             transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
             className="hero-actions"
           >
-            <Link to="/login" className="btn btn-primary btn-lg">
+            <Link to="/admin/login" className="btn btn-primary btn-lg">
               Enterprise Access
               <ArrowRight size={18} className="btn-arrow" />
             </Link>

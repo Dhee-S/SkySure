@@ -4,6 +4,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
+import AdminLogin from './pages/AdminLogin';
 import ClientLayout from './pages/ClientLayout';
 import Overview from './pages/Overview';
 import Riders from './pages/Riders';
@@ -156,10 +157,11 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={user ? <Navigate to={userRole === 'admin' ? '/client/overview' : '/rider'} replace /> : <Login onLoginProp={handleAuthUpdate} />} />
+        <Route path="/admin/login" element={user ? <Navigate to="/client/overview" replace /> : <AdminLogin onLoginProp={handleAuthUpdate} />} />
         <Route path="/register" element={<RiderRegistration />} />
         <Route path="/payment" element={<RiderPayment />} />
 
-        <Route path="/client" element={user && userRole === 'admin' ? <ClientLayout /> : <Navigate to="/login" replace />}>
+        <Route path="/client" element={user && userRole === 'admin' ? <ClientLayout /> : <Navigate to="/admin/login" replace />}>
           <Route index element={<Navigate to="/client/overview" replace />} />
           <Route path="overview" element={<Overview />} />
           <Route path="riders" element={<Riders />} />

@@ -26,21 +26,17 @@ export default function Login({ onLoginProp }) {
   const navigate = useNavigate();
   const showToast = useToast();
 
-  const processRoleAuth = async (user, selectedRole) => {
+  const processRoleAuth = async (user) => {
     try {
-      const email = user.email?.toLowerCase() || '';
-      
-      // Auto-promote to admin if email contains the keyword
-      const effectiveRole = email.includes('admin') ? 'admin' : selectedRole;
-      
+      const role = 'rider';
       const userRef = doc(db, 'users', user.uid);
       const userSnap = await getDoc(userRef);
 
       let isNewUser = false;
       if (userSnap.exists()) {
         const userData = userSnap.data();
-        if (userData.role !== effectiveRole) {
-          showToast(`This account is registered as a ${userData.role.toUpperCase()}. Please use another Gmail to register as ${effectiveRole.toUpperCase()}.`, "danger");
+        if (userData.role !== role) {
+          showToast(`This account is registered as an ${userData.role.toUpperCase()}. Please use the Enterprise Portal.`, "danger");
           await auth.signOut();
           setLoading(false);
           setShowConfirm(false);
@@ -52,38 +48,32 @@ export default function Login({ onLoginProp }) {
         await setDoc(userRef, {
           uid: user.uid,
           email: user.email,
-          role: effectiveRole,
-          name: user.displayName || (effectiveRole === 'admin' ? 'Enterprise Admin' : 'New Partner'),
+          role: role,
+          name: user.displayName || 'New Partner',
           created_at: serverTimestamp(),
-          tier: 'Basic', // Default tier
+          tier: 'Basic',
           is_active: true
         });
-
-        // Add to local riders cache if it's a rider
-        if (effectiveRole === 'rider') {
-           // We could trigger a backend initialization here
-        }
         
-        showToast("Welcome! Your SkySure account has been initialized.", "success");
+        showToast("Welcome! Your Partner Hub has been initialized.", "success");
       }
 
-      const finalUser = userSnap.exists() ? userSnap.data() : { uid: user.uid, email: user.email, role: effectiveRole, name: user.displayName };
+      const finalUser = userSnap.exists() ? userSnap.data() : { uid: user.uid, email: user.email, role: role, name: user.displayName };
       localStorage.setItem('skysure_mock_user', JSON.stringify(finalUser));
       
       if (onLoginProp) onLoginProp();
       
       setTimeout(() => {
-        // First time users go to profile to complete setup
-        if (isNewUser && effectiveRole === 'rider') {
+        if (isNewUser) {
            navigate('/rider/profile');
         } else {
-           navigate(effectiveRole === 'admin' ? '/client/overview' : '/rider');
+           navigate('/rider');
         }
       }, 500);
       return true;
     } catch (err) {
       console.error("Auth process error:", err);
-      showToast("Security Handshake Failed. Please try again.", "danger");
+      showToast("Security Handshake Failed.", "danger");
       return false;
     }
   };
@@ -94,7 +84,7 @@ export default function Login({ onLoginProp }) {
 
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      await processRoleAuth(userCredential.user, role);
+      await processRoleAuth(userCredential.user);
     } catch (error) {
       console.error("Login error:", error);
       showToast(error.message || "Invalid credentials. Access Denied.", "danger");
@@ -124,7 +114,7 @@ export default function Login({ onLoginProp }) {
   const finalizeLogin = async () => {
     if (!pendingUser) return;
     setLoading(true);
-    await processRoleAuth(pendingUser, role);
+    await processRoleAuth(pendingUser);
     setLoading(false);
   };
   return (
@@ -220,32 +210,9 @@ export default function Login({ onLoginProp }) {
             className="form-content"
           >
             <header className="form-header">
-              <h1>Rider Authentication</h1>
-              <p>Authenticate your identity to access the SkySure hub.</p>
+              <h1>Partner Authentication</h1>
+              <p>Sign in to sync your telemetry and view coverage.</p>
             </header>
-
-            {/* Role Selector */}
-            <div className="role-selector">
-              <button 
-                className={`role-btn ${role === 'rider' ? 'active' : ''}`}
-                onClick={() => setRole('rider')}
-              >
-                <User size={16} />
-                Partner
-              </button>
-              <button 
-                className={`role-btn ${role === 'admin' ? 'active' : ''}`}
-                onClick={() => setRole('admin')}
-              >
-                <Briefcase size={16} />
-                Enterprise
-              </button>
-              <motion.div 
-                className="role-indicator"
-                animate={{ x: role === 'rider' ? 0 : '100%' }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              />
-            </div>
 
             <form onSubmit={handleLogin} className="login-form">
               <div className="input-group">
