@@ -301,20 +301,33 @@ export default function Simulation() {
                    <div className="sidebar-controls" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                       
                       <div style={{ background: 'white', borderRadius: '20px', padding: '24px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
-                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                               <Microscope size={18} color="#3B82F6" />
-                               <span style={{ fontSize: '0.7rem', fontWeight: 900, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Fraud Intel Console</span>
-                            </div>
-                            {isPaused && <div className="pulse-dot" style={{ background: '#F59E0B' }} />}
-                         </div>
-                         
-                         <div className="audit-log-sequence" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                            <AnimatePresence mode="popLayout">
-                               {auditLog.length > 0 ? (
-                                  auditLog.map((log, i) => (
-                                     <motion.div 
-                                        key={`${log.label}-${i}`}
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <Microscope size={18} color="#3B82F6" />
+                                <span style={{ fontSize: '0.7rem', fontWeight: 900, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                                   {expandedId ? `Forensic Audit: ${expandedId}` : 'Global Heuristic Pulse'}
+                                </span>
+                             </div>
+                             {expandedId && (
+                                <button 
+                                   onClick={(e) => { e.stopPropagation(); setExpandedId(null); }}
+                                   style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#94A3B8' }}
+                                >
+                                   <X size={14} />
+                                </button>
+                             )}
+                          </div>
+                          
+                          <div className="audit-log-sequence" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                             <AnimatePresence mode="popLayout">
+                                {(() => {
+                                   const selectedRider = expandedId ? processedHistory.find(n => n.id === expandedId) : null;
+                                   const displayLogs = selectedRider ? selectedRider.heuristicChecks : auditLog;
+                                   
+                                   return displayLogs.length > 0 ? (
+                                      displayLogs.map((log, i) => (
+                                         <motion.div 
+                                            key={`${log.label}-${i}`}
                                         initial={{ opacity: 0, x: -10 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         className={`audit-log-item ${log.status}`}
@@ -338,38 +351,55 @@ export default function Simulation() {
                                         <span style={{ fontSize: '0.55rem', opacity: 0.4, fontWeight: 700 }}>{log.timestamp}</span>
                                      </motion.div>
                                   ))
-                               ) : (
-                                  <div style={{ padding: '40px 20px', textAlign: 'center', opacity: 0.5 }}>
-                                     <Activity size={24} color="#94A3B8" style={{ margin: '0 auto 12px' }} className="animate-pulse" />
-                                     <span style={{ fontSize: '0.65rem', fontWeight: 700 }}>AWAITING HEURISTIC PULSE...</span>
-                                  </div>
-                                )}
-                            </AnimatePresence>
+                                   ) : (
+                                      <div style={{ padding: '40px 20px', textAlign: 'center', opacity: 0.5 }}>
+                                         <Activity size={24} color="#94A3B8" style={{ margin: '0 auto 12px' }} className="animate-pulse" />
+                                         <span style={{ fontSize: '0.65rem', fontWeight: 700 }}>{expandedId ? 'ANALYZING BIOMETRIC PACKETS...' : 'AWAITING HEURISTIC PULSE...'}</span>
+                                      </div>
+                                    );
+                                })()}
+                             </AnimatePresence>
                          </div>
                       </div>
 
-                      <div style={{ background: '#1E293B', borderRadius: '20px', padding: '24px', color: 'white' }}>
-                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
-                            <div>
-                               <span style={{ fontSize: '0.65rem', fontWeight: 700, opacity: 0.6, textTransform: 'uppercase' }}>Consolidated Risk</span>
-                               <div style={{ fontSize: '2rem', fontWeight: 900, marginTop: '4px' }}>
-                                  {processedHistory.length > 0 
-                                     ? `${Math.round((processedHistory.filter(n => n.payout?.status === 'APPROVED').length / processedHistory.length) * 100)}%` 
-                                     : '--'}
-                               </div>
-                            </div>
-                            <div style={{ background: 'rgba(255,255,255,0.1)', padding: '10px', borderRadius: '12px' }}>
-                               <Fingerprint size={24} />
-                            </div>
-                         </div>
-                         <div style={{ marginTop: '20px', height: '4px', background: 'rgba(255,255,255,0.1)', borderRadius: '2px' }}>
-                            <motion.div 
-                                initial={{ width: 0 }}
-                                animate={{ width: processedHistory.length > 0 ? `${(processedHistory.length / 10) * 100}%` : 0 }}
-                                style={{ height: '100%', background: '#3B82F6', borderRadius: '2px shadow-lg' }} 
-                            />
-                         </div>
-                      </div>
+                       <div style={{ background: '#1E293B', borderRadius: '20px', padding: '24px', color: 'white' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+                             <div>
+                                <span style={{ fontSize: '0.65rem', fontWeight: 700, opacity: 0.6, textTransform: 'uppercase' }}>
+                                   {(() => {
+                                      const selectedRider = expandedId ? processedHistory.find(n => n.id === expandedId) : null;
+                                      return selectedRider ? 'Rider Trust Score' : 'Consolidated Risk';
+                                   })()}
+                                </span>
+                                <div style={{ fontSize: '2rem', fontWeight: 900, marginTop: '4px' }}>
+                                   {(() => {
+                                      const selectedRider = expandedId ? processedHistory.find(n => n.id === expandedId) : null;
+                                      if (selectedRider) return `${Math.round(selectedRider.trust_score)}%`;
+                                      
+                                      return processedHistory.length > 0 
+                                         ? `${Math.round((processedHistory.filter(n => n.payout?.status === 'APPROVED').length / processedHistory.length) * 100)}%` 
+                                         : '--';
+                                   })()}
+                                </div>
+                             </div>
+                             <div style={{ background: 'rgba(255,255,255,0.1)', padding: '10px', borderRadius: '12px' }}>
+                                <Fingerprint size={24} />
+                             </div>
+                          </div>
+                          <div style={{ marginTop: '20px', height: '4px', background: 'rgba(255,255,255,0.1)', borderRadius: '2px' }}>
+                             <motion.div 
+                                 initial={{ width: 0 }}
+                                 animate={{ 
+                                    width: (() => {
+                                       const selectedRider = expandedId ? processedHistory.find(n => n.id === expandedId) : null;
+                                       if (selectedRider) return `${selectedRider.trust_score}%`;
+                                       return processedHistory.length > 0 ? `${(processedHistory.length / 10) * 100}%` : 0;
+                                    })()
+                                 }}
+                                 style={{ height: '100%', background: '#3B82F6', borderRadius: '2px shadow-lg' }} 
+                             />
+                          </div>
+                       </div>
                    </div>
 
                   {/* RIGHT: DETAILED VALIDATION LEDGER */}
@@ -427,9 +457,14 @@ export default function Simulation() {
                                         <td>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                                 {r.payout?.status === 'APPROVED' ? <CloudRain size={14} color="#3B82F6" /> : <AlertTriangle size={14} color="#F59E0B" />}
-                                                <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#475569' }}>
-                                                    {r.payout?.status === 'APPROVED' ? 'Parametric Trigger' : (r.payout?.status === 'MITIGATED' ? 'Fraud Heuristic' : 'Nominal Baseline')}</span><br/><span style={{fontSize: '0.6rem', opacity: 0.6}}>Velocity: {r.velocity || '42km/h'}</span><span>
-                                                </span>
+                                                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                                   <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#1E293B', lineHeight: 1.2 }}>
+                                                      {r.payout?.status === 'MITIGATED' ? (r.fraud?.reasons?.[0]?.split(':')[0] || 'Fraud Mitigation') : 'Parametric Settlement'}
+                                                   </span>
+                                                   <span style={{ fontSize: '0.6rem', color: '#64748B', fontWeight: 600 }}>
+                                                      {r.payout?.status === 'MITIGATED' ? (r.fraud?.reasons?.[0]?.split(':')[1]?.trim() || 'Heuristic Anomaly') : `Velocity: ${r.velocity || '42km/h'}`}
+                                                   </span>
+                                                </div>
                                             </div>
                                         </td>
                                         <td>

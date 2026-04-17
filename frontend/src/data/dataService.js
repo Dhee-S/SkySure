@@ -147,7 +147,9 @@ export const dataService = {
     }
 
     const { location } = payload;
-    const clusterRiders = ridersData.filter(r => r.city === location).slice(0, 15);
+    const batchSize = Math.floor(Math.random() * 4) + 5; // 5 to 8 riders
+    const clusterRiders = ridersData.filter(r => r.city === location).slice(0, batchSize);
+    
     const nodes = clusterRiders.map(r => {
       const isDisrupted = Math.random() > 0.4;
       const actuarial = calculateActuarialData(r);
@@ -158,19 +160,29 @@ export const dataService = {
       const isClusterFraud = dice > 0.70 && dice <= 0.85;
       const isMitigated = isGhostRider || isClusterFraud || (parseFloat(actuarial.fraudProb) > 0.6 && isDisrupted);
       
-      const reasonTags = isGhostRider ? ["Potential Ghost Riding Node"] : isClusterFraud ? ["Cluster Sync Anomaly"] : ["Clean Telemetry Signature"];
+      const reasonTags = isGhostRider 
+        ? ["Geospatial Ghosting: Persistent signal drift from verified route nodes"] 
+        : isClusterFraud 
+          ? ["Cluster Sync Anomaly: Packet collision detected in regional telemetry node"] 
+          : ["Nominal Signature: Telemetry aligns with environmental baseline"];
+
+      // Adjusted payout for realism (₹400 - ₹2,800 range)
+      const baseEarningsPerDay = parseFloat(r.past_week_earnings) / 7;
+      const normalizedAmount = isDisrupted 
+        ? (isMitigated ? 0 : Math.round(Math.max(450, Math.min(baseEarningsPerDay * 1.2, 2800)) * (Math.random() * 0.3 + 0.85)))
+        : 0;
 
       return {
         id: r.rider_id || r.id,
         name: r.name || `Partner ${r.rider_id?.slice(-4)}`,
         persona: r.persona_type || 'Gig-Pro',
-        trust_score: isMitigated ? Math.max(5, actuarial.trustScore - 30) : actuarial.trustScore,
-        fraud_probability: isMitigated ? 0.75 : parseFloat(actuarial.fraudProb),
+        trust_score: isMitigated ? Math.max(5, actuarial.trustScore - 45) : actuarial.trustScore,
+        fraud_probability: isMitigated ? 0.82 : parseFloat(actuarial.fraudProb),
         isDisrupted,
         activeSignalCount: isDisrupted ? 3 : 0,
         severityScore: isDisrupted ? 1.85 : 0.45,
         fraud: {
-           score: isMitigated ? 75 : 15,
+           score: isMitigated ? 85 : 12,
            reasons: reasonTags
         },
         signals: {
@@ -184,12 +196,11 @@ export const dataService = {
         velocity: `${Math.floor(Math.random() * 25) + 32}km/h`,
         payout: {
           status: isMitigated ? 'MITIGATED' : (isDisrupted ? 'APPROVED' : 'NOMINAL'),
-          // Scaled up by 10x for more professional appearance
-          amount: isDisrupted ? (isMitigated ? 0 : Math.round(Math.min(parseFloat(r.past_week_earnings) / 7, 1200) * 8.5 * 9.5 * (actuarial.trustScore / 100) * 10)) : 0,
+          amount: normalizedAmount,
           math: { 
-            baseline: Math.round(parseFloat(r.past_week_earnings) / 7),
-            impact: 0.85, 
-            severity: isDisrupted ? 0.95 : 0, 
+            baseline: Math.round(baseEarningsPerDay),
+            impact: 1.15, 
+            severity: isDisrupted ? 1.25 : 0, 
             confidence: actuarial.trustScore / 100 
           }
         },
@@ -197,30 +208,31 @@ export const dataService = {
             { 
                 label: 'Geospatial Integrity', 
                 status: isGhostRider ? 'fail' : 'pass', 
-                detail: isGhostRider ? 'Signal cluster ghosting detected' : 'Locked to verified route nodes',
+                detail: isGhostRider ? 'CRITICAL: Persistent GPS drift (>500m) from assigned route' : 'CONFIRMED: Real-time telemetry locked to verified nodes',
                 icon: 'MapPin'
             },
             { 
                 label: 'Temporal Velocity', 
                 status: (isDisrupted && Math.random() > 0.6) ? 'warn' : 'pass', 
-                detail: isDisrupted ? 'Speed mismatch with environment' : 'Velocity within nominal range',
+                detail: isDisrupted ? 'WARNING: Speed discrepancy vs environmental wind resistance' : 'NOMINAL: Instantaneous velocity aligns with weather pulse',
                 icon: 'Zap'
             },
             { 
-                label: 'Telemetry Heartbeat', 
+                label: 'Cluster Synchronization', 
                 status: isClusterFraud ? 'fail' : 'pass', 
-                detail: isClusterFraud ? 'Packet collision in node sync' : 'Encrypted pulse synchronized',
+                detail: isClusterFraud ? 'ANOMALY: Packet collision/Spoofed node ID detected in local cluster' : 'SECURE: Encrypted telemetry heartbeat synchronized with region',
                 icon: 'Activity'
             },
             { 
-                label: 'Risk Propensity', 
+                label: 'Actuarial Trust Propensity', 
                 status: actuarial.trustScore < 40 ? 'fail' : (actuarial.trustScore < 70 ? 'warn' : 'pass'), 
-                detail: `Trust score: ${actuarial.trustScore}%`,
+                detail: `Historical trust profile: ${actuarial.trustScore}% valid transactions`,
                 icon: 'ShieldCheck'
             }
         ]
       };
     });
+
 
     // AUTO-LOGGING: Push these nodes into our session history for the Audit Ledger
     const loggedNodes = nodes.map(n => ({
@@ -271,32 +283,57 @@ export const dataService = {
     const mockLogs = pool.map(r => {
         const velocityBase = Math.floor(Math.random() * 25) + 32;
         const rainfall = (Math.random() * 60 + 20).toFixed(1);
-        const status = Math.random() > 0.7 ? 'blocked' : 'settled';
+        const status = Math.random() > 0.8 ? 'blocked' : 'settled';
         const trustVal = Math.floor(Math.random()*40 + 55);
+        const baseEarningsPerDay = (parseFloat(r.past_week_earnings) || 5000) / 7;
+        const amount = status === 'blocked' ? 0 : Math.round(Math.max(450, Math.min(baseEarningsPerDay * 1.15, 2800)) * (Math.random() * 0.2 + 0.9));
         
         return {
             id: `TXN-${(r.rider_id || r.id).toUpperCase().slice(-8)}`,
             riderId: r.rider_id || r.id,
             riderName: r.name || `Partner ${r.rider_id?.slice(-4)}`,
-            amount: (r.probation_status === 'True' || r.probation_status === true) ? 15000 : Math.round((parseFloat(r.predicted_payout) || 450) * 85),
+            amount: amount,
             status: status,
-            reason: (r.probation_status === 'True' || r.probation_status === true) ? 'Probationary Risk' : 'Parametric Fallback Logic',
+            reason: status === 'blocked' ? 'Clustered Heuristic Anomaly' : 'Parametric Environmental Trigger',
             location: r.city || 'Chennai',
             weather: 'Heavy Rain',
             velocity: `${velocityBase}km/h`,
             sensors: `Rainfall: ${rainfall}mm | Velocity: ${velocityBase}km/h`,
-            timestamp: new Date().toISOString(),
+            timestamp: new Date(Date.now() - Math.random() * 10000000).toISOString(),
             nodeDetail: {
+                id: r.rider_id || r.id,
+                name: r.name || `Partner ${r.rider_id?.slice(-4)}`,
                 trust_score: trustVal,
                 velocity: `${velocityBase}km/h`,
-                signals: { heavyRain: { value: rainfall, active: true } },
+                signals: { 
+                    heavyRain: { value: rainfall, active: true, threshold: 25 },
+                    highWind: { value: (Math.random() * 40 + 10).toFixed(1), active: false, threshold: 35 },
+                    orderDrop: { value: (Math.random() * 30 + 50).toFixed(0), active: true, threshold: 45 }
+                },
                 heuristicChecks: [
-                    { label: 'Signal Stability', status: 'pass', detail: 'Telemetry packets consistent' },
-                    { label: 'Risk Heuristic', status: status === 'blocked' ? 'fail' : 'pass', detail: status === 'blocked' ? 'Anomaly detected' : 'Normal signature' }
+                    { 
+                        label: 'Geospatial Integrity', 
+                        status: 'pass', 
+                        detail: 'CONFIRMED: Real-time telemetry locked to verified nodes',
+                        icon: 'MapPin'
+                    },
+                    { 
+                        label: 'Temporal Velocity', 
+                        status: 'pass', 
+                        detail: 'NOMINAL: Instantaneous velocity aligns with weather pulse',
+                        icon: 'Zap'
+                    },
+                    { 
+                        label: 'Cluster Synchronization', 
+                        status: status === 'blocked' ? 'fail' : 'pass', 
+                        detail: status === 'blocked' ? 'ANOMALY: Packet collision detected in local cluster' : 'SECURE: Encrypted telemetry heartbeat synchronized',
+                        icon: 'Activity'
+                    }
                 ],
                 payout: { 
-                    math: { baseline: 850, impact: 0.85, severity: 0.95 }, 
-                    amount: (r.probation_status === 'True' || r.probation_status === true) ? 15000 : Math.round((parseFloat(r.predicted_payout) || 450) * 85)
+                    status: status === 'blocked' ? 'MITIGATED' : 'APPROVED',
+                    math: { baseline: Math.round(baseEarningsPerDay), impact: 1.10, severity: 1.05 }, 
+                    amount: amount
                 }
             }
         };
