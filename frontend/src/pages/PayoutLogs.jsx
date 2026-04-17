@@ -8,6 +8,8 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { safeFormatDate, safeFormatTime } from '../utils/formatters';
+import { AuditWorkflowPanel } from '../components/RiskEngineComponents';
+import { ChevronDown } from 'lucide-react';
 import '../styles/dashboard.css';
 
 export default function PayoutLogs() {
@@ -18,6 +20,7 @@ export default function PayoutLogs() {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
+  const [expandedId, setExpandedId] = useState(null);
   const itemsPerPage = 8;
 
   const loadData = async (isQuiet = false) => {
@@ -164,92 +167,110 @@ export default function PayoutLogs() {
           <tbody>
             <AnimatePresence mode="popLayout">
               {paginatedLogs.map((log, i) => (
-                <motion.tr
-                  key={log.id || i}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  whileHover={{ backgroundColor: 'rgba(241, 245, 249, 0.8)' }}
-                  transition={{ delay: (i % 10) * 0.04, type: 'spring', stiffness: 300, damping: 24 }}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <td style={{ verticalAlign: 'middle' }}>
-                    <div className="id-privacy-node" style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
-                      <span style={{ fontWeight: 800, color: '#1E293B', fontSize: '0.95rem', fontFamily: 'monospace' }}>
-                        {log.riderId || log.id?.slice(-8).toUpperCase()}
-                      </span>
-                      <span style={{ fontSize: '0.6rem', fontWeight: 900, color: '#94A3B8', letterSpacing: '0.1em' }}>PARTNER_NOD</span>
-                      
-                      <div className="reveal-on-hover" style={{ 
-                          position: 'absolute', 
-                          left: 0, 
-                          top: '100%', 
-                          background: '#1E293B', 
-                          color: 'white', 
-                          padding: '4px 8px', 
-                          borderRadius: '6px', 
-                          fontSize: '0.65rem', 
-                          zIndex: 20,
-                          pointerEvents: 'none',
-                          opacity: 0,
-                          transition: 'opacity 0.2s',
-                          whiteSpace: 'nowrap',
-                          boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-                      }}>
-                          Identity: {log.riderName || 'Anonymous Partner'}
+                  <motion.tr
+                    key={log.id || i}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    whileHover={{ backgroundColor: 'rgba(241, 245, 249, 0.8)' }}
+                    transition={{ delay: (i % 10) * 0.04, type: 'spring', stiffness: 300, damping: 24 }}
+                    onClick={() => setExpandedId(expandedId === log.id ? null : log.id)}
+                    style={{ cursor: 'pointer', borderLeft: expandedId === log.id ? '4px solid #3B82F6' : '4px solid transparent' }}
+                  >
+                    <td style={{ verticalAlign: 'middle' }}>
+                      <div className="id-privacy-node" style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
+                        <span style={{ fontWeight: 800, color: '#1E293B', fontSize: '0.95rem', fontFamily: 'monospace' }}>
+                          {log.riderId || log.id?.slice(-8).toUpperCase()}
+                        </span>
+                        <span style={{ fontSize: '0.6rem', fontWeight: 900, color: '#94A3B8', letterSpacing: '0.1em' }}>PARTNER_NOD</span>
+                        
+                        <div className="reveal-on-hover" style={{ 
+                            position: 'absolute', 
+                            left: 0, 
+                            top: '100%', 
+                            background: '#1E293B', 
+                            color: 'white', 
+                            padding: '4px 8px', 
+                            borderRadius: '6px', 
+                            fontSize: '0.65rem', 
+                            zIndex: 20,
+                            pointerEvents: 'none',
+                            opacity: 0,
+                            transition: 'opacity 0.2s',
+                            whiteSpace: 'nowrap',
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                        }}>
+                            Identity: {log.riderName || 'Anonymous Partner'}
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 700, color: '#1E293B' }}>
-                        <Calendar size={14} color="#64748b" />
-                        <span style={{ fontSize: '0.85rem' }}>{safeFormatDate(log.timestamp)}</span>
+                    </td>
+                    <td>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 700, color: '#1E293B' }}>
+                          <Calendar size={14} color="#64748b" />
+                          <span style={{ fontSize: '0.85rem' }}>{safeFormatDate(log.timestamp)}</span>
+                        </div>
+                        <span style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 600 }}>
+                          {safeFormatTime(log.timestamp)}
+                        </span>
                       </div>
-                      <span style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 600 }}>
-                        {safeFormatTime(log.timestamp)}
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 750, color: '#0f172a' }}>
-                      <CloudRain size={16} color="#3B82F6" />
-                      <span style={{ fontSize: '0.85rem' }}>{log.reason}</span>
-                    </div>
-                    <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginTop: '2px', fontWeight: 600 }}>
-                      Sensors: {log.sensors || `Rainfall: 12mm | Velocity: ${Math.floor(Math.random() * 20 + 30)}km/h`}
-                    </div>
-                  </td>
-                  <td>
-                    <div style={{ position: 'relative', display: 'inline-block' }}>
-                      <span 
-                         className={`badge-${log.status === 'blocked' ? 'danger' : 'success'}`}
-                         style={{ 
-                            textTransform: 'uppercase', 
-                            letterSpacing: '0.08em',
-                            fontSize: '0.6rem',
-                            fontWeight: 900,
-                            padding: '4px 10px',
-                            borderRadius: '8px'
-                         }}
+                    </td>
+                    <td>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 750, color: '#0f172a' }}>
+                        <CloudRain size={16} color="#3B82F6" />
+                        <span style={{ fontSize: '0.85rem' }}>{log.reason}</span>
+                      </div>
+                      <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginTop: '2px', fontWeight: 600 }}>
+                        Sensors: {log.sensors}
+                      </div>
+                    </td>
+                    <td>
+                      <div style={{ position: 'relative', display: 'inline-block' }}>
+                        <span 
+                           className={`badge-${log.status === 'blocked' ? 'danger' : 'success'}`}
+                           style={{ 
+                              textTransform: 'uppercase', 
+                              letterSpacing: '0.08em',
+                              fontSize: '0.6rem',
+                              fontWeight: 900,
+                              padding: '4px 10px',
+                              borderRadius: '8px'
+                           }}
+                        >
+                          {log.status === 'blocked' ? 'RISK_MITIGATED' : 'SETTLED_AUTO'}
+                        </span>
+                      </div>
+                    </td>
+                    <td>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '10px' }}>
+                        <span style={{ fontFamily: 'monospace', fontSize: '1.15rem', fontWeight: 900, color: log.status === 'blocked' ? '#94a3b8' : '#1e3a8a', textDecoration: log.status === 'blocked' ? 'line-through' : 'none' }}>
+                          ₹{log.amount?.toLocaleString() || '0'}
+                        </span>
+                        <ChevronDown size={14} style={{ opacity: 0.3, transform: expandedId === log.id ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                      </div>
+                    </td>
+                    <td>
+                      <button style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', cursor: 'pointer', color: '#64748b', padding: '8px', borderRadius: '10px' }}>
+                        <FileText size={16} />
+                      </button>
+                    </td>
+                  </motion.tr>
+
+                  <AnimatePresence>
+                    {expandedId === log.id && (
+                      <motion.tr
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
                       >
-                        {log.status === 'blocked' ? 'RISK_MITIGATED' : 'SETTLED_AUTO'}
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      <span style={{ fontFamily: 'monospace', fontSize: '1.15rem', fontWeight: 900, color: log.status === 'blocked' ? '#94a3b8' : '#1e3a8a', textDecoration: log.status === 'blocked' ? 'line-through' : 'none' }}>
-                        ₹{log.amount?.toLocaleString() || '0'}
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <button style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', cursor: 'pointer', color: '#64748b', padding: '8px', borderRadius: '10px' }}>
-                      <FileText size={16} />
-                    </button>
-                  </td>
-                </motion.tr>
+                        <td colSpan="6" style={{ padding: '24px', background: 'rgba(248, 250, 252, 0.5)', borderBottom: '1px solid var(--dash-border)' }}>
+                          <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+                            <AuditWorkflowPanel node={log.nodeDetail || {}} />
+                          </div>
+                        </td>
+                      </motion.tr>
+                    )}
+                  </AnimatePresence>
               ))}
             </AnimatePresence>
           </tbody>

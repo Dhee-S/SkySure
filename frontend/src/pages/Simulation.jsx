@@ -11,42 +11,11 @@ import {
 } from 'lucide-react';
 import { dataService } from '../data/dataService';
 import { safeFormatTime } from '../utils/formatters';
+import { TriggerCard, CalculationStep, AuditWorkflowPanel } from '../components/RiskEngineComponents';
 import '../styles/dashboard.css';
 import '../styles/Simulation.css';
 
-const TriggerCard = ({ label, name, value, unit, active, threshold, isStatus }) => {
-   const displayValue = value !== undefined
-      ? (typeof value === 'number' ? (isStatus ? (value === 100 ? 'INACTIVE' : 'ACTIVE') : value.toFixed(1)) : value)
-      : '-';
-
-   return (
-      <div style={{
-         textAlign: 'center',
-         padding: '12px 8px',
-         background: active ? 'rgba(59, 130, 246, 0.1)' : 'rgba(241, 245, 249, 0.5)',
-         borderRadius: '10px',
-         border: `2px solid ${active ? '#3b82f6' : 'rgba(226, 232, 240, 0.5)'}`,
-         transition: 'all 0.2s ease',
-         backdropFilter: 'blur(4px)'
-      }}>
-         <div style={{ fontSize: '0.65rem', fontWeight: 800, color: active ? '#3B82F6' : '#94A3B8', marginBottom: '4px' }}>{label}</div>
-         <div style={{ fontSize: '0.6rem', color: '#64748B', marginBottom: '6px', fontWeight: 600 }}>{name}</div>
-         <div style={{ fontSize: '0.9rem', fontWeight: 900, color: active ? '#3B82F6' : '#1E293B', marginBottom: '6px', fontFamily: 'monospace' }}>
-            {displayValue}
-            {unit && !isStatus && <span style={{ fontSize: '0.6rem', fontWeight: 600, marginLeft: '2px' }}>{unit}</span>}
-         </div>
-         <div style={{
-            width: '8px',
-            height: '8px',
-            borderRadius: '50%',
-            margin: '0 auto',
-            background: active ? '#3B82F6' : '#CBD5E1',
-            boxShadow: active ? '0 0 10px rgba(59, 130, 246, 0.6)' : 'none',
-            animation: active ? 'pulse 2s infinite' : 'none'
-         }} />
-      </div>
-   );
-};
+// TriggerCard and CalculationStep removed as they are now imported from shared components
 
 const LoadingStage = ({ stage }) => {
    const stages = [
@@ -95,12 +64,8 @@ function WeatherMetricItem({ label, value, Icon, color }) {
    );
 }
 
-const CalculationStep = ({ label, value, isFinal }) => (
-    <div className={`calc-step ${isFinal ? 'calc-final' : ''}`}>
-       <div className="calc-step-label">{label}</div>
-       <div className="calc-step-value">{value}</div>
-    </div>
- );
+// Using shared CalculationStep from RiskEngineComponents
+
 
 export default function Simulation() {
    const navigate = useNavigate();

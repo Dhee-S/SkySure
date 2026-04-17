@@ -1,5 +1,8 @@
 import ridersData from './ridersData.json';
 
+// Global singleton to persist simulation results across the session
+let simulationPool = [];
+
 import { auth } from '../firebase';
 
 // Vercel / Local Toggle: In production, API calls use relative paths (rewrites)
@@ -218,7 +221,27 @@ export const dataService = {
         ]
       };
     });
-    return { nodes };
+
+    // AUTO-LOGGING: Push these nodes into our session history for the Audit Ledger
+    const loggedNodes = nodes.map(n => ({
+        id: `TXN-SIM-${n.id.toUpperCase().slice(-6)}`,
+        riderId: n.id,
+        riderName: n.name,
+        amount: n.payout.amount,
+        status: n.payout.status === 'APPROVED' ? 'settled' : 'blocked',
+        reason: n.payout.status === 'MITIGATED' ? n.fraud.reasons[0] : 'Parametric Trigger',
+        location: location,
+        weather: 'Heavy Rain',
+        velocity: n.velocity,
+        sensors: `Rainfall: ${n.signals.heavyRain.value}mm | Velocity: ${n.velocity}`,
+        timestamp: new Date().toISOString(),
+        isSimulation: true,
+        nodeDetail: n // Store the full node for the expanded view in PayoutLogs
+    }));
+    
+    simulationPool = [...loggedNodes, ...simulationPool].slice(0, 50); // Keep last 50
+
+    return { location, timestamp: new Date().toISOString(), nodes };
 
   },
 
@@ -245,26 +268,41 @@ export const dataService = {
         pool = ridersData.slice(0, 10);
     }
 
-    return pool.map(r => {
-        const isDisrupted = Math.random() > 0.4;
-        const velocityBase = Math.floor(Math.random() * 25) + 30; // 30-55 km/h
+    const mockLogs = pool.map(r => {
+        const velocityBase = Math.floor(Math.random() * 25) + 32;
         const rainfall = (Math.random() * 60 + 20).toFixed(1);
-
+        const status = Math.random() > 0.7 ? 'blocked' : 'settled';
+        const trustVal = Math.floor(Math.random()*40 + 55);
+        
         return {
             id: `TXN-${(r.rider_id || r.id).toUpperCase().slice(-8)}`,
             riderId: r.rider_id || r.id,
             riderName: r.name || `Partner ${r.rider_id?.slice(-4)}`,
-            // Scaled up for professionalism: now 100x instead of 10x
             amount: (r.probation_status === 'True' || r.probation_status === true) ? 15000 : Math.round((parseFloat(r.predicted_payout) || 450) * 85),
-            status: Math.random() > 0.7 ? 'blocked' : 'settled',
+            status: status,
             reason: (r.probation_status === 'True' || r.probation_status === true) ? 'Probationary Risk' : 'Parametric Fallback Logic',
             location: r.city || 'Chennai',
             weather: 'Heavy Rain',
             velocity: `${velocityBase}km/h`,
             sensors: `Rainfall: ${rainfall}mm | Velocity: ${velocityBase}km/h`,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            nodeDetail: {
+                trust_score: trustVal,
+                velocity: `${velocityBase}km/h`,
+                signals: { heavyRain: { value: rainfall, active: true } },
+                heuristicChecks: [
+                    { label: 'Signal Stability', status: 'pass', detail: 'Telemetry packets consistent' },
+                    { label: 'Risk Heuristic', status: status === 'blocked' ? 'fail' : 'pass', detail: status === 'blocked' ? 'Anomaly detected' : 'Normal signature' }
+                ],
+                payout: { 
+                    math: { baseline: 850, impact: 0.85, severity: 0.95 }, 
+                    amount: (r.probation_status === 'True' || r.probation_status === true) ? 15000 : Math.round((parseFloat(r.predicted_payout) || 450) * 85)
+                }
+            }
         };
     });
+
+    return [...simulationPool, ...mockLogs];
 
   },
 
