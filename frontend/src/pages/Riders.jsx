@@ -254,11 +254,9 @@ export default function Riders() {
             <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="dash-btn dash-btn-outline" style={{ padding: '8px 16px' }}>
               Next <ChevronRight size={16} />
             </button>
-          </div>
         </div>
       </div>
-        </div>
-      </div>
+    </div>
       <style>{`
         .id-privacy-node {
           position: relative;
@@ -282,4 +280,5 @@ export default function Riders() {
       `}</style>
     </div>
   );
-}
+}
+
