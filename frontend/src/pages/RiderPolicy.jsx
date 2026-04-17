@@ -263,5 +263,3 @@ function ShieldCheck(props) {
         </svg>
     );
 }
-);
-}
