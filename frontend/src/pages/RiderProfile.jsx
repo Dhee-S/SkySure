@@ -54,6 +54,7 @@ export default function RiderProfile() {
                 updated_at: new Date().toISOString()
             }, { merge: true });
             showToast("Profile identity synchronized successfully.", "success");
+            if (reloadRider) reloadRider();
         } catch (err) {
             console.error("Profile update error:", err);
             showToast("Failed to sync profile data.", "danger");

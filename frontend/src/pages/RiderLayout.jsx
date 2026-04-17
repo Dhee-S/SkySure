@@ -30,6 +30,10 @@ export default function RiderLayout() {
     }
   };
 
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const reloadRider = () => setRefreshKey(prev => prev + 1);
+
   useEffect(() => {
     async function load() {
       const data = await dataService.getRiders();
@@ -37,7 +41,6 @@ export default function RiderLayout() {
       setRiders(ridersList);
 
       const mockUserStr = localStorage.getItem('skysure_mock_user');
-      const skippedProfile = localStorage.getItem('skysure_profile_incomplete') === 'true';
       
       let foundRider = null;
 
@@ -47,7 +50,6 @@ export default function RiderLayout() {
           foundRider = ridersList.find(r => r.id === mockUser.uid || r.rider_id === mockUser.uid);
           
           if (!foundRider) {
-            // New user not in verified registry - use auth data
             foundRider = {
               id: mockUser.uid,
               rider_id: mockUser.uid,
@@ -71,7 +73,7 @@ export default function RiderLayout() {
       setLoading(false);
     }
     load();
-  }, []);
+  }, [refreshKey]);
 
   const filteredRiders = selectedTier === 'All' 
     ? riders 
@@ -193,7 +195,7 @@ export default function RiderLayout() {
       {/* MAIN CONTENT AREA */}
       <main className="client-main" style={{ padding: '40px', minHeight: '100vh' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-          <Outlet context={{ rider: selectedRider, weather: { severity: 'SECURE', temperatureC: 28, rainfallMm: 0, windKph: 12, humidity: 65, visibility: 10, description: 'Clear Skies' }, isProtected, isProfileIncomplete }} />
+          <Outlet context={{ rider: selectedRider, weather: { severity: 'SECURE', temperatureC: 28, rainfallMm: 0, windKph: 12, humidity: 65, visibility: 10, description: 'Clear Skies' }, isProtected, isProfileIncomplete, reloadRider }} />
         </div>
       </main>
     </div>
