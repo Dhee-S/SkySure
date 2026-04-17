@@ -124,7 +124,7 @@ export default function RiderDashboard() {
                             justifyContent: 'center', 
                             margin: '0 auto 24px' 
                         }}>
-                            <ShieldCheck size={40} />
+                            <User size={40} />
                         </div>
                         <h2 style={{ fontSize: '1.75rem', fontWeight: 900, marginBottom: '12px', color: '#0f172a' }}>Profile Setup Required</h2>
                         <p style={{ color: '#64748b', lineHeight: 1.6, marginBottom: '32px', fontWeight: 500 }}>

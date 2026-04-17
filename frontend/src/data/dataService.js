@@ -206,9 +206,17 @@ export const dataService = {
         }
     }
 
-    let pool = ridersData;
-    if (riderId) pool = pool.filter(r => r.id === riderId || r.rider_id === riderId);
-    return pool.slice(0, 10).map(r => ({
+    // MOCK LOGIC: If riderId is provided, ONLY return for that rider.
+    // If rider is new (not in ridersData), return empty array.
+    let pool = [];
+    if (riderId) {
+        pool = ridersData.filter(r => r.id === riderId || r.rider_id === riderId);
+    } else {
+        // Admin view or global audit
+        pool = ridersData.slice(0, 10);
+    }
+
+    return pool.map(r => ({
         id: `TXN-${(r.rider_id || r.id).toUpperCase().slice(-8)}`,
         riderId: r.rider_id || r.id,
         riderName: r.name || `Partner ${r.rider_id?.slice(-4)}`,

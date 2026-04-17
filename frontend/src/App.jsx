@@ -15,9 +15,11 @@ import RiderPolicy from './pages/RiderPolicy';
 import RiderPayouts from './pages/RiderPayouts';
 import RiderStatus from './pages/RiderStatus';
 import RiderDashboard from './pages/RiderDashboard';
+import RiderProfile from './pages/RiderProfile';
 import Exit from './pages/Exit';
 import RiderRegistration from './components/RiderRegistration';
 import RiderPayment from './pages/RiderPayment';
+
 export const ToastContext = createContext(null);
 
 export function useToast() {
@@ -44,7 +46,8 @@ export default function App() {
       if (mockUser) {
         const parsed = JSON.parse(mockUser);
         setUser(parsed);
-        const role = parsed.role || (parsed.email?.includes('admin') ? 'admin' : 'rider');
+        // Explicitly check for admin keyword or role field
+        const role = parsed.role || (parsed.email?.toLowerCase().includes('admin') ? 'admin' : 'rider');
         setUserRole(role);
         setLoading(false);
         return true;
@@ -57,12 +60,9 @@ export default function App() {
   };
 
   useEffect(() => {
-    // 1. Check for mock session
     const hasMock = handleAuthUpdate();
 
-    // 2. Listen for Firebase Auth
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      // Only use Firebase if no Mock user is active
       if (!localStorage.getItem('skysure_mock_user')) {
         setUser(currentUser);
         if (currentUser) {
@@ -71,11 +71,14 @@ export default function App() {
             const { db } = await import('./firebase');
             const userSnap = await getDoc(doc(db, 'users', currentUser.uid));
             if (userSnap.exists()) {
-              setUserRole(userSnap.data().role);
+              const data = userSnap.data();
+              setUserRole(data.role);
+              // Synced storage for layout components
+              localStorage.setItem('skysure_mock_user', JSON.stringify({ ...data, email: currentUser.email }));
             } else {
-              // Fallback for new users
               const email = currentUser.email?.toLowerCase() || '';
-              setUserRole(email.includes('admin') ? 'admin' : 'rider');
+              const role = email.includes('admin') ? 'admin' : 'rider';
+              setUserRole(role);
             }
           } catch (err) {
             console.error("Profile fetch error:", err);
@@ -88,13 +91,9 @@ export default function App() {
       }
     });
 
-    // 3. Safety Fallback: Always end loading after 3.5s to prevent black screen
     const safetyTimer = setTimeout(() => {
-      setLoading(prevState => {
-        if (prevState) console.warn("Safety timeout triggered: Force-ending load state.");
-        return false;
-      });
-    }, 3500);
+        setLoading(false);
+    }, 4000);
 
     return () => {
       unsubscribe();
@@ -104,17 +103,10 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="loading-screen" style={{
-        height: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: '#0a0a0a',
-        color: 'white'
-      }}>
+      <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0a0a', color: 'white' }}>
         <div style={{ textAlign: 'center' }}>
           <div className="spinner" style={{ marginBottom: 20 }}></div>
-          <p>Initializing SkySure Engine...</p>
+          <p style={{ fontWeight: 700, letterSpacing: '0.1em' }}>INITIALIZING SKYSURE PROTOCOL...</p>
         </div>
       </div>
     );
@@ -145,8 +137,10 @@ export default function App() {
 
         <Route path="/rider" element={user && userRole === 'rider' ? <RiderLayout /> : <Navigate to="/login" replace />}>
           <Route index element={<RiderDashboard />} />
+          <Route path="policy" element={<RiderPolicy />} />
           <Route path="payouts" element={<RiderPayouts />} />
           <Route path="status" element={<RiderStatus />} />
+          <Route path="profile" element={<RiderProfile />} />
         </Route>
 
         <Route path="/exit" element={<Exit />} />

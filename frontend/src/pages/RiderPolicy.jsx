@@ -49,7 +49,7 @@ export default function RiderPolicy() {
                            </div>
                         </div>
                         <div style={{ padding: '16px', background: 'rgba(255,255,255,0.1)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.2)' }}>
-                           <Shield size={32} />
+                           <Zap size={32} fill="white" />
                         </div>
                      </div>
 

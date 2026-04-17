@@ -125,6 +125,9 @@ export default function Login({ onLoginProp }) {
             transition={{ delay: 0.2 }}
             className="branding-header"
           >
+            <div style={{ padding: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Zap size={18} color="white" fill="white" />
+            </div>
             <span className="branding-title">SkySure</span>
           </motion.div>
 
@@ -152,16 +155,16 @@ export default function Login({ onLoginProp }) {
               className="branding-features"
             >
               <div className="feature-item">
-                <ShieldCheck size={18} />
-                <span>ISO 27001 Protocol Compliance</span>
+                <Zap size={18} fill="currentColor" />
+                <span>Instant Settlement Protocol</span>
               </div>
               <div className="feature-item">
                 <Globe size={18} />
-                <span>Global Environmental Telemetry</span>
+                <span>Global Risk Telemetry</span>
               </div>
               <div className="feature-item">
-                <Zap size={18} />
-                <span>Instant Settlement Engine</span>
+                <ShieldCheck size={18} />
+                <span>Autonomous Fraud Mitigation</span>
               </div>
             </motion.div>
           </div>

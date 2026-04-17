@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { dataService } from '../data/dataService';
 import {
   Shield, CreditCard, Activity,
-  LogOut, ChevronDown, Zap
+  LogOut, ChevronDown, Zap, User
 } from 'lucide-react';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
@@ -95,7 +95,9 @@ export default function RiderLayout() {
     return (
       <div style={{ display: 'flex', height: '100vh', justifyContent: 'center', alignItems: 'center', background: '#f8fafc' }}>
         <div style={{ maxWidth: '400px', textAlign: 'center' }}>
-          <Shield size={48} color="#94a3b8" style={{ margin: '0 auto 24px' }} />
+          <div style={{ width: '80px', height: '80px', background: '#f1f5f9', color: '#94a3b8', borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
+            <Zap size={40} />
+          </div>
           <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '8px' }}>No Active Enrollment</h2>
           <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '32px' }}>Your account hasn't been provisioned as a partner node yet.</p>
           <button onClick={handleLogout} className="dash-btn dash-btn-primary">Return to Security Login</button>
@@ -113,7 +115,7 @@ export default function RiderLayout() {
         className={`sidebar-trigger trigger-dark`} 
         onClick={toggleSidebar}
       >
-        {sidebarOpen ? <LogOut size={20} style={{ transform: 'rotate(180deg)' }} /> : <Shield size={20} />}
+        {sidebarOpen ? <LogOut size={20} style={{ transform: 'rotate(180deg)' }} /> : <Zap size={20} />}
       </button>
 
       {/* SIDEBAR */}
@@ -121,20 +123,21 @@ export default function RiderLayout() {
 
         <div style={{ padding: '24px 32px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '32px' }}>
-            <div style={{ width: '40px', height: '40px', background: 'white', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Shield size={20} color="#1e3a8a" />
+            <div style={{ width: '40px', height: '40px', background: '#3b82f6', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)' }}>
+              <Zap size={22} color="white" fill="white" />
             </div>
             <div>
-              <h1 style={{ fontSize: '1.5rem', fontWeight: 900, margin: 0, lineHeight: 1 }}>SkySure</h1>
+              <h1 style={{ fontSize: '1.5rem', fontWeight: 900, margin: 0, lineHeight: 1, letterSpacing: '-0.02em' }}>SkySure</h1>
               <p style={{ fontSize: '0.65rem', textTransform: 'uppercase', fontWeight: 700, opacity: 0.5, letterSpacing: '0.1em', margin: '4px 0 0' }}>Partner Portal</p>
             </div>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <div style={{ fontSize: '0.65rem', textTransform: 'uppercase', fontWeight: 800, opacity: 0.4, letterSpacing: '0.15em', marginBottom: '8px', marginLeft: '4px' }}>My Dashboard</div>
-            <RiderNavLink to="/rider" end icon={Shield} label="Policy Control" />
+            <RiderNavLink to="/rider" end icon={Activity} label="Performance" />
+            <RiderNavLink to="/rider/policy" icon={Zap} label="Policy Control" />
             <RiderNavLink to="/rider/payouts" icon={CreditCard} label="Settlement Audit" />
-            <RiderNavLink to="/rider/status" icon={Activity} label="Live Monitoring" />
+            <RiderNavLink to="/rider/profile" icon={User} label="Profile Settings" />
           </div>
 
           <div style={{ marginTop: '40px' }}>

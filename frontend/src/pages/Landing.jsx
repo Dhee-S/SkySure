@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { motion, useScroll, useTransform, useInView, useSpring } from 'framer-motion';
 import { useRef, useState, useEffect } from 'react';
+import { ChevronDown } from 'lucide-react';
 import { dataService } from '../data/dataService';
 import '../styles/landing.css';
 
@@ -30,6 +31,9 @@ export default function Landing() {
     description: 'Clear Skies'
   });
   const [weatherLoading, setWeatherLoading] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const cities = ['Chennai', 'Coimbatore', 'Madurai', 'Salem', 'Trichy'];
 
   useEffect(() => {
     async function fetchWeather() {
@@ -82,7 +86,11 @@ export default function Landing() {
             className="flex items-center gap-3"
             whileHover={{ scale: 1.02 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            style={{ display: 'flex', alignItems: 'center', gap: '10px' }}
           >
+            <div style={{ width: '32px', height: '32px', background: '#3b82f6', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Zap size={18} color="white" fill="white" />
+            </div>
             <span className="logo-text">SkySure</span>
           </motion.div>
 
@@ -189,19 +197,42 @@ export default function Landing() {
             </div>
             <div className="visual-content">
               <div className="visual-title">Live Monitoring</div>
-              <div style={{ marginBottom: '16px' }}>
-                <select 
-                  className="city-selector-pro"
-                  value={selectedCity} 
-                  onChange={(e) => setSelectedCity(e.target.value)}
+              
+              <div className="custom-dropdown-wrapper">
+                <div 
+                  className={`custom-dropdown-trigger ${dropdownOpen ? 'active' : ''}`}
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
                 >
-                  <option value="Chennai">Chennai</option>
-                  <option value="Coimbatore">Coimbatore</option>
-                  <option value="Madurai">Madurai</option>
-                  <option value="Salem">Salem</option>
-                  <option value="Trichy">Trichy</option>
-                </select>
+                  <span>{selectedCity}</span>
+                  <ChevronDown size={16} className={`dropdown-arrow ${dropdownOpen ? 'rotated' : ''}`} />
+                </div>
+                
+                <AnimatePresence>
+                  {dropdownOpen && (
+                    <motion.div 
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      transition={{ duration: 0.2, ease: "easeOut" }}
+                      className="custom-dropdown-menu"
+                    >
+                      {cities.map(city => (
+                        <div 
+                          key={city}
+                          className={`custom-dropdown-item ${selectedCity === city ? 'selected' : ''}`}
+                          onClick={() => {
+                            setSelectedCity(city);
+                            setDropdownOpen(false);
+                          }}
+                        >
+                          {city}
+                        </div>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
+
               <div className="visual-subtitle" style={{ opacity: weatherLoading ? 0.5 : 1 }}>
                 {weather.description} • {selectedCity} Zone
               </div>
@@ -304,7 +335,7 @@ export default function Landing() {
               coverage="60% Floor"
               cap="₹800"
 
-              icon={Shield}
+              icon={Rocket}
               delay={0.1}
             />
             <ModernPricingCard

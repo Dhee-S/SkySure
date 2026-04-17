@@ -11,7 +11,7 @@ const CITIES = {
   Thanjavur: { lat: 10.7872, lon: 79.1378 },
 };
 
-const CACHE_KEY = 'gigguard_weather_cache';
+const CACHE_KEY = 'skysure_weather_cache';
 const CACHE_DURATION = 10 * 60 * 1000;
 
 export { CITIES };
