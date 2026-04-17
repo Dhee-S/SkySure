@@ -7,7 +7,7 @@ import {
   Gauge, Droplets, Sun, ThermometerSun,
   Rocket, Lock, HeadphonesIcon
 } from 'lucide-react';
-import { motion, useScroll, useTransform, useInView, useSpring } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform, useInView, useSpring } from 'framer-motion';
 import { useRef, useState, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { dataService } from '../data/dataService';

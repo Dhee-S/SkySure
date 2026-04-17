@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
     ShieldCheck, CloudRain, Wind, Droplets,
     Zap, History, MapPin, LogOut, CheckCircle2, AlertCircle,
-    TrendingUp, Clock, AlertTriangle
+    TrendingUp, Clock, AlertTriangle, User
 } from 'lucide-react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
