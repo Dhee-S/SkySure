@@ -1,51 +1,63 @@
-# SkySure: Parametric Insurance for the Gig Economy
+# SkySure: User Navigation & Workflow Guide
 
-Welcome to the SkySure repository. This project is a next-generation insurance solution designed to protect gig workers from climate-driven earnings volatility through real-time telemetry and parametric triggers.
+Welcome to the SkySure platform. This guide explains how to navigate the application and perform forensic risk audits as an insurance professional.
 
-## 🚀 Navigation Guide
+## 🧭 Main Navigation
 
-### 1. The Risk Lab (Simulation Environment)
-The heart of SkySure is the **Risk Lab**, where we ingest climate pulses and verify insurance payouts.
-- **UI & Interaction**: [Simulation.jsx](file:///d:/Code/Guidwire/gigguard/frontend/src/pages/Simulation.jsx)
-- **Pulse & Metric Logic**: [dataService.js](file:///d:/Code/Guidwire/gigguard/frontend/src/data/dataService.js)
+The application is divided into three primary functional zones, accessible via the top navigation bar:
 
-### 2. The Forensic Audit Console
-Every fraud event is backed by telemetry evidence.
-- **Forensic UI**: Contextual logs in the `Simulation` left sidebar.
-- **Heuristic Triggers**: Defined in `dataService.js` under `heuristicChecks`.
-
-### 3. The Audit Ledger (Payout Settlements)
-Real-time tracking of all parametric disbursements.
-- **Ledger UI**: [PayoutLogs.jsx](file:///d:/Code/Guidwire/gigguard/frontend/src/pages/PayoutLogs.jsx)
-- **Settlement Components**: [RiskEngineComponents.jsx](file:///d:/Code/Guidwire/gigguard/frontend/src/components/RiskEngineComponents.jsx)
-
-## 🛠️ System Architecture
-
-SkySure uses a unified **Serverless Stack** deployed on Vercel:
-- **Frontend**: React (Vite) with Vanilla CSS and Framer Motion for high-fidelity animations.
-- **Backend API**: Node.js (Express) serverless endpoints in the `api/` directory.
-- **Persistence**: Firebase Firestore and Auth for transaction logs and user management.
-
-## 🏃 Local Execution
-
-To run the application locally:
-
-1. **Frontend Development**:
-   ```bash
-   cd frontend
-   npm install
-   npm run dev
-   ```
-
-2. **Backend API**:
-   The API is designed for Vercel deployment. For local development, ensure your environment variables match the expected Firebase config.
-
-## 🧠 Key Logic Files
-
-- [dataService.js](file:///d:/Code/Guidwire/gigguard/frontend/src/data/dataService.js): The source of truth for all simulation data, payout formulas, and fraud heuristics.
-- [Simulation.jsx](file:///d:/Code/Guidwire/gigguard/frontend/src/pages/Simulation.jsx): The primary orchestration component for the Risk Lab interface.
-- [api/index.js](file:///d:/Code/Guidwire/gigguard/api/index.js): The main serverless entry point for backend operations.
+1.  **Dashboard**: High-level executive overview of regional risk, active policies, and payout trends.
+2.  **Risk Lab (Simulation)**: The core investigative workspace for real-time telemetry pulses and fraud research.
+3.  **Audit Ledger (Payouts)**: A transparent record of all parametric settlements and historical disbursements.
 
 ---
 
-*This repository has been sanitized for the Judge Review process. All sensitive test data and development logs have been excluded while keeping the core investigative logic accessible.*
+## 🔬 How to Use the Risk Lab
+
+The **Risk Lab** is where you monitor live climate disruptions and investigate potential fraud.
+
+### 1. Initiating a Climate Pulse
+- **Location Selector**: Choose the region you wish to audit (e.g., Chennai, Mumbai, Bangalore).
+- **Controls**: Use the **Start Simulation** button to begin ingesting real-time rider telemetry.
+- **Pulse Speed**: Adjust the slider to control the cadence of incoming data packets (5-8 riders per batch).
+
+### 2. Monitoring the Pulse Feed
+- As the simulation runs, the **Risk Pulse Table** will populate with live rider nodes.
+- **Trigger Status**: Look for the icon in the "Trigger Cause" column:
+    - ⛈️ **Blue Cloud**: Operational parametric trigger (automated payout).
+    - ⚠️ **Amber Triangle**: Forensic mitigation (fraud heuristic triggered).
+
+### 3. Forensic Investigation (The Click Journey)
+- **Select a Rider**: Click on any row in the table to "Lock On" to that specific rider.
+- **Dynamic Intel Console**: Watch the **Fraud Intel Console** (left sidebar). It will automatically switch from the global feed to a **Private Audit** of the selected rider.
+- **Biometric Audit**: Review the specific failure reasons (e.g., "Geospatial Ghosting" or "Cluster Sync Anomaly") surfaced in the sidebar.
+
+---
+
+## 💸 How to Use the Audit Ledger
+
+The **Audit Ledger** provides the "Source of Truth" for all financial settlements.
+
+### 1. Verifying Payouts
+- Each row represents a completed transaction.
+- **Amount**: Verified parametric settlement in the realistic ₹400 - ₹2,800 range.
+- **Status**: 
+    - **SETTLED**: Payout successfully disbursed to the gig worker.
+    - **BLOCKED**: Transaction mitigated due to forensic anomalies.
+
+### 2. Transaction Deep-Dive
+- Click the **Expansion Chevron** on any ledger row to reveal the **Audit Workflow Panel**.
+- **Parametric Math**: View the exact formula used for the payout:
+    `Daily Baseline × Impact Multiplier × Severity Multiplier = Outcome`
+- **Signal Evidence**: See the precise weather signals (Precipitation, Wind) that triggered the event.
+
+---
+
+## 📈 Executive Monitoring
+
+- **Consolidated Risk**: The top-right card monitors the average trust score across the current regional pulse. If a specific rider is selected, this card dynamically updates to show that individual's **Rider Trust Score**.
+- **Fraud Intel Console**: Keep an eye on this for high-level heuristic pulses when no specific rider is selected.
+
+---
+
+*For technical setup or local execution instructions, please refer to the [README.md](file:///d:/Code/Guidwire/gigguard/README.md).*
