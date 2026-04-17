@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { motion, useScroll, useTransform, useInView, useSpring } from 'framer-motion';
 import { useRef, useState, useEffect } from 'react';
+import { dataService } from '../data/dataService';
 import '../styles/landing.css';
 
 export default function Landing() {
@@ -21,6 +22,26 @@ export default function Landing() {
   const containerRef = useRef(null);
   const heroRef = useRef(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [selectedCity, setSelectedCity] = useState('Chennai');
+  const [weather, setWeather] = useState({
+    temperature: 28,
+    rainfall: 0,
+    windSpeed: 12,
+    description: 'Clear Skies'
+  });
+  const [weatherLoading, setWeatherLoading] = useState(false);
+
+  useEffect(() => {
+    async function fetchWeather() {
+      setWeatherLoading(true);
+      const data = await dataService.getLiveWeather(selectedCity);
+      if (data) setWeather(data);
+      setWeatherLoading(false);
+    }
+    fetchWeather();
+    const interval = setInterval(fetchWeather, 30000); // 30s update
+    return () => clearInterval(interval);
+  }, [selectedCity]);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -168,20 +189,35 @@ export default function Landing() {
             </div>
             <div className="visual-content">
               <div className="visual-title">Live Monitoring</div>
-              <div className="visual-subtitle">Weather Resilience Active</div>
+              <div style={{ marginBottom: '16px' }}>
+                <select 
+                  className="city-selector-pro"
+                  value={selectedCity} 
+                  onChange={(e) => setSelectedCity(e.target.value)}
+                >
+                  <option value="Chennai">Chennai</option>
+                  <option value="Coimbatore">Coimbatore</option>
+                  <option value="Madurai">Madurai</option>
+                  <option value="Salem">Salem</option>
+                  <option value="Trichy">Trichy</option>
+                </select>
+              </div>
+              <div className="visual-subtitle" style={{ opacity: weatherLoading ? 0.5 : 1 }}>
+                {weather.description} • {selectedCity} Zone
+              </div>
             </div>
             <div className="visual-metrics">
               <div className="metric">
                 <Droplets size={16} />
-                <span>12mm/hr</span>
+                <span>{weather.rainfall}mm/hr</span>
               </div>
               <div className="metric">
                 <Wind size={16} />
-                <span>45km/h</span>
+                <span>{weather.windSpeed}km/h</span>
               </div>
               <div className="metric">
                 <ThermometerSun size={16} />
-                <span>28°C</span>
+                <span>{weather.temperature}°C</span>
               </div>
             </div>
             <div className="visual-pulse" />

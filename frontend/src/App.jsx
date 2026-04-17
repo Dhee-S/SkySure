@@ -39,13 +39,19 @@ export default function App() {
   };
 
   const handleAuthUpdate = () => {
-    const mockUser = localStorage.getItem('skysure_mock_user');
-    if (mockUser) {
-      const parsed = JSON.parse(mockUser);
-      setUser(parsed);
-      setUserRole(parsed.email.includes('admin') ? 'admin' : 'rider');
-      setLoading(false);
-      return true;
+    try {
+      const mockUser = localStorage.getItem('skysure_mock_user');
+      if (mockUser) {
+        const parsed = JSON.parse(mockUser);
+        setUser(parsed);
+        const role = parsed.role || (parsed.email?.includes('admin') ? 'admin' : 'rider');
+        setUserRole(role);
+        setLoading(false);
+        return true;
+      }
+    } catch (err) {
+      console.error("Mock auth parsing failed:", err);
+      localStorage.removeItem('skysure_mock_user');
     }
     return false;
   };
@@ -82,13 +88,18 @@ export default function App() {
       }
     });
 
-    // 3. Fallback to end loading if nothing found
-    if (!hasMock && !auth.currentUser) {
-       // Give Firebase a small window to initialize
-       setTimeout(() => setLoading(false), 1000);
-    }
+    // 3. Safety Fallback: Always end loading after 3.5s to prevent black screen
+    const safetyTimer = setTimeout(() => {
+      setLoading(prevState => {
+        if (prevState) console.warn("Safety timeout triggered: Force-ending load state.");
+        return false;
+      });
+    }, 3500);
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      clearTimeout(safetyTimer);
+    };
   }, []);
 
   if (loading) {

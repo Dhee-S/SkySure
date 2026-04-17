@@ -10,7 +10,7 @@ import { dataService } from '../data/dataService';
 import '../styles/dashboard.css';
 
 export default function RiderDashboard() {
-    const { rider, weather, isProtected } = useOutletContext();
+    const { rider, weather, isProtected, isProfileIncomplete } = useOutletContext();
     const [loading, setLoading] = useState(true);
     const [settlements, setSettlements] = useState([]);
 
@@ -81,11 +81,65 @@ export default function RiderDashboard() {
     return (
         <motion.div 
             className="dash-container" 
-            style={{ maxWidth: '900px' }}
+            style={{ maxWidth: '900px', position: 'relative' }}
             initial="hidden"
             animate="visible"
             variants={containerVariants}
         >
+            {/* SETUP REQUIRED OVERLAY */}
+            {isProfileIncomplete && (
+                <div style={{
+                    position: 'absolute',
+                    inset: -20,
+                    background: 'rgba(255, 255, 255, 0.7)',
+                    backdropFilter: 'blur(12px)',
+                    zIndex: 100,
+                    borderRadius: '40px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '40px'
+                }}>
+                    <motion.div 
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        style={{
+                            background: '#ffffff',
+                            padding: '48px',
+                            borderRadius: '32px',
+                            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
+                            textAlign: 'center',
+                            maxWidth: '440px',
+                            border: '1px solid #e2e8f0'
+                        }}
+                    >
+                        <div style={{ 
+                            width: '80px', 
+                            height: '80px', 
+                            background: '#eff6ff', 
+                            color: '#3b82f6', 
+                            borderRadius: '24px', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            margin: '0 auto 24px' 
+                        }}>
+                            <ShieldCheck size={40} />
+                        </div>
+                        <h2 style={{ fontSize: '1.75rem', fontWeight: 900, marginBottom: '12px', color: '#0f172a' }}>Profile Setup Required</h2>
+                        <p style={{ color: '#64748b', lineHeight: 1.6, marginBottom: '32px', fontWeight: 500 }}>
+                            To access live telemetry, active mapping, and automatic biometric payouts, you must complete your partner profile registration.
+                        </p>
+                        <button 
+                            onClick={() => navigate('/register')}
+                            className="dash-btn dash-btn-primary"
+                            style={{ width: '100%', padding: '16px', fontSize: '1rem' }}
+                        >
+                            Complete Profile Now
+                        </button>
+                    </motion.div>
+                </div>
+            )}
             {/* RIDER HEADER */}
             <motion.header variants={itemVariants} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>

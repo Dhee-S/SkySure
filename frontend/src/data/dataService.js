@@ -269,5 +269,27 @@ export const dataService = {
         body: JSON.stringify(paymentDetails)
     });
     return await resp.json();
+  },
+
+  // 10. Weather Exposure
+  async getLiveWeather(location) {
+    try {
+        const resp = await fetch(`${API_URL}/api/simulation/weather/live?location=${location}`);
+        if (resp.ok) return await resp.json();
+    } catch (e) {
+        console.error("Weather fetch failed", e);
+    }
+    return { rainfall: 0, windSpeed: 10, temperature: 28, description: 'Clear' };
+  },
+
+  // 11. Profile Status
+  async getRiderByUid(uid) {
+    if (!uid) return null;
+    try {
+        const riders = await this.getRiders();
+        return riders.find(r => r.id === uid || r.rider_id === uid);
+    } catch (e) {
+        return null;
+    }
   }
 };

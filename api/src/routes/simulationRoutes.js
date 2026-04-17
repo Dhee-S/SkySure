@@ -30,6 +30,23 @@ const getLiveWeather = async (lat, lon) => {
     }
 };
 
+// ─── LIVE WEATHER EXPOSURE ────────────────────────────────────────────────────
+router.get('/weather/live', async (req, res) => {
+    try {
+        const { location } = req.query;
+        const coords = CITY_COORDS[location] || CITY_COORDS['Chennai'];
+        const weather = await getLiveWeather(coords.lat, coords.lon);
+        res.json({
+            city: location || 'Chennai',
+            ...weather,
+            temperature: Math.round(28 + (Math.random() * 5)), // Mock temp for demo
+            description: weather.rainfall > 10 ? 'Heavy Rain' : (weather.rainfall > 2 ? 'Moderate Rain' : 'Partly Cloudy')
+        });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch weather' });
+    }
+});
+
 // ─── IMPROVED SYNTHETIC GENERATOR ────────────────────────────────────────────
 const generateSyntheticRiders = (count, city) => {
     const names = [
@@ -108,21 +125,39 @@ router.post('/batch', async (req, res) => {
         }
         selectedRiders = selectedRiders.sort(() => 0.5 - Math.random()).slice(0, batchCount);
 
-        // ─── BATCH WEATHER SCENARIO (Consistency) ────────────────────────────
+        // ─── BATCH WEATHER SCENARIO (Zonal Intelligence) ────────────────────
         let batchEnv = { rainfall: 0, windSpeed: 10, trafficLevel: 'Medium', isStressMode: false };
         
+        const ZONAL_FREQS = {
+            'Chennai': { freq: 0.18, rMax: 45, wMax: 45 },
+            'Madurai': { freq: 0.08, rMax: 15, wMax: 20 },
+            'Salem': { freq: 0.08, rMax: 15, wMax: 20 },
+            'Coimbatore': { freq: 0.12, rMax: 25, wMax: 25 },
+            'Trichy': { freq: 0.12, rMax: 25, wMax: 25 }
+        };
+
         if (isLiveMode) {
             const coords = CITY_COORDS[targetCity];
             if (coords) batchEnv = await getLiveWeather(coords.lat, coords.lon);
         } else {
-            // Force a 'Storm Scenario' if Stress Mode is ON or 60% probability
-            const isStorm = isStressMode || Math.random() > 0.4;
+            // Realistic Zonal Probability (Avg ~12% global storm freq)
+            const zoneConfig = ZONAL_FREQS[targetCity] || { freq: 0.10, rMax: 20, wMax: 20 };
+            const isStorm = isStressMode || Math.random() < zoneConfig.freq;
+
             if (isStorm) {
                 batchEnv = { 
-                    rainfall: 15 + (Math.random() * 20), 
-                    windSpeed: 35 + (Math.random() * 25), 
+                    rainfall: 15 + (Math.random() * zoneConfig.rMax), 
+                    windSpeed: 30 + (Math.random() * zoneConfig.wMax), 
                     trafficLevel: 'High', 
                     isStressMode: true 
+                };
+            } else {
+                // Nominal weather for the zone
+                batchEnv = {
+                    rainfall: Math.random() * 5,
+                    windSpeed: 5 + (Math.random() * 10),
+                    trafficLevel: Math.random() > 0.7 ? 'Medium' : 'Low',
+                    isStressMode: false
                 };
             }
         }
@@ -132,11 +167,11 @@ router.post('/batch', async (req, res) => {
             const dice = Math.random();
             let behavior = { earning_efficiency: 0.85, session_time_hr: 7, order_drop: 0.05 };
 
-            if (dice > 0.85) {
-                // Ghost Rider Profile (15% freq): High efficiency, very low time
+            if (dice > 0.96) {
+                // Ghost Rider Profile (4% freq): High efficiency, very low time
                 behavior = { earning_efficiency: 0.99, session_time_hr: 0.5, order_drop: 0.02 };
-            } else if (dice > 0.70) {
-                // Cluster Fraud Profile (15% freq): High order drop
+            } else if (dice > 0.92) {
+                // Cluster Fraud Profile (4% freq): High order drop
                 behavior = { earning_efficiency: 0.70, session_time_hr: 4, order_drop: 0.85 };
             } else if (batchEnv.isStressMode) {
                 // Storm Condition behavior

@@ -13,6 +13,7 @@ export default function RiderLayout() {
   const [selectedRider, setSelectedRider] = useState(null);
   const [selectedTier, setSelectedTier] = useState('All');
   const [loading, setLoading] = useState(true);
+  const [isProfileIncomplete, setIsProfileIncomplete] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -35,23 +36,35 @@ export default function RiderLayout() {
       const ridersList = Array.isArray(data) ? data : [];
       setRiders(ridersList);
 
-      if (ridersList.length > 0) {
-        const mockUserStr = localStorage.getItem('skysure_mock_user');
-        let initialRider = ridersList[0];
+      const mockUserStr = localStorage.getItem('skysure_mock_user');
+      const skippedProfile = localStorage.getItem('skysure_profile_incomplete') === 'true';
+      
+      let foundRider = null;
 
-        if (mockUserStr) {
-          try {
-            const mockUser = JSON.parse(mockUserStr);
-            const savedRider = ridersList.find(r => r.id === mockUser.uid || r.rider_id === mockUser.uid);
-            if (savedRider) initialRider = savedRider;
-          } catch (e) {
-            console.error('Failed to parse mock user:', e);
-          }
+      if (mockUserStr) {
+        try {
+          const mockUser = JSON.parse(mockUserStr);
+          foundRider = ridersList.find(r => r.id === mockUser.uid || r.rider_id === mockUser.uid);
+        } catch (e) {
+          console.error('Failed to parse mock user:', e);
         }
-
-        setSelectedRider(initialRider);
-        setSelectedTier('All');
       }
+
+      if (foundRider) {
+        setSelectedRider(foundRider);
+        setIsProfileIncomplete(false);
+      } else {
+        // No profile in DB
+        setIsProfileIncomplete(true);
+        // Provide a placeholder rider for the UI to use
+        setSelectedRider({ 
+          name: 'Anonymous Partner', 
+          city: 'Unconfigured',
+          tier: 'No Policy',
+          active_policy: false 
+        });
+      }
+      
       setLoading(false);
     }
     load();
@@ -91,7 +104,7 @@ export default function RiderLayout() {
     );
   }
 
-  const isProtected = selectedRider.active_policy !== false;
+  const isProtected = selectedRider?.active_policy !== false;
 
   return (
     <div className="client-layout">
@@ -174,7 +187,7 @@ export default function RiderLayout() {
       {/* MAIN CONTENT AREA */}
       <main className="client-main" style={{ padding: '40px', minHeight: '100vh' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-          <Outlet context={{ rider: selectedRider, weather: { severity: 'SECURE', temperatureC: 28, rainfallMm: 0, windKph: 12, humidity: 65, visibility: 10, description: 'Clear Skies' }, isProtected }} />
+          <Outlet context={{ rider: selectedRider, weather: { severity: 'SECURE', temperatureC: 28, rainfallMm: 0, windKph: 12, humidity: 65, visibility: 10, description: 'Clear Skies' }, isProtected, isProfileIncomplete }} />
         </div>
       </main>
     </div>

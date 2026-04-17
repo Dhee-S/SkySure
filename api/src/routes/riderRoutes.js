@@ -8,7 +8,7 @@ const { db } = require('../../firebase');
  */
 router.post('/register', async (req, res) => {
     try {
-        const { uid, email, name, phone, city, vehicle, persona, targetEarnings, upi } = req.body;
+        const { uid, email, name, phone, city, vehicle, persona, targetEarnings, upi, partnerApp } = req.body;
         
         if (!uid) return res.status(400).json({ error: 'UID is required' });
 
@@ -20,6 +20,7 @@ router.post('/register', async (req, res) => {
             city: city || 'Chennai',
             vehicle_type: vehicle || 'bike',
             persona_type: persona || 'Gig-Pro',
+            partner_app: (partnerApp || 'other').toLowerCase(),
             target_earnings: parseFloat(targetEarnings) || 5000,
             upi_id: upi || '',
             is_active: true,

@@ -82,6 +82,7 @@ export default function RiderRegistration() {
 
       if (response.ok) {
         // Bypass payment and go straight to dashboard
+        localStorage.removeItem('skysure_profile_incomplete');
         showToast("Registration Successful! Welcome to SkySure.", "success");
         navigate('/rider');
       } else {
@@ -247,10 +248,10 @@ export default function RiderRegistration() {
                     style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '14px', borderRadius: '14px', outline: 'none' }}
                   >
                     <option value="Chennai">Chennai</option>
-                    <option value="Bangalore">Bangalore</option>
-                    <option value="Delhi">Delhi</option>
-                    <option value="Mumbai">Mumbai</option>
-                    <option value="Hyderabad">Hyderabad</option>
+                    <option value="Coimbatore">Coimbatore</option>
+                    <option value="Madurai">Madurai</option>
+                    <option value="Salem">Salem</option>
+                    <option value="Trichy">Trichy</option>
                   </select>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -341,7 +342,10 @@ export default function RiderRegistration() {
             
             <div style={{ display: 'flex', gap: '16px' }}>
               <button 
-                onClick={() => navigate('/rider')}
+                onClick={() => {
+                  localStorage.setItem('skysure_profile_incomplete', 'true');
+                  navigate('/rider');
+                }}
                 style={{ background: 'none', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.6)', padding: '14px 24px', borderRadius: '16px', fontSize: '13px', fontWeight: 800, cursor: 'pointer' }}
               >
                 Skip to Dashboard
