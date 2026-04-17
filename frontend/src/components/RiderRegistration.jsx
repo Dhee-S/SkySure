@@ -4,24 +4,22 @@ import {
   User, Shield, MapPin, CreditCard, 
   CheckCircle, ArrowRight, ArrowLeft, 
   Zap, Mail, Phone, Map, Briefcase,
-  Smartphone, Truck, Navigation, DollarSign, Bike, Fuel
+  Smartphone, Truck, Navigation, DollarSign, Bike, Fuel,
+  Globe, Fingerprint
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { auth, googleProvider } from '../firebase';
 import { signInWithPopup } from 'firebase/auth';
 
 const steps = [
-  { id: 1, title: 'Identity', icon: User },
-  { id: 2, title: 'Vehicle', icon: Truck },
-  { id: 3, title: 'Workforce', icon: Briefcase },
-  { id: 4, title: 'Premium', icon: Shield },
-  { id: 5, title: 'Secure', icon: Zap }
+  { id: 1, title: 'Identity', desc: 'Secure OAuth Sync' },
+  { id: 2, title: 'Profile', desc: 'Hustle Configuration' },
+  { id: 3, title: 'Payouts', desc: 'Wallet Integration' }
 ];
 
 export default function RiderRegistration() {
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [displayText, setDisplayText] = useState('');
   const navigate = useNavigate();
   
   const [formData, setFormData] = useState({
@@ -30,66 +28,15 @@ export default function RiderRegistration() {
     name: '',
     phone: '',
     city: 'Chennai',
-    zone: 'Adyar',
     persona: 'Gig-Pro',
     vehicle: 'bike',
     partnerApp: 'Zomato',
-    appId: '',
-    targetEarnings: 5000, // Weekly target
+    targetEarnings: 5000,
     upi: ''
   });
 
-  const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 5));
+  const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 3));
   const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
-
-  // Terminal Typewriter Effect
-  useEffect(() => {
-    if (currentStep !== 1) return;
-
-    const sequence = [
-      { text: "INITIALIZING NODE...", delay: 50 },
-      { text: "ACCESSING GATEWAY...", delay: 40 },
-      { text: "IDENTITY VERIFIED: READY", delay: 30 }
-    ];
-
-    let currentIdx = 0;
-    let charIdx = 0;
-    let isDeleting = false;
-    let timeout;
-
-    const type = () => {
-      const fullText = sequence[currentIdx].text;
-      
-      if (!isDeleting) {
-        setDisplayText(fullText.substring(0, charIdx + 1));
-        charIdx++;
-
-        if (charIdx === fullText.length) {
-          if (currentIdx < sequence.length - 1) {
-            timeout = setTimeout(() => {
-              isDeleting = true;
-              type();
-            }, 1500);
-            return;
-          }
-        }
-      } else {
-        setDisplayText(fullText.substring(0, charIdx - 1));
-        charIdx--;
-
-        if (charIdx === 0) {
-          isDeleting = false;
-          currentIdx++;
-        }
-      }
-
-      const speed = isDeleting ? 30 : sequence[currentIdx].delay;
-      timeout = setTimeout(type, speed);
-    };
-
-    type();
-    return () => clearTimeout(timeout);
-  }, [currentStep]);
 
   const handleGoogleLogin = async () => {
     setLoading(true);
@@ -104,16 +51,8 @@ export default function RiderRegistration() {
       }));
       nextStep();
     } catch (error) {
-      console.error("Google Login Failed:", error);
-      let msg = `Login failed: ${error.message}`;
-      if (error.code === 'auth/unauthorized-domain') {
-        msg = "ERROR: Localhost is not whitelisted. Please ensure 'localhost' is added to Authorized Domains in Firebase Console.";
-      } else if (error.code === 'auth/operation-not-allowed') {
-        msg = "ERROR: Google Sign-In is not enabled. I have attempted to enable it via setup—please refresh and try again.";
-      } else if (error.code === 'auth/popup-blocked') {
-        msg = "ERROR: Browser blocked the popup. Please enable popups for this site.";
-      }
-      alert(`${msg} (${error.code})\n\nCURRENT DOMAIN: ${window.location.hostname}\n(Please ensure this EXACT hostname is added to 'Authorized Domains' in Firebase console)`);
+      console.error("Login Error:", error);
+      alert("Authentication failed. Please ensure Firebase Authorized Domains are configured.");
     } finally {
       setLoading(false);
     }
@@ -124,19 +63,15 @@ export default function RiderRegistration() {
     try {
       const response = await fetch('/api/rider/register', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
 
       if (response.ok) {
-        // Bypass payment and go straight to dashboard
         localStorage.removeItem('skysure_profile_incomplete');
         navigate('/rider');
       } else {
-        const err = await response.json();
-        throw new Error(err.error || "Registration failed");
+        throw new Error("Registration synchronization failed.");
       }
     } catch (error) {
       alert(error.message);
@@ -147,78 +82,67 @@ export default function RiderRegistration() {
 
   const calculatePremium = () => {
     const baseRate = 0.03; 
-    const personaModifiers = {
-      'Full-Timer': 0.70,
-      'Gig-Pro': 0.90,
-      'Student-Flex': 1.10,
-      'High-Risk': 1.50
-    };
-    const modifier = personaModifiers[formData.persona] || 1.0;
-    const weeklyPremium = (formData.targetEarnings * baseRate * modifier);
-    return Math.round(weeklyPremium);
+    const personaModifiers = { 'Full-Timer': 0.70, 'Gig-Pro': 0.90, 'Student-Flex': 1.10 };
+    return Math.round(formData.targetEarnings * baseRate * (personaModifiers[formData.persona] || 1.0));
   };
 
   return (
     <div className="registration-container" style={{ 
       minHeight: '100vh', 
-      background: '#0a0a0a', 
+      background: '#F8FAFC', 
       display: 'flex', 
+      flexDirection: 'column',
       alignItems: 'center', 
       justifyContent: 'center', 
-      padding: '20px',
-      fontFamily: "'Inter', sans-serif",
-      color: 'white'
+      padding: '40px 20px',
+      fontFamily: "'Inter', sans-serif"
     }}>
-      {/* Background Glow */}
-      <div style={{ position: 'fixed', top: '20%', left: '30%', width: '400px', height: '400px', background: 'rgba(37, 99, 235, 0.15)', filter: 'blur(100px)', borderRadius: '50%', zIndex: 0 }} />
-      <div style={{ position: 'fixed', bottom: '20%', right: '30%', width: '300px', height: '300px', background: 'rgba(59, 130, 246, 0.1)', filter: 'blur(80px)', borderRadius: '50%', zIndex: 0 }} />
+      {/* Premium Background Elements */}
+      <div style={{ position: 'fixed', top: '-10%', right: '-5%', width: '500px', height: '500px', background: 'rgba(59, 130, 246, 0.05)', filter: 'blur(100px)', borderRadius: '50%', zIndex: 0 }} />
+      <div style={{ position: 'fixed', bottom: '-5%', left: '-5%', width: '400px', height: '400px', background: 'rgba(59, 130, 246, 0.03)', filter: 'blur(100px)', borderRadius: '50%', zIndex: 0 }} />
+
+      {/* Header */}
+      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} style={{ textAlign: 'center', marginBottom: '40px', zIndex: 1 }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'white', padding: '8px 16px', borderRadius: '40px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', marginBottom: '16px' }}>
+          <Shield size={18} color="#3B82F6" fill="#3B82F6" />
+          <span style={{ fontSize: '0.75rem', fontWeight: 900, color: '#1E293B', letterSpacing: '0.05em', textTransform: 'uppercase' }}>SkySure Onboarding</span>
+        </div>
+        <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#1E293B', letterSpacing: '-0.04em', margin: 0 }}>Join the Resilience Network</h1>
+      </motion.div>
 
       <motion.div 
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
+        layout
         style={{ 
           width: '100%', 
-          maxWidth: '640px', 
-          background: 'rgba(255, 255, 255, 0.03)', 
-          backdropFilter: 'blur(20px)',
-          borderRadius: '40px', 
-          padding: '48px', 
-          border: '1px solid rgba(255, 255, 255, 0.08)',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+          maxWidth: '800px', 
+          background: 'white', 
+          borderRadius: '32px', 
+          padding: '40px', 
+          border: '1px solid #E2E8F0',
+          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02)',
           position: 'relative',
           zIndex: 1
         }}
       >
-        {/* Progress Bar */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '56px', position: 'relative' }}>
-          <div style={{ position: 'absolute', top: '16px', left: '0', right: '0', height: '2px', background: 'rgba(255, 255, 255, 0.05)', zIndex: 0 }} />
+        {/* Step Stepper */}
+        <div style={{ display: 'flex', gap: '2px', marginBottom: '48px', background: '#F1F5F9', padding: '6px', borderRadius: '16px' }}>
           {steps.map(step => (
-            <div key={step.id} style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-              <motion.div 
-                animate={{ 
-                  scale: currentStep === step.id ? 1.2 : 1,
-                  backgroundColor: currentStep >= step.id ? '#2563eb' : 'rgba(255, 255, 255, 0.05)',
-                  borderColor: currentStep >= step.id ? '#3b82f6' : 'rgba(255, 255, 255, 0.1)'
-                }}
-                style={{ 
-                  width: '32px', 
-                  height: '32px', 
-                  borderRadius: '12px', 
-                  border: '2px solid',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                  fontSize: '12px', fontWeight: 900,
-                  color: 'white'
-                }}
-              >
-                {currentStep > step.id ? <CheckCircle size={16} /> : step.id}
-              </motion.div>
-              <span style={{ 
-                fontSize: '10px', 
-                fontWeight: 800, 
-                textTransform: 'uppercase', 
-                letterSpacing: '0.05em',
-                color: currentStep >= step.id ? 'white' : 'rgba(255, 255, 255, 0.3)' 
-              }}>{step.title}</span>
+            <div 
+              key={step.id} 
+              style={{ 
+                flex: 1, 
+                padding: '12px', 
+                borderRadius: '12px', 
+                background: currentStep === step.id ? 'white' : 'transparent',
+                boxShadow: currentStep === step.id ? '0 4px 6px -1px rgba(0,0,0,0.05)' : 'none',
+                transition: 'all 0.3s ease',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '2px'
+              }}
+            >
+              <span style={{ fontSize: '0.6rem', fontWeight: 800, color: currentStep === step.id ? '#3B82F6' : '#94A3B8', textTransform: 'uppercase' }}>Step 0{step.id}</span>
+              <span style={{ fontSize: '0.85rem', fontWeight: 800, color: currentStep === step.id ? '#1E293B' : '#64748B' }}>{step.title}</span>
             </div>
           ))}
         </div>
@@ -226,259 +150,169 @@ export default function RiderRegistration() {
         <AnimatePresence mode="wait">
           {currentStep === 1 && (
             <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-              <div style={{ marginBottom: '32px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#3b82f6', boxShadow: '0 0 10px #3b82f6' }} />
-                  <span style={{ fontFamily: 'monospace', fontSize: '12px', color: '#3b82f6', fontWeight: 800, letterSpacing: '0.1em' }}>{displayText}<span className="cursor">_</span></span>
-                </div>
-                <h2 style={{ fontSize: '2.2rem', fontWeight: 900, marginBottom: '12px', letterSpacing: '-0.03em' }}>Welcome to SkySure</h2>
-                <p style={{ color: 'rgba(255, 255, 255, 0.5)', fontWeight: 500, lineHeight: 1.6 }}>Secure your digital rider identity with Google OAuth for instant parametric payouts.</p>
-              </div>
-              
-              <button 
-                onClick={handleGoogleLogin}
-                disabled={loading}
-                style={{ 
-                  width: '100%', 
-                  padding: '18px', 
-                  borderRadius: '18px', 
-                  background: 'white', 
-                  color: 'black', 
-                  border: 'none', 
-                  fontWeight: 800, 
-                  fontSize: '16px',
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center', 
-                  gap: '12px',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease'
-                }}
-              >
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20" alt="Google" />
-                {loading ? 'Authenticating...' : 'Continue with Google'}
-              </button>
-
-              <div style={{ marginTop: '24px', textAlign: 'center' }}>
-                <p style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.4)', fontWeight: 600 }}>We only sync your profile name and email.</p>
-              </div>
+               <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '40px', alignItems: 'center' }}>
+                  <div>
+                    <h2 style={{ fontSize: '1.75rem', fontWeight: 900, color: '#1E293B', marginBottom: '16px' }}>Verify Identity</h2>
+                    <p style={{ color: '#64748B', lineHeight: 1.6, marginBottom: '32px' }}>We use Secure OAuth 2.0 to link your rider profile. This ensure instant parametric payouts can be routed to your wallet without manual claims.</p>
+                    
+                    <button 
+                      onClick={handleGoogleLogin}
+                      disabled={loading}
+                      style={{ 
+                        width: '100%', 
+                        padding: '16px', 
+                        borderRadius: '14px', 
+                        background: 'white', 
+                        color: '#1E293B', 
+                        border: '2px solid #E2E8F0', 
+                        fontWeight: 800, 
+                        fontSize: '1rem',
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        gap: '12px',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20" alt="Google" />
+                      {loading ? 'Authenticating...' : 'Continue with Google'}
+                    </button>
+                  </div>
+                  <div style={{ background: '#F8FAFC', padding: '32px', borderRadius: '24px', border: '1px dashed #CBD5E1', textAlign: 'center' }}>
+                    <Fingerprint size={48} color="#3B82F6" style={{ marginBottom: '16px' }} />
+                    <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#94A3B8', textTransform: 'uppercase', marginBottom: '4px' }}>Security Layer</div>
+                    <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#1E293B' }}>Parametric Verification Active</div>
+                  </div>
+               </div>
             </motion.div>
           )}
 
           {currentStep === 2 && (
             <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-              <h2 style={{ fontSize: '1.8rem', fontWeight: 900, marginBottom: '8px' }}>Asset & Tools</h2>
-              <p style={{ color: 'rgba(255, 255, 255, 0.5)', marginBottom: '32px', fontWeight: 500 }}>Select your primary delivery machine.</p>
+              <div style={{ marginBottom: '32px' }}>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#1E293B', marginBottom: '8px' }}>Hustle Configuration</h2>
+                <p style={{ color: '#64748B', fontSize: '0.9rem' }}>Configure your operational profile for accurate risk assessment.</p>
+              </div>
               
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '32px' }}>
-                <SelectCard active={formData.vehicle === 'bike'} onClick={() => setFormData({...formData, vehicle: 'bike'})} icon={Fuel} title="Petrol Bike" desc="Standard IC Engine" />
-                <SelectCard active={formData.vehicle === 'scooter'} onClick={() => setFormData({...formData, vehicle: 'scooter'})} icon={Navigation} title="Scooter" desc="Light transit" />
-                <SelectCard active={formData.vehicle === 'ev'} onClick={() => setFormData({...formData, vehicle: 'ev'})} icon={Zap} title="Electric" desc="Eco-efficient" />
-                <SelectCard active={formData.vehicle === 'bicycle'} onClick={() => setFormData({...formData, vehicle: 'bicycle'})} icon={Bike} title="Bicycle" desc="Short range" />
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '32px' }}>
+                <PersonaCard active={formData.persona === 'Full-Timer'} onClick={() => setFormData({...formData, persona: 'Full-Timer'})} title="Full-Timer" desc="10+ hrs/day" />
+                <PersonaCard active={formData.persona === 'Gig-Pro'} onClick={() => setFormData({...formData, persona: 'Gig-Pro'})} title="Gig-Pro" desc="5-8 hrs/day" />
+                <PersonaCard active={formData.persona === 'Student-Flex'} onClick={() => setFormData({...formData, persona: 'Student-Flex'})} title="Student" desc="Flex Hours" />
               </div>
 
-              <Input label="Mobile Number" icon={Phone} value={formData.phone} onChange={v => setFormData({...formData, phone: v})} placeholder="+91 XXXXX XXXXX" />
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '32px' }}>
+                <Input label="Operating City" icon={Globe} value={formData.city} onChange={v => setFormData({...formData, city: v})} placeholder="e.g. Chennai" />
+                <Input label="Partner Application" icon={Briefcase} value={formData.partnerApp} onChange={v => setFormData({...formData, partnerApp: v})} placeholder="e.g. Zomato" />
+              </div>
+
+              <div style={{ background: '#F8FAFC', padding: '24px', borderRadius: '20px', border: '1px solid #E2E8F0' }}>
+                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748B' }}>WEEKLY EARNINGS TARGET</span>
+                    <span style={{ fontSize: '1.25rem', fontWeight: 900, color: '#3B82F6' }}>₹{formData.targetEarnings.toLocaleString()}</span>
+                 </div>
+                 <input 
+                  type="range" min="1000" max="15000" step="500" 
+                  value={formData.targetEarnings} 
+                  onChange={(e) => setFormData({...formData, targetEarnings: parseInt(e.target.value)})}
+                  style={{ width: '100%', accentColor: '#3B82F6' }}
+                />
+              </div>
             </motion.div>
           )}
 
           {currentStep === 3 && (
             <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-              <h2 style={{ fontSize: '1.8rem', fontWeight: 900, marginBottom: '8px' }}>Rider Persona</h2>
-              <p style={{ color: 'rgba(255, 255, 255, 0.5)', marginBottom: '32px', fontWeight: 500 }}>Which profile matches your weekly hustle?</p>
-              
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '32px' }}>
-                <PersonaCard active={formData.persona === 'Full-Timer'} onClick={() => setFormData({...formData, persona: 'Full-Timer'})} title="Full-Timer" desc="10+ hrs/day" />
-                <PersonaCard active={formData.persona === 'Gig-Pro'} onClick={() => setFormData({...formData, persona: 'Gig-Pro'})} title="Gig-Pro" desc="5-8 hrs/day" />
-                <PersonaCard active={formData.persona === 'Student-Flex'} onClick={() => setFormData({...formData, persona: 'Student-Flex'})} title="Flex" desc="Weekend focus" />
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <label style={{ fontSize: '11px', fontWeight: 900, color: 'rgba(255, 255, 255, 0.4)', textTransform: 'uppercase' }}>City</label>
-                  <select 
-                    value={formData.city} 
-                    onChange={e => setFormData({...formData, city: e.target.value})}
-                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '14px', borderRadius: '14px', outline: 'none' }}
-                  >
-                    <option value="Chennai">Chennai</option>
-                    <option value="Coimbatore">Coimbatore</option>
-                    <option value="Madurai">Madurai</option>
-                    <option value="Salem">Salem</option>
-                    <option value="Trichy">Trichy</option>
-                  </select>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <label style={{ fontSize: '11px', fontWeight: 900, color: 'rgba(255, 255, 255, 0.4)', textTransform: 'uppercase' }}>Partner App</label>
-                  <select 
-                    value={formData.partnerApp} 
-                    onChange={e => setFormData({...formData, partnerApp: e.target.value})}
-                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '14px', borderRadius: '14px', outline: 'none' }}
-                  >
-                    <option value="Zomato">Zomato</option>
-                    <option value="Swiggy">Swiggy</option>
-                    <option value="Uber Eats">Uber Eats</option>
-                    <option value="Dunzo">Dunzo</option>
-                    <option value="Zepto">Zepto</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {currentStep === 4 && (
-            <motion.div key="step4" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-              <h2 style={{ fontSize: '1.8rem', fontWeight: 900, marginBottom: '8px' }}>Dynamic Premium</h2>
-              <p style={{ color: 'rgba(255, 255, 255, 0.5)', marginBottom: '40px', fontWeight: 500 }}>Adjust your weekly earnings goal to see your protection premium.</p>
-              
-              <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '32px', borderRadius: '24px', marginBottom: '32px', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                  <span style={{ fontWeight: 800, color: 'rgba(255, 255, 255, 0.6)', textTransform: 'uppercase', fontSize: '12px' }}>Weekly Earnings Goal</span>
-                  <span style={{ fontSize: '1.8rem', fontWeight: 900, color: '#3b82f6' }}>₹{formData.targetEarnings}</span>
-                </div>
-                
-                <input 
-                  type="range" 
-                  min="1000" 
-                  max="10000" 
-                  step="500" 
-                  value={formData.targetEarnings} 
-                  onChange={(e) => setFormData({...formData, targetEarnings: parseInt(e.target.value)})}
-                  style={{ width: '100%', height: '6px', background: '#1e3a8a', borderRadius: '10px', appearance: 'none', cursor: 'pointer' }}
-                />
-                
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px', fontSize: '10px', fontWeight: 700, color: 'rgba(255, 255, 255, 0.3)' }}>
-                  <span>₹1,000</span>
-                  <span>₹10,000</span>
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '24px', background: '#2563eb', borderRadius: '24px' }}>
-                <div>
-                  <div style={{ fontSize: '12px', fontWeight: 800, color: 'rgba(255, 255, 255, 0.8)', textTransform: 'uppercase' }}>Adaptive Premium</div>
-                  <div style={{ fontSize: '0.9rem', fontWeight: 700 }}>Parametric Protection</div>
-                </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: '2rem', fontWeight: 900 }}>₹{calculatePremium()}</div>
-                  <div style={{ fontSize: '10px', fontWeight: 700, color: 'rgba(255, 255, 255, 0.7)' }}>PER WEEK</div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {currentStep === 5 && (
-            <motion.div key="step5" style={{ textAlign: 'center' }}>
-              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring' }} style={{ width: '80px', height: '80px', background: 'rgba(37, 99, 235, 0.2)', color: '#3b82f6', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
-                <Shield size={40} />
-              </motion.div>
-              <h2 style={{ fontSize: '1.8rem', fontWeight: 900, marginBottom: '12px' }}>Finalize Setup</h2>
-              <p style={{ color: 'rgba(255, 255, 255, 0.5)', marginBottom: '32px', fontWeight: 500, lineHeight: 1.6 }}>One last step. Please provide your UPI ID for instant parametric payouts directly to your account.</p>
-              
-              <Input label="UPI ID / VPA" icon={CreditCard} value={formData.upi} onChange={v => setFormData({...formData, upi: v})} placeholder="name@upi" />
-              
-              <div style={{ margin: '24px 0', padding: '20px', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '16px', fontSize: '13px', color: 'rgba(255, 255, 255, 0.4)', textAlign: 'left', lineHeight: 1.6 }}>
-                <div style={{ fontWeight: 800, color: 'rgba(255, 255, 255, 0.6)', marginBottom: '4px', textTransform: 'uppercase', fontSize: '10px' }}>Coverage summary</div>
-                Parametric trigger activated at 10mm/h rainfall or 35km/h wind speed. 
-              </div>
+               <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#1E293B', marginBottom: '24px' }}>Payout Settlement</h2>
+               
+               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                    <Input label="UPI Address" icon={CreditCard} value={formData.upi} onChange={v => setFormData({...formData, upi: v})} placeholder="yourname@upi" />
+                    <Input label="Verified Phone" icon={Smartphone} value={formData.phone} onChange={v => setFormData({...formData, phone: v})} placeholder="+91 XXXXX XXXXX" />
+                  </div>
+                  
+                  <div style={{ background: '#1E293B', padding: '32px', borderRadius: '24px', color: 'white', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                    <div style={{ fontSize: '0.7rem', fontWeight: 800, opacity: 0.6, letterSpacing: '0.1em', marginBottom: '8px' }}>ESTIMATED PREMIUM</div>
+                    <div style={{ fontSize: '2.5rem', fontWeight: 900, marginBottom: '4px' }}>₹{calculatePremium()}</div>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 600, opacity: 0.6 }}>Per Week (Parametric Protection)</div>
+                    <div style={{ height: '1px', background: 'rgba(255,255,255,0.1)', margin: '20px 0' }} />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <CheckCircle size={14} color="#10B981" />
+                      <span style={{ fontSize: '0.7rem', fontWeight: 700 }}>Auto-Trigger Cap: 10mm Rain</span>
+                    </div>
+                  </div>
+               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {currentStep > 1 && (
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '48px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '48px', alignItems: 'center' }}>
+          {currentStep > 1 ? (
+             <button onClick={prevStep} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'none', border: 'none', color: '#64748B', fontWeight: 800, cursor: 'pointer' }}>
+               <ArrowLeft size={18} /> Back
+             </button>
+          ) : <div />}
+          
+          <div style={{ display: 'flex', gap: '12px' }}>
             <button 
-              onClick={prevStep} 
-              style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 800, color: 'rgba(255, 255, 255, 0.4)', background: 'none', border: 'none', cursor: 'pointer' }}
+              onClick={() => navigate('/rider')}
+              style={{ padding: '12px 24px', borderRadius: '12px', border: '1px solid #E2E8F0', background: 'white', color: '#64748B', fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer' }}
             >
-              <ArrowLeft size={16} /> Back
+              Skip
             </button>
-            
-            <div style={{ display: 'flex', gap: '16px' }}>
+            {currentStep > 1 && (
               <button 
-                onClick={() => {
-                  localStorage.setItem('skysure_profile_incomplete', 'true');
-                  navigate('/rider');
-                }}
-                style={{ background: 'none', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.6)', padding: '14px 24px', borderRadius: '16px', fontSize: '13px', fontWeight: 800, cursor: 'pointer' }}
-              >
-                Skip to Dashboard
-              </button>
-              
-              <button 
-                onClick={currentStep === 5 ? handleRegister : nextStep}
+                onClick={currentStep === 3 ? handleRegister : nextStep}
                 disabled={loading}
                 style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: '12px', 
-                  padding: '14px 36px', 
-                  borderRadius: '16px', 
-                  background: '#2563eb', 
+                  padding: '12px 32px', 
+                  borderRadius: '12px', 
+                  background: '#1E293B', 
                   color: 'white', 
                   fontWeight: 800, 
+                  fontSize: '0.9rem', 
                   cursor: 'pointer', 
                   border: 'none',
-                  boxShadow: '0 10px 15px -3px rgba(37, 99, 235, 0.3)'
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px'
                 }}
               >
-                {loading ? 'Securing...' : (currentStep === 5 ? 'Authorize & Pay' : 'Next Step')} <ArrowRight size={16} />
+                {currentStep === 3 ? 'Finalize Account' : 'Continue'} <ArrowRight size={18} />
               </button>
-            </div>
+            )}
           </div>
-        )}
+        </div>
       </motion.div>
     </div>
   );
 }
 
-function Input({ icon: Icon, label, value, onChange, type = "text", placeholder }) {
+function Input({ icon: Icon, label, value, onChange, placeholder }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%', marginBottom: '20px' }}>
-      <label style={{ fontSize: '11px', fontWeight: 900, color: 'rgba(255, 255, 255, 0.4)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{label}</label>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
+      <label style={{ fontSize: '0.65rem', fontWeight: 800, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</label>
       <div style={{ position: 'relative' }}>
-        <Icon size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255, 255, 255, 0.3)' }} />
+        <div style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }}>
+          <Icon size={18} />
+        </div>
         <input 
-          type={type}
           value={value}
           onChange={e => onChange(e.target.value)}
           placeholder={placeholder}
           style={{ 
             width: '100%', 
-            padding: '16px 16px 16px 48px', 
-            borderRadius: '16px', 
-            background: 'rgba(255, 255, 255, 0.05)',
-            border: '1px solid rgba(255, 255, 255, 0.1)', 
-            fontSize: '14px', 
+            padding: '14px 16px 14px 44px', 
+            borderRadius: '12px', 
+            background: '#F8FAFC',
+            border: '1px solid #E2E8F0', 
+            fontSize: '0.9rem', 
             fontWeight: 700, 
-            color: 'white',
-            outline: 'none',
-            boxSizing: 'border-box'
+            color: '#1E293B',
+            outline: 'none'
           }} 
         />
       </div>
-    </div>
-  );
-}
-
-function SelectCard({ active, onClick, icon: Icon, title, desc }) {
-  return (
-    <div 
-      onClick={onClick}
-      style={{ 
-        padding: '20px', 
-        borderRadius: '20px', 
-        border: `2px solid ${active ? '#2563eb' : 'rgba(255, 255, 255, 0.05)'}`, 
-        background: active ? 'rgba(37, 99, 235, 0.1)' : 'rgba(255, 255, 255, 0.02)', 
-        cursor: 'pointer', 
-        transition: 'all 0.2s ease',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '8px'
-      }}
-    >
-      <Icon size={24} color={active ? '#3b82f6' : 'rgba(255, 255, 255, 0.3)'} />
-      <h4 style={{ fontWeight: 800, fontSize: '14px', margin: 0 }}>{title}</h4>
-      <p style={{ fontSize: '10px', color: 'rgba(255, 255, 255, 0.4)', margin: 0, fontWeight: 600 }}>{desc}</p>
     </div>
   );
 }
@@ -488,17 +322,18 @@ function PersonaCard({ active, onClick, title, desc }) {
     <div 
       onClick={onClick}
       style={{ 
-        padding: '24px', 
-        borderRadius: '20px', 
-        border: `2px solid ${active ? '#2563eb' : 'rgba(255, 255, 255, 0.05)'}`, 
-        background: active ? 'rgba(37, 99, 235, 0.1)' : 'rgba(255, 255, 255, 0.02)', 
+        padding: '20px', 
+        borderRadius: '16px', 
+        border: `2px solid ${active ? '#3B82F6' : '#F1F5F9'}`, 
+        background: active ? 'white' : '#F8FAFC', 
         cursor: 'pointer', 
-        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-        textAlign: 'center'
+        transition: 'all 0.2s ease',
+        textAlign: 'center',
+        boxShadow: active ? '0 10px 15px -3px rgba(59, 130, 246, 0.1)' : 'none'
       }}
     >
-      <h4 style={{ fontWeight: 900, fontSize: '15px', marginBottom: '4px', letterSpacing: '-0.02em' }}>{title}</h4>
-      <p style={{ fontSize: '10px', color: 'rgba(255, 255, 255, 0.4)', margin: 0, fontWeight: 700, textTransform: 'uppercase' }}>{desc}</p>
+      <h4 style={{ fontWeight: 900, fontSize: '0.9rem', color: active ? '#3B82F6' : '#1E293B', margin: '0 0 4px 0' }}>{title}</h4>
+      <p style={{ fontSize: '0.65rem', color: '#94A3B8', margin: 0, fontWeight: 700 }}>{desc}</p>
     </div>
   );
 }

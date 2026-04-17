@@ -52,4 +52,62 @@ router.post('/register', async (req, res) => {
     }
 });
 
+/**
+ * @route PATCH /api/rider/profile/:id
+ * @desc Update rider profile and sync with users collection
+ */
+router.patch('/profile/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, city, phone, partnerApp, tier } = req.body;
+
+        if (!db) throw new Error('Firestore is not available');
+
+        const updateData = {};
+        if (name) updateData.name = name;
+        if (city) updateData.city = city;
+        if (phone) updateData.phone = phone;
+        if (partnerApp) updateData.partner_app = partnerApp.toLowerCase();
+        if (tier) updateData.tier = tier;
+        
+        updateData.updated_at = new Date().toISOString();
+
+        // 1. Update Rider Profile collection
+        const profileRef = db.collection('rider_profiles').doc(id);
+        const profileDoc = await profileRef.get();
+        
+        if (profileDoc.exists) {
+            await profileRef.update(updateData);
+        } else {
+            // If it doesn't exist in rider_profiles, create it (backfill)
+            await profileRef.set({
+                rider_id: id,
+                ...updateData,
+                is_active: true,
+                trust_score: 85,
+                fraud_probability: 0.05
+            }, { merge: true });
+        }
+
+        // 2. Sync with Users collection
+        const userRef = db.collection('users').doc(id);
+        await userRef.set({
+            ...updateData,
+            role: 'rider'
+        }, { merge: true });
+
+        console.log(`[RIDER] Updated Profile: ${id}`);
+        
+        res.json({ 
+            success: true, 
+            message: 'Profile synchronized successfully',
+            data: updateData
+        });
+    } catch (error) {
+        console.error('[RIDER_UPDATE_ERROR]', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 module.exports = router;
+

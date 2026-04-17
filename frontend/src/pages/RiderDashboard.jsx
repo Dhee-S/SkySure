@@ -144,7 +144,7 @@ export default function RiderDashboard() {
                             To access live telemetry, active mapping, and automatic biometric payouts, you must complete your partner profile registration.
                         </p>
                         <button 
-                            onClick={() => navigate('/register')}
+                            onClick={() => navigate('/rider/profile')}
                             className="dash-btn dash-btn-primary"
                             style={{ width: '100%', padding: '16px', fontSize: '1rem' }}
                         >

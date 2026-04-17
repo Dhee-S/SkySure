@@ -61,8 +61,9 @@ export default function RiderPayouts() {
                   <CreditCard size={12} /> Settlement Registry
                </div>
                <h1 className="dash-title">My Payouts</h1>
-               <p className="dash-subtitle">Historical audit of all disbursements for <strong style={{ color: '#0f172a' }}>#{rider.id?.slice(0, 8) || 'RDR-99'}</strong></p>
+               <p className="dash-subtitle" style={{ marginTop: '4px', maxWidth: '300px' }}>Historical audit of all disbursements for <strong style={{ color: '#0f172a' }}>#{rider.id?.slice(0, 8) || 'RDR-99'}</strong></p>
             </div>
+
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '24px', background: 'white', border: '1px solid #e2e8f0', padding: '16px 24px', borderRadius: '16px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
                <div>

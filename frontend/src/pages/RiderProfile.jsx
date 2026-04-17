@@ -37,31 +37,40 @@ export default function RiderProfile() {
 
     const handleSave = async (e) => {
         e.preventDefault();
-        if (!rider?.id) {
-            showToast("Cannot update profile: Account not linked to database.", "danger");
+        if (!rider?.id && !rider?.rider_id) {
+            showToast("Cannot update profile: Account session lost. Please login again.", "danger");
             return;
         }
 
+        const riderId = rider.id || rider.rider_id;
+
         setLoading(true);
         try {
-            const { setDoc } = await import('firebase/firestore');
-            const userRef = doc(db, 'users', rider.id);
-            await setDoc(userRef, {
-                name: formData.name,
-                city: formData.city,
-                partner_app: formData.partnerApp,
-                phone: formData.phone,
-                updated_at: new Date().toISOString()
-            }, { merge: true });
+            const response = await fetch(`/api/rider/profile/${riderId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: formData.name,
+                    city: formData.city,
+                    partnerApp: formData.partnerApp,
+                    phone: formData.phone
+                })
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) throw new Error(result.error || 'Update failed');
+
             showToast("Profile identity synchronized successfully.", "success");
             if (reloadRider) reloadRider();
         } catch (err) {
             console.error("Profile update error:", err);
-            showToast("Failed to sync profile data.", "danger");
+            showToast(err.message || "Failed to sync profile data.", "danger");
         } finally {
             setLoading(false);
         }
     };
+
 
     const containerVariants = {
         hidden: { opacity: 0, y: 20 },
@@ -119,6 +128,7 @@ export default function RiderProfile() {
                                     onChange={e => setFormData({...formData, name: e.target.value})}
                                     style={{ width: '100%', padding: '14px 14px 14px 48px', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '1rem', fontWeight: 600, color: '#0f172a' }}
                                     placeholder="Enter full name"
+                                    required
                                 />
                             </div>
                         </div>
@@ -131,13 +141,16 @@ export default function RiderProfile() {
                                     value={formData.city}
                                     onChange={e => setFormData({...formData, city: e.target.value})}
                                     style={{ width: '100%', padding: '14px 14px 14px 48px', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '1rem', fontWeight: 600, color: '#0f172a', appearance: 'none', background: 'white' }}
+                                    required
                                 >
+                                    <option value="">Select City</option>
                                     <option>Chennai</option>
                                     <option>Coimbatore</option>
                                     <option>Madurai</option>
                                     <option>Salem</option>
                                     <option>Trichy</option>
                                 </select>
+
                             </div>
                         </div>
 

@@ -59,22 +59,30 @@ export default function RiderPolicy() {
    const premium = Math.round(baseEarnings * currentConfig.premium_rate);
    const coverage = currentConfig.coverage_floor;
 
-   const handleUpdatePolicy = async () => {
-       setIsUpdating(true);
-       try {
-           const userRef = doc(db, 'users', rider.uid);
-           await updateDoc(userRef, {
-               tier: currentConfig.label,
-               updated_at: new Date()
-           });
-           showToast(`Policy upgraded to ${currentConfig.label} successfully!`, "success");
-       } catch (error) {
-           console.error("Policy Update Failed:", error);
-           showToast("Failed to update policy handshake. Please try again.", "danger");
-       } finally {
-           setIsUpdating(false);
-       }
-   };
+    const handleUpdatePolicy = async () => {
+        setIsUpdating(true);
+        const riderId = rider.id || rider.rider_id || rider.uid;
+        try {
+            const response = await fetch(`/api/rider/profile/${riderId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    tier: currentConfig.label
+                })
+            });
+
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.error || 'Handshake failed');
+
+            showToast(`Policy upgraded to ${currentConfig.label} successfully!`, "success");
+            if (reloadRider) reloadRider();
+        } catch (error) {
+            console.error("Policy Update Failed:", error);
+            showToast(error.message || "Failed to update policy handshake. Please try again.", "danger");
+        } finally {
+            setIsUpdating(false);
+        }
+    };
 
    return (
       <div className="dash-container" style={{ padding: 0 }}>

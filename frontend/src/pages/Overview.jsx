@@ -193,15 +193,19 @@ export default function Overview() {
                   >
                     <td style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                       <div className="avatar" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#b91c1c' }}>{rider?.name?.charAt(0) || '?'}</div>
-                      <div>
-                        <strong style={{ display: 'block', fontSize: '1.05rem', marginBottom: '2px' }}>{rider?.name}</strong>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', color: '#64748b' }}>
-                          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><MapPin size={12} /> {rider?.city}</span>
-                          <span style={{ opacity: 0.5 }}>|</span>
-                          <span style={{ fontFamily: 'monospace' }}>Rider ID: {rider?.id?.slice(0, 8)}</span>
+                      <div className="id-privacy-node">
+                        <div style={{ fontFamily: 'monospace', fontSize: '0.85rem', fontWeight: 900, color: '#1e293b' }}>
+                          RID-{rider?.id?.slice(0, 8).toUpperCase() || 'RDR-99'}
+                        </div>
+                        <div className="reveal-on-hover" style={{ fontSize: '0.9rem', color: '#2563eb', fontWeight: 800 }}>
+                          {rider?.name || 'Partner Instance'}
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.7rem', color: '#64748b', fontWeight: 600 }}>
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><MapPin size={10} /> {rider?.city}</span>
                         </div>
                       </div>
                     </td>
+
                     <td style={{ textAlign: 'right' }}>
                       <span className={rider.risk?.level === 'High' ? "badge-danger" : "badge-success"} style={{ marginRight: '16px' }}>
                         {rider.risk?.level || 'High'} Risk
@@ -242,12 +246,20 @@ export default function Overview() {
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                  <strong style={{ fontSize: '1rem', color: '#0f172a' }}>{log.riderName}</strong>
+                  <div className="id-privacy-node">
+                    <div style={{ fontFamily: 'monospace', fontSize: '0.75rem', fontWeight: 900, color: '#64748b' }}>
+                      RID-{log.riderId?.slice(0, 8).toUpperCase() || 'RDR-99'}
+                    </div>
+                    <div className="reveal-on-hover" style={{ fontSize: '0.9rem', color: '#0f172a', fontWeight: 800 }}>
+                      {log.riderName}
+                    </div>
+                  </div>
                   <span style={{ fontSize: '0.8rem', color: '#64748b', display: 'flex', alignItems: 'center', gap: '4px' }}>
                       <Clock size={12} /> 
                       {safeFormatTime(log.timestamp)}
                   </span>
                 </div>
+
                 <div style={{ fontSize: '0.85rem', color: log.status === 'blocked' ? '#b91c1c' : '#475569', fontWeight: 600, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   {log.status === 'blocked' ? <Lock size={14} /> : <Zap size={14} />} {log.reason}
                 </div>
@@ -270,9 +282,30 @@ export default function Overview() {
           </button>
         </div>
       </div>
+      <style>{`
+        .id-privacy-node {
+          position: relative;
+          overflow: hidden;
+        }
+        .id-privacy-node .reveal-on-hover {
+          opacity: 0;
+          height: 0;
+          transition: all 0.2s ease;
+          pointer-events: none;
+        }
+        .id-privacy-node:hover .reveal-on-hover {
+          opacity: 1;
+          height: auto;
+          margin-top: 2px;
+        }
+        .id-privacy-node:hover div:first-child {
+          opacity: 0.5;
+        }
+      `}</style>
     </div>
   );
 }
+
 
 function KPICard({ label, value, trend, status, color, icon: Icon }) {
   const isDanger = status === 'Attention Required';

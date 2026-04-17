@@ -136,18 +136,22 @@ export default function Riders() {
                       <div className={`avatar ${rider?.probation_status ? 'avatar-probation' : ''}`}>
                         {displayName.charAt(0)}
                       </div>
-                      <div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <strong style={{ fontSize: '1.05rem' }}>{displayName}</strong>
+                      <div className="id-privacy-node">
+                        <div style={{ fontFamily: 'monospace', fontSize: '0.75rem', fontWeight: 900, color: '#94a3b8', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                          <span style={{ fontSize: '0.6rem', opacity: 0.5, letterSpacing: '0.05em' }}>PARTNER ID</span>
+                          <span className="rider-id-primary">RID-{rider?.rider_id?.slice(-8).toUpperCase() || rider?.id?.slice(-8).toUpperCase() || 'RDR-99'}</span>
+                        </div>
+                        <div className="reveal-on-hover" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px' }}>
+                          <strong style={{ fontSize: '1.05rem', color: '#1e3a8a' }}>{displayName}</strong>
                           {rider?.probation_status && (
                             <span className="badge-probation" title="Redemption Track Active">
                               PROBATION
                             </span>
                           )}
                         </div>
-                        <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontFamily: 'monospace' }}>Rider ID: {rider?.rider_id || rider?.id}</span>
                       </div>
                     </td>
+
                     <td>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>
@@ -253,6 +257,29 @@ export default function Riders() {
           </div>
         </div>
       </div>
+        </div>
+      </div>
+      <style>{`
+        .id-privacy-node {
+          position: relative;
+          cursor: help;
+        }
+        .id-privacy-node .reveal-on-hover {
+          opacity: 0;
+          height: 0;
+          overflow: hidden;
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+          pointer-events: none;
+        }
+        .id-privacy-node:hover .reveal-on-hover {
+          opacity: 1;
+          height: auto;
+          margin-top: 6px;
+        }
+        .id-privacy-node:hover .rider-id-primary {
+          color: #2563eb !important;
+        }
+      `}</style>
     </div>
   );
-}
+}

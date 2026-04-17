@@ -147,15 +147,47 @@ export default function RiderLayout() {
 
           <div style={{ marginTop: '40px' }}>
             <div style={{ fontSize: '0.65rem', textTransform: 'uppercase', fontWeight: 800, opacity: 0.4, letterSpacing: '0.15em', marginBottom: '12px', marginLeft: '4px' }}>Active Rider Identity</div>
-            <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '16px', padding: '16px' }}>
-              <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'rgba(255,255,255,0.5)', fontFamily: 'monospace' }}>RID-{selectedRider.id?.slice(-8).toUpperCase() || 'RDR-99'}</div>
+            <div 
+              style={{ 
+                background: 'rgba(255,255,255,0.03)', 
+                border: '1px solid rgba(255,255,255,0.05)', 
+                borderRadius: '16px', 
+                padding: '16px',
+                cursor: 'help',
+                transition: '0.3s'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'}
+              onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.03)'}
+              title={selectedRider.name || 'Partner'}
+            >
+              <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'rgba(255,255,255,0.5)', fontFamily: 'monospace', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <span style={{ fontSize: '0.6rem', opacity: 0.5 }}>RIDER NODE</span>
+                <span className="rider-id-display">RID-{selectedRider.id?.slice(-8).toUpperCase() || 'RDR-99'}</span>
+              </div>
+              
+              <div className="hover-name-reveal" style={{ fontSize: '0.75rem', fontWeight: 800, color: '#3b82f6', marginTop: '8px', opacity: 0, height: 0, overflow: 'hidden', transition: '0.3s' }}>
+                {selectedRider.name}
+              </div>
+
               <div style={{ fontSize: '0.55rem', color: isProtected ? '#10b981' : '#94a3b8', fontWeight: 900, textTransform: 'uppercase', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: isProtected ? '#10b981' : '#94a3b8' }} />
                 <span style={{ fontSize: '0.65rem', fontWeight: 800, opacity: 0.6, textTransform: 'uppercase', letterSpacing: '0.12em' }}>{isProtected ? 'Rider Protected' : 'Telemetry Syncing'}</span>
               </div>
             </div>
+            
+            <style>{`
+              div:hover > .hover-name-reveal {
+                opacity: 1 !important;
+                height: auto !important;
+                margin-top: 8px !important;
+              }
+              div:hover .rider-id-display {
+                color: #fff !important;
+              }
+            `}</style>
           </div>
         </div>
+
 
         <div style={{ marginTop: 'auto', padding: '24px' }}>
           <div style={{ padding: '16px', background: 'rgba(255,255,255,0.05)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)', marginBottom: '12px' }}>
