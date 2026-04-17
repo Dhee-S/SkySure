@@ -39,12 +39,12 @@ export default function Login({ onLoginProp }) {
       } else {
         // New User Registration
 
-        // Auto-register Riders
+        // Auto-register Users with selected role
         await setDoc(userRef, {
           uid: user.uid,
           email: user.email,
-          role: 'rider',
-          name: user.displayName || 'New Partner',
+          role: selectedRole,
+          name: user.displayName || (selectedRole === 'admin' ? 'Enterprise Admin' : 'New Partner'),
           created_at: serverTimestamp()
         });
 

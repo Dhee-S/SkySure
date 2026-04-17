@@ -331,32 +331,42 @@ export default function RiderRegistration() {
         </AnimatePresence>
 
         {currentStep > 1 && (
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '48px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '48px' }}>
             <button 
               onClick={prevStep} 
               style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 800, color: 'rgba(255, 255, 255, 0.4)', background: 'none', border: 'none', cursor: 'pointer' }}
             >
               <ArrowLeft size={16} /> Back
             </button>
-            <button 
-              onClick={currentStep === 5 ? handleRegister : nextStep}
-              disabled={loading}
-              style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '12px', 
-                padding: '14px 36px', 
-                borderRadius: '16px', 
-                background: '#2563eb', 
-                color: 'white', 
-                fontWeight: 800, 
-                cursor: 'pointer', 
-                border: 'none',
-                boxShadow: '0 10px 15px -3px rgba(37, 99, 235, 0.3)'
-              }}
-            >
-              {loading ? 'Securing...' : (currentStep === 5 ? 'Authorize & Pay' : 'Next Step')} <ArrowRight size={16} />
-            </button>
+            
+            <div style={{ display: 'flex', gap: '16px' }}>
+              <button 
+                onClick={() => navigate('/rider')}
+                style={{ background: 'none', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.6)', padding: '14px 24px', borderRadius: '16px', fontSize: '13px', fontWeight: 800, cursor: 'pointer' }}
+              >
+                Skip to Dashboard
+              </button>
+              
+              <button 
+                onClick={currentStep === 5 ? handleRegister : nextStep}
+                disabled={loading}
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '12px', 
+                  padding: '14px 36px', 
+                  borderRadius: '16px', 
+                  background: '#2563eb', 
+                  color: 'white', 
+                  fontWeight: 800, 
+                  cursor: 'pointer', 
+                  border: 'none',
+                  boxShadow: '0 10px 15px -3px rgba(37, 99, 235, 0.3)'
+                }}
+              >
+                {loading ? 'Securing...' : (currentStep === 5 ? 'Authorize & Pay' : 'Next Step')} <ArrowRight size={16} />
+              </button>
+            </div>
           </div>
         )}
       </motion.div>
