@@ -4,15 +4,21 @@ import {
   FileText, IndianRupee, ShieldCheck,
   ShieldAlert, Calendar, CloudRain,
   Search, Download, ChevronLeft, ChevronRight,
-  Filter, MoreVertical
+  Filter, MoreVertical, RefreshCw
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { safeFormatDate, safeFormatTime } from '../utils/formatters';
 import '../styles/dashboard.css';
 
 export default function PayoutLogs() {
   const [payouts, setPayouts] = useState([]);
   const [isLive, setIsLive] = useState(true);
   const [syncCount, setSyncCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState('All');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
 
   const loadData = async (isQuiet = false) => {
     if (!isQuiet) setLoading(true);
@@ -35,17 +41,21 @@ export default function PayoutLogs() {
     if (isLive) {
       interval = setInterval(() => {
         loadData(true);
-      }, 5000); // 5s Auto-sync for Neural Feed
+      }, 5000); 
     }
     return () => clearInterval(interval);
   }, [isLive]);
 
   const filteredLogs = useMemo(() => {
     return payouts.filter(log => {
+      const riderName = log.riderName || '';
+      const txId = log.id || '';
+      const reason = log.reason || '';
+
       const matchesSearch = 
-        log.riderName?.toLowerCase().includes(search.toLowerCase()) ||
-        log.id?.toLowerCase().includes(search.toLowerCase()) ||
-        log.reason?.toLowerCase().includes(search.toLowerCase());
+        riderName.toLowerCase().includes(search.toLowerCase()) ||
+        txId.toLowerCase().includes(search.toLowerCase()) ||
+        reason.toLowerCase().includes(search.toLowerCase());
       
       const matchesFilter = 
         filter === 'All' || 
@@ -56,14 +66,13 @@ export default function PayoutLogs() {
     });
   }, [payouts, search, filter]);
 
-  // Reset pagination when searching
   useEffect(() => { setCurrentPage(1); }, [search, filter]);
 
   const totalPages = Math.ceil(filteredLogs.length / itemsPerPage) || 1;
   const paginatedLogs = filteredLogs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   if (loading) return (
-    <div style={{ display: 'flex', height: '100vh', justifyContent: 'center', alignItems: 'center' }}>
+    <div style={{ display: 'flex', height: '100vh', justifyContent: 'center', alignItems: 'center', color: '#64748b' }}>
       Syncing Audit Ledger...
     </div>
   );
@@ -177,10 +186,10 @@ export default function PayoutLogs() {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>
                         <Calendar size={14} color="#64748b" />
-                        <span>{new Date(log.timestamp).toLocaleDateString()}</span>
+                        <span>{safeFormatDate(log.timestamp)}</span>
                       </div>
                       <span style={{ fontSize: '0.75rem', color: '#94a3b8', marginLeft: '20px' }}>
-                        {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        {safeFormatTime(log.timestamp)}
                       </span>
                     </div>
                   </td>
@@ -222,7 +231,7 @@ export default function PayoutLogs() {
                     </div>
                   </td>
                   <td>
-                    <button style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#64748b', padding: '8px', borderRadius: '8px' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.5)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
+                    <button style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#64748b', padding: '8px', borderRadius: '8px' }}>
                       <MoreVertical size={20} />
                     </button>
                   </td>

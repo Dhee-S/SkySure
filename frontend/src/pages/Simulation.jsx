@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { dataService } from '../data/dataService';
 import FraudCluster from '../components/FraudCluster';
+import { safeFormatTime } from '../utils/formatters';
 import '../styles/dashboard.css';
 import '../styles/Simulation.css';
 
@@ -414,7 +415,7 @@ export default function Simulation() {
                      </div>
                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
                         <span style={{ fontSize: '0.6rem', fontWeight: 800, color: '#3B82F6', letterSpacing: '0.1em' }}>
-                           BATCH_SYNC: {new Date().toLocaleTimeString()}
+                           BATCH_SYNC: {safeFormatTime(new Date())}
                         </span>
                         <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#64748B', letterSpacing: '0.1em' }}>
                            ADAPTIVE_ID: GG-B{Math.floor(Math.random() * 90000) + 10000}

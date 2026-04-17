@@ -10,6 +10,7 @@ import {
 import { dataService } from '../data/dataService';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { safeFormatTime } from '../utils/formatters';
 import '../styles/dashboard.css';
 import '../styles/Simulation.css';
 
@@ -244,7 +245,7 @@ export default function Overview() {
                   <strong style={{ fontSize: '1rem', color: '#0f172a' }}>{log.riderName}</strong>
                   <span style={{ fontSize: '0.8rem', color: '#64748b', display: 'flex', alignItems: 'center', gap: '4px' }}>
                       <Clock size={12} /> 
-                      {log.timestamp ? new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--:--'}
+                      {safeFormatTime(log.timestamp)}
                   </span>
                 </div>
                 <div style={{ fontSize: '0.85rem', color: log.status === 'blocked' ? '#b91c1c' : '#475569', fontWeight: 600, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>

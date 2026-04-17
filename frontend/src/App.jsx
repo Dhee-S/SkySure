@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useEffect, useState, createContext, useContext } from 'react';
+import React, { useEffect, useState, createContext, useContext } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
 import Landing from './pages/Landing';
@@ -19,6 +19,29 @@ import RiderProfile from './pages/RiderProfile';
 import Exit from './pages/Exit';
 import RiderRegistration from './components/RiderRegistration';
 import RiderPayment from './pages/RiderPayment';
+
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError(error) { return { hasError: true }; }
+  componentDidCatch(error, errorInfo) { console.error("UI Crash:", error, errorInfo); }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: '40px', textAlign: 'center', background: '#f8fafc', height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+          <h2 style={{ color: '#1e293b', marginBottom: '10px' }}>Dashboard Offline</h2>
+          <p style={{ color: '#64748b', marginBottom: '20px' }}>A telemetry node encountered a critical error. The system is attempting to recover.</p>
+          <button onClick={() => window.location.href = '/login'} style={{ padding: '10px 20px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
+            Reconnect to Operations Hub
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 export const ToastContext = createContext(null);
 
@@ -46,7 +69,6 @@ export default function App() {
       if (mockUser) {
         const parsed = JSON.parse(mockUser);
         setUser(parsed);
-        // Explicitly check for admin keyword or role field
         const role = parsed.role || (parsed.email?.toLowerCase().includes('admin') ? 'admin' : 'rider');
         setUserRole(role);
         setLoading(false);
@@ -67,33 +89,43 @@ export default function App() {
         setUser(currentUser);
         if (currentUser) {
           try {
-            const { doc, getDoc } = await import('firebase/firestore');
-            const { db } = await import('./firebase');
+            const { doc, getDoc, getFirestore } = await import('firebase/firestore');
+            const { app } = await import('./firebase');
+            const db = getFirestore(app);
             const userSnap = await getDoc(doc(db, 'users', currentUser.uid));
+            
+            let role = 'rider';
+            let userData = { uid: currentUser.uid, email: currentUser.email };
+
             if (userSnap.exists()) {
               const data = userSnap.data();
-              setUserRole(data.role);
-              // Synced storage for layout components
-              localStorage.setItem('skysure_mock_user', JSON.stringify({ ...data, email: currentUser.email }));
+              role = data.role || 'rider';
+              userData = { ...userData, ...data };
             } else {
-              const email = currentUser.email?.toLowerCase() || '';
-              const role = email.includes('admin') ? 'admin' : 'rider';
-              setUserRole(role);
+              role = currentUser.email?.toLowerCase().includes('admin') ? 'admin' : 'rider';
+              userData.role = role;
             }
+
+            setUserRole(role);
+            localStorage.setItem('skysure_mock_user', JSON.stringify(userData));
           } catch (err) {
-            console.error("Profile fetch error:", err);
+            console.error("Profile sync error:", err);
             setUserRole('rider');
           }
         } else {
           setUserRole(null);
         }
         setLoading(false);
+      } else {
+        // Even if we have a mock, sync the raw firebase user object
+        if (currentUser) setUser(prev => ({ ...prev, ...currentUser }));
+        setLoading(false);
       }
     });
 
     const safetyTimer = setTimeout(() => {
-        setLoading(false);
-    }, 4000);
+      setLoading(false);
+    }, 5000);
 
     return () => {
       unsubscribe();
