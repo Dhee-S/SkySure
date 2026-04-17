@@ -77,6 +77,11 @@ export default function App() {
       }
     } catch (err) {
       console.error("Mock auth parsing failed:", err);
+      localStorage.removeItem('skysure_mock_user');
+    }
+    return false;
+  };
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
