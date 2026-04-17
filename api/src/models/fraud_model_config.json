@@ -1,0 +1,19 @@
+{
+    "modelVersion": "GG-NEURAL-v2.0-STABLE",
+    "trainedAt": "2026-04-17T04:02:12.957Z",
+    "weights": {
+        "EfficiencyAnomaly": 0.21,
+        "DropRateLogic": 0.45,
+        "SessionPersistence": 11.87
+    },
+    "thresholds": {
+        "EfficiencyAnomaly": 0.87,
+        "DropRateLogic": 0.23,
+        "SessionPersistence": 9.34
+    },
+    "metadata": {
+        "trainingSetSize": 5000,
+        "fraudDensity": "0.1516",
+        "accuracyRef": 0.94
+    }
+}
