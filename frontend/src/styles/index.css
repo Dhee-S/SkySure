@@ -42,6 +42,10 @@
 
   /* Smooth Scroll */
   --smooth: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Sidebar Configuration */
+  --sidebar-width: 280px;
+  --sidebar-bg: #1e3a8a;
 }
 
 html {
@@ -491,7 +495,7 @@ html.lenis {
   display: grid;
   grid-template-columns: 1fr 1fr;
   max-width: 1100px;
-  width: 100%;
+  width: 90%;
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 32px;
@@ -889,7 +893,7 @@ html.lenis {
 
 .client-main {
   flex: 1;
-  margin-left: 280px;
+  margin-left: var(--sidebar-width);
   display: flex;
   flex-direction: column;
 }
@@ -1008,7 +1012,7 @@ html.lenis {
    ============================================ */
 
 .sidebar {
-  width: 280px;
+  width: var(--sidebar-width);
   min-height: 100vh;
   background: var(--bg);
   border-right: 1px solid var(--border);
@@ -1017,7 +1021,18 @@ html.lenis {
   top: 0;
   display: flex;
   flex-direction: column;
+  transition: width 0.3s ease, left 0.3s ease, transform 0.3s ease;
   z-index: 200;
+}
+
+.sidebar-dark {
+  background: var(--sidebar-bg);
+  color: white;
+  border-right: none;
+}
+
+.sidebar-rider {
+  z-index: 20;
 }
 
 .sidebar-header {
@@ -1097,6 +1112,38 @@ html.lenis {
   gap: 14px;
   position: relative;
   z-index: 2;
+}
+
+/* Sidebar Trigger for Mobile/Laptop */
+.sidebar-trigger {
+  position: fixed;
+  top: 1.5rem;
+  left: 1.5rem;
+  z-index: 1000;
+  width: 44px;
+  height: 44px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-main);
+  cursor: pointer;
+  box-shadow: var(--shadow-base);
+  transition: all 0.3s ease;
+  display: none; /* Hidden by default */
+}
+
+.sidebar-trigger:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.sidebar-trigger.trigger-dark {
+  background: var(--sidebar-bg);
+  color: white;
+  border: none;
 }
 
 .nav-icon {
@@ -2732,13 +2779,94 @@ html.lenis {
   color: var(--success);
 }
 
-/* Responsive */
-@media (max-width: 1200px) {
-  .overview-grid {
-    grid-template-columns: 1fr;
-  }
+/* ============================================
+   SkySure Professional Responsiveness
+   Optimized for Laptop & Desktop spectrum
+   ============================================ */
 
-  .overview-sidebar {
-    order: -1;
+@media (max-width: 1440px) {
+  :root {
+    --sidebar-width: 260px;
   }
 }
+
+@media (max-width: 1366px) {
+  :root {
+    --sidebar-width: 240px;
+  }
+  
+  .login-container {
+    max-width: 1000px;
+  }
+  
+  .analysis-chips,
+  .logs-stats,
+  .kpi-grid {
+    gap: 1.25rem;
+  }
+}
+
+@media (max-width: 1200px) {
+  :root {
+    --sidebar-width: 220px;
+  }
+
+  .login-container {
+    max-width: 900px;
+  }
+
+  .branding-content h2 {
+    font-size: 1.75rem;
+  }
+  
+  .kpi-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}
+
+@media (max-width: 1024px) {
+  :root {
+    --sidebar-width: 0px;
+  }
+
+  .sidebar {
+    left: -280px; /* Use fixed width for the drawer off-screen */
+    width: 280px;
+    z-index: 1100;
+  }
+
+  .sidebar.open {
+    left: 0;
+    box-shadow: 20px 0 50px rgba(0,0,0,0.1);
+  }
+
+  .sidebar-trigger {
+    display: flex;
+  }
+
+  .client-main {
+    margin-left: 0;
+    padding-top: 5rem; /* Space for the trigger */
+  }
+
+  .login-container {
+    grid-template-columns: 1fr;
+    max-width: 500px;
+    width: 95%;
+  }
+
+  .login-branding {
+    display: none;
+  }
+
+  .sidebar {
+    position: fixed;
+    left: -280px; /* Use absolute value for hiding */
+    z-index: 1000;
+    transition: left 0.3s ease;
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
+}

@@ -11,7 +11,7 @@ const navItems = [
   { path: '/client/logs', label: 'Payout Feed', icon: ScrollText },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen }) {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -22,7 +22,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
       <div className="sidebar-header">
         <div className="sidebar-brand">
           <h1>SkySure</h1>

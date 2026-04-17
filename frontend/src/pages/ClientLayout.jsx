@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import { Bell, Search, Command, LogOut } from 'lucide-react';
@@ -8,6 +9,9 @@ import { useToast } from '../App';
 export default function ClientLayout() {
   const navigate = useNavigate();
   const showToast = useToast();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   const handleLogout = async () => {
     try {
@@ -21,7 +25,15 @@ export default function ClientLayout() {
 
   return (
     <div className="client-layout">
-      <Sidebar />
+      <button 
+        className="sidebar-trigger" 
+        onClick={toggleSidebar}
+        style={{ top: '1rem', left: '1rem' }}
+      >
+        {sidebarOpen ? <LogOut size={20} style={{ transform: 'rotate(180deg)' }} /> : <Command size={20} />}
+      </button>
+
+      <Sidebar isOpen={sidebarOpen} />
       <main className="client-main">
         {/* Global Utility Bar */}
         <div className="client-toolbar">

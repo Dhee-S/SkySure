@@ -1257,3 +1257,71 @@
     flex-wrap: wrap;
     gap: 6px;
 }
+
+/* ============================================
+   SkySure Professional Responsiveness
+   Optimized for Laptop & Desktop spectrum
+   ============================================ */
+
+@media (max-width: 1440px) {
+    .neural-hud-glance {
+        padding: 12px 24px;
+    }
+    
+    .weather-metrics-row {
+        gap: 24px;
+    }
+}
+
+@media (max-width: 1366px) {
+    .neural-hud-glance {
+        gap: 16px;
+    }
+    
+    .weather-metrics-row {
+        gap: 16px;
+    }
+    
+    .metric-item {
+        gap: 8px;
+    }
+    
+    .results-kpi-grid {
+        gap: 16px;
+    }
+    
+    .kpi-card {
+        padding: 16px;
+    }
+    
+    .kpi-val {
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 1200px) {
+    .neural-hud-glance {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+    }
+    
+    .results-kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 1024px) {
+    .results-kpi-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .weather-metrics-row {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .metric-divider {
+        display: none;
+    }
+}

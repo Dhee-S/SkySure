@@ -69,6 +69,7 @@ body {
 /* --- LAYOUT & HEADERS --- */
 .dash-container {
     max-width: 1300px;
+    width: 100%;
     margin: 0 auto;
     padding: 40px 32px;
 }
@@ -158,7 +159,7 @@ body {
 /* --- GLASSMORPHIC CARDS (Stats & Containers) --- */
 .dash-stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 24px;
     margin-bottom: 40px;
 }
@@ -763,4 +764,59 @@ body {
     color: #ef4444;
     text-transform: uppercase;
     margin-top: 4px;
+}
+/* ============================================
+   SkySure Professional Responsiveness
+   Optimized for Laptop & Desktop spectrum
+   ============================================ */
+
+@media (max-width: 1440px) {
+    .dash-container {
+        max-width: 1200px;
+        padding: 32px 24px;
+    }
+}
+
+@media (max-width: 1366px) {
+    .dash-container {
+        max-width: 1100px;
+    }
+    
+    .dash-title {
+        font-size: 2rem;
+    }
+    
+    .dash-stats-grid {
+        gap: 20px;
+    }
+    
+    .dash-stat-card {
+        padding: 24px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .dash-container {
+        max-width: 1000px;
+    }
+    
+    .expand-panel {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 1024px) {
+    .dash-container {
+        padding: 24px 16px;
+    }
+    
+    .dash-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+    
+    .dash-stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
 }

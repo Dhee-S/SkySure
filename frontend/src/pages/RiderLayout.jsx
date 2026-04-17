@@ -13,7 +13,10 @@ export default function RiderLayout() {
   const [selectedRider, setSelectedRider] = useState(null);
   const [selectedTier, setSelectedTier] = useState('All');
   const [loading, setLoading] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
+
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   const handleLogout = async () => {
     try {
@@ -91,9 +94,17 @@ export default function RiderLayout() {
   const isProtected = selectedRider.active_policy !== false;
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#f8fafc' }}>
+    <div className="client-layout">
+      {/* MOBILE TRIGGER */}
+      <button 
+        className={`sidebar-trigger trigger-dark`} 
+        onClick={toggleSidebar}
+      >
+        {sidebarOpen ? <LogOut size={20} style={{ transform: 'rotate(180deg)' }} /> : <Shield size={20} />}
+      </button>
+
       {/* SIDEBAR */}
-      <aside style={{ width: '280px', background: '#1e3a8a', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, bottom: 0, left: 0, color: 'white', zIndex: 20 }}>
+      <aside className={`sidebar sidebar-dark sidebar-rider ${sidebarOpen ? 'open' : ''}`}>
 
         <div style={{ padding: '24px 32px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '32px' }}>
@@ -161,7 +172,7 @@ export default function RiderLayout() {
       </aside>
 
       {/* MAIN CONTENT AREA */}
-      <main style={{ flex: 1, marginLeft: '280px', padding: '40px', minHeight: '100vh' }}>
+      <main className="client-main" style={{ padding: '40px', minHeight: '100vh' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
           <Outlet context={{ rider: selectedRider, weather: { severity: 'SECURE', temperatureC: 28, rainfallMm: 0, windKph: 12, humidity: 65, visibility: 10, description: 'Clear Skies' }, isProtected }} />
         </div>
