@@ -183,7 +183,7 @@ SkySure/
 Experience how SkySure automatically detects disruptions and triggers payouts in real-time.
 
 Watch our 2-minute project pitch with demo here:  
-👉 [Click to Watch Video](https://drive.google.com/file/d/16-0F9ubbzX5ePsyD0Ob7pX216txnkTaD/view?usp=drivesdk)
+👉 [Click to Watch Video](https://drive.google.com/file/d/1HSXuD0uCF9EitDJJCI4eWl-ZQnxS_RGn/view?usp=sharing)
 
 ---
 
@@ -191,7 +191,7 @@ Watch our 2-minute project pitch with demo here:
 
 Experience how SkySure works as our first stage prototype
  
-👉 [Click to visit SkySure](https://dhee-s.github.io/SkySure/)
+👉 [Click to visit SkySure](https://sky-sure.vercel.app/)
 
 ---
 
