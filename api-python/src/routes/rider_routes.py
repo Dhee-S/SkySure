@@ -19,6 +19,15 @@ class RiderRegisterRequest(BaseModel):
     upi: str
     vehicle: str
 
+class RiderProfileUpdate(BaseModel):
+    name: Optional[str] = None
+    city: Optional[str] = None
+    phone: Optional[str] = None
+    tier: Optional[str] = None
+    persona: Optional[str] = None
+    vehicle: Optional[str] = None
+    upi: Optional[str] = None
+
 @router.post("/register")
 async def register_rider(req: RiderRegisterRequest):
     """Registers a new rider in Firestore after Firebase Auth"""
@@ -156,3 +165,59 @@ async def get_all_payouts(limit: int = 50, rider_id: Optional[str] = None):
         return all_payouts[:limit]
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Firestore Payouts Error: {str(e)}")
+
+@router.patch("/riders/{rider_id}")
+async def update_rider_profile(rider_id: str, req: RiderProfileUpdate):
+    """Updates a rider profile in Firestore and syncs with users collection"""
+    try:
+        # 1. Update rider_profiles
+        rider_ref = db.collection("rider_profiles").document(rider_id)
+        # Handle case where document ID might be the user UID or the RDR-XXXX ID
+        # For simplicity in this patch, we update by the document ID provided
+        
+        update_data = {k: v for k, v in req.dict().items() if v is not None}
+        if not update_data:
+            return {"status": "success", "message": "No changes provided"}
+
+        if "persona" in update_data:
+            update_data["persona_type"] = update_data.pop("persona")
+        if "vehicle" in update_data:
+            update_data["vehicle_type"] = update_data.pop("vehicle")
+        if "upi" in update_data:
+            update_data["upi_id"] = update_data.pop("upi")
+        if "phone" in update_data:
+            update_data["phone_number"] = update_data.pop("phone")
+            
+        update_data["updated_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        
+        # Check if doc exists
+        doc = rider_ref.get()
+        if doc.exists:
+            rider_ref.update(update_data)
+        else:
+             # Fallback: search by user_id or rider_id field
+             query = db.collection("rider_profiles").where("user_id", "==", rider_id).limit(1).stream()
+             found = False
+             for d in query:
+                 d.reference.update(update_data)
+                 found = True
+                 break
+             if not found:
+                 raise HTTPException(status_code=404, detail="Rider profile not found")
+
+        # 2. Sync with users collection
+        user_id = rider_id # Assuming rider_id is user_uid or we find it
+        if doc.exists:
+            user_id = doc.to_dict().get("user_id", rider_id)
+        
+        user_update = {}
+        if "name" in update_data: user_update["name"] = update_data["name"]
+        if "phone_number" in update_data: user_update["phone_number"] = update_data["phone_number"]
+        if "email" in update_data: user_update["email"] = update_data["email"]
+
+        if user_update:
+            db.collection("users").document(user_id).set(user_update, merge=True)
+
+        return {"status": "success", "message": "Profile updated successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

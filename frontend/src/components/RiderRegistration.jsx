@@ -99,23 +99,37 @@ export default function RiderRegistration() {
     setLoading(true);
     try {
       const { dataService } = await import('../data/dataService');
-      const data = await dataService.registerRider(formData);
+      
+      // Map frontend fields to backend RiderRegisterRequest model
+      const payload = {
+          uid: formData.uid || `user_${Math.random().toString(36).slice(2, 9)}`,
+          name: formData.name || 'Anonymous Rider',
+          email: formData.email || '',
+          phone: formData.phone || '',
+          city: formData.city,
+          persona: formData.persona,
+          tier: formData.tier || 'Standard',
+          upi: formData.upi || '',
+          vehicle: formData.vehicle
+      };
+
+      const data = await dataService.registerRider(payload);
 
       // Store for payment page and session
       localStorage.setItem('skysure_mock_user', JSON.stringify({
-          uid: data?.uid || formData.uid || `user_${Math.random().toString(36).slice(2, 9)}`,
-          email: formData.email,
-          name: formData.name,
+          uid: payload.uid,
+          email: payload.email,
+          name: payload.name,
           role: 'rider',
-          city: formData.city,
-          persona: formData.persona,
-          vehicle: formData.vehicle
+          city: payload.city,
+          persona: payload.persona,
+          vehicle: payload.vehicle
       }));
       
       // Push state to payment
       navigate('/payment', { 
         state: { 
-          formData: { ...formData, uid: data?.uid || formData.uid }, 
+          formData: { ...formData, uid: payload.uid }, 
           premium: calculatePremium() 
         } 
       });

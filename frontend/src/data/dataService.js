@@ -381,7 +381,7 @@ export const dataService = {
   // 7. Advanced Rider Management
   async registerRider(riderData) {
     const headers = await getAuthHeaders();
-    return await safeFetch(`${API_URL}/api/rider/register`, {
+    return await safeFetch(`${API_URL}/api/register`, {
         method: 'POST',
         headers,
         body: JSON.stringify(riderData)
@@ -390,7 +390,7 @@ export const dataService = {
 
   async updateRiderProfile(id, updates) {
     const headers = await getAuthHeaders();
-    return await safeFetch(`${API_URL}/api/rider/profile/${id}`, {
+    return await safeFetch(`${API_URL}/api/riders/${id}`, {
         method: 'PATCH',
         headers,
         body: JSON.stringify(updates)
