@@ -96,39 +96,32 @@ export default function RiderRegistration() {
   };
 
   const handleRegister = async () => {
-    const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:8000' : '';
     setLoading(true);
     try {
-      // In a real app we'd call createUserWithEmailAndPassword here if enrollmentMethod === 'email'
-      // For showcase, we sync the provided profile to backend
-      const response = await fetch(`${API_BASE}/api/riders/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
+      const { dataService } = await import('../data/dataService');
+      const data = await dataService.registerRider(formData);
 
-      if (response.ok) {
-        const data = await response.json();
-        // Store for payment page and session
-        localStorage.setItem('skysure_mock_user', JSON.stringify({
-            uid: data.uid || formData.uid || `user_${Math.random().toString(36).slice(2, 9)}`,
-            email: formData.email,
-            name: formData.name,
-            role: 'rider',
-            city: formData.city,
-            persona: formData.persona,
-            vehicle: formData.vehicle
-        }));
-        
-        // Push state to payment
-        navigate('/payment', { state: { formData: { ...formData, uid: data.uid || formData.uid }, premium: calculatePremium() } });
-      } else {
-        const err = await response.json();
-        throw new Error(err.error || "Registration synchronization failed.");
-      }
+      // Store for payment page and session
+      localStorage.setItem('skysure_mock_user', JSON.stringify({
+          uid: data?.uid || formData.uid || `user_${Math.random().toString(36).slice(2, 9)}`,
+          email: formData.email,
+          name: formData.name,
+          role: 'rider',
+          city: formData.city,
+          persona: formData.persona,
+          vehicle: formData.vehicle
+      }));
+      
+      // Push state to payment
+      navigate('/payment', { 
+        state: { 
+          formData: { ...formData, uid: data?.uid || formData.uid }, 
+          premium: calculatePremium() 
+        } 
+      });
     } catch (error) {
       console.error("Registration error:", error);
-      alert(error.message);
+      alert(error.message || "An unexpected error occurred during registration.");
     } finally {
       setLoading(false);
     }
@@ -179,31 +172,66 @@ export default function RiderRegistration() {
         }}
       >
         {/* Step Stepper */}
-        <div style={{ display: 'flex', gap: '2px', marginBottom: '48px', background: '#F1F5F9', padding: '6px', borderRadius: '16px' }}>
-          {steps.map(step => (
-            <div 
-              key={step.id} 
-              style={{ 
-                flex: 1, 
-                padding: '12px', 
-                borderRadius: '12px', 
-                background: currentStep === step.id ? 'white' : 'transparent',
-                boxShadow: currentStep === step.id ? '0 4px 6px -1px rgba(0,0,0,0.05)' : 'none',
-                transition: 'all 0.3s ease',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '2px'
-              }}
-            >
-              <span style={{ fontSize: '0.6rem', fontWeight: 800, color: currentStep === step.id ? '#3B82F6' : '#94A3B8', textTransform: 'uppercase' }}>Step 0{step.id}</span>
-              <span style={{ fontSize: '0.85rem', fontWeight: 800, color: currentStep === step.id ? '#1E293B' : '#64748B' }}>{step.title}</span>
-            </div>
-          ))}
+        <div style={{ display: 'flex', gap: '2px', marginBottom: '48px', background: '#F1F5F9', padding: '6px', borderRadius: '20px', position: 'relative' }}>
+          {/* Progress Background Line */}
+          <div style={{ position: 'absolute', top: '50%', left: '10%', right: '10%', height: '2px', background: '#E2E8F0', transform: 'translateY(-50%)', zIndex: 0 }} />
+          <motion.div 
+            style={{ position: 'absolute', top: '50%', left: '10%', height: '2px', background: '#3B82F6', transformOrigin: 'left', transform: 'translateY(-50%)', zIndex: 0 }}
+            animate={{ scaleX: (currentStep - 1) / (steps.length - 1) }}
+            initial={{ scaleX: 0 }}
+            transition={{ type: "spring", stiffness: 50, damping: 15 }}
+          />
+
+          {steps.map(step => {
+            const isCompleted = currentStep > step.id;
+            const isActive = currentStep === step.id;
+            
+            return (
+              <div 
+                key={step.id} 
+                style={{ 
+                  flex: 1, 
+                  padding: '12px', 
+                  borderRadius: '16px', 
+                  background: isActive ? 'white' : 'transparent',
+                  boxShadow: isActive ? '0 10px 15px -3px rgba(0,0,0,0.05)' : 'none',
+                  transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  zIndex: 1,
+                  position: 'relative'
+                }}
+              >
+                <motion.div
+                  animate={{ 
+                    background: isCompleted ? '#10B981' : (isActive ? '#3B82F6' : '#E2E8F0'),
+                    scale: isActive ? 1.1 : 1
+                  }}
+                  style={{ 
+                    width: '32px', height: '32px', borderRadius: '50%', 
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: (isActive || isCompleted) ? 'white' : '#94A3B8',
+                    fontWeight: 900, fontSize: '0.8rem'
+                  }}
+                >
+                  {isCompleted ? <CheckCircle size={18} /> : <span>{step.id}</span>}
+                </motion.div>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
+                  <span style={{ fontSize: '0.6rem', fontWeight: 800, color: isActive ? '#3B82F6' : (isCompleted ? '#10B981' : '#94A3B8'), textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    {isCompleted ? 'Completed' : `Step 0${step.id}`}
+                  </span>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 800, color: (isActive || isCompleted) ? '#1E293B' : '#64748B' }}>{step.title}</span>
+                </div>
+              </div>
+            );
+          })}
         </div>
 
         <AnimatePresence mode="wait">
            {currentStep === 1 && (
-            <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+            <motion.div key="step1" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.4 }}>
                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px', alignItems: 'center' }}>
                   <div>
                     <h2 style={{ fontSize: '1.75rem', fontWeight: 900, color: '#1E293B', marginBottom: '16px' }}>Verify Identity</h2>
@@ -268,7 +296,7 @@ export default function RiderRegistration() {
           )}
 
           {currentStep === 2 && !isEmailVerified && (
-            <motion.div key="stepVerify" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+            <motion.div key="stepVerify" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.4 }}>
                <div style={{ textAlign: 'center', padding: '20px' }}>
                   <div style={{ width: '64px', height: '64px', background: '#DBEAFE', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
                     <Mail size={32} color="#3B82F6" />
@@ -298,7 +326,7 @@ export default function RiderRegistration() {
           )}
 
           {currentStep === 3 && (
-            <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+            <motion.div key="step3" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.4 }}>
               <div style={{ marginBottom: '32px' }}>
                 <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#1E293B', marginBottom: '8px' }}>Hustle Configuration</h2>
                 <p style={{ color: '#64748B', fontSize: '0.9rem' }}>Configure your operational profile for accurate risk assessment.</p>
@@ -321,7 +349,7 @@ export default function RiderRegistration() {
                       border: '1px solid #E2E8F0', outline: 'none', fontWeight: 700, color: '#1E293B' 
                     }}
                   >
-                    {['Chennai', 'Bengaluru', 'Mumbai', 'Delhi', 'Hyderabad', 'Pune', 'Kolkata'].map(c => (
+                    {['Trichy', 'Chennai', 'Coimbatore', 'Madurai', 'Salem'].map(c => (
                       <option key={c} value={c}>{c}</option>
                     ))}
                   </select>

@@ -23,6 +23,38 @@ const getAuthHeaders = async () => {
     };
 };
 
+// Helper: Defensive JSON Fetch
+const safeFetch = async (url, options = {}) => {
+    try {
+        const resp = await fetch(url, options);
+        const contentType = resp.headers.get("content-type");
+        
+        if (!resp.ok) {
+            let errorMsg = `Server responded with ${resp.status}`;
+            if (contentType && contentType.includes("application/json")) {
+                const errData = await resp.json();
+                errorMsg = errData.error || errData.message || errorMsg;
+            } else {
+                // If it's HTML/Text, the body might be too long or irrelevant
+                const text = await resp.text();
+                if (text.includes("The page c")) errorMsg = "API Endpoint not found. Please check backend connection.";
+            }
+            throw new Error(errorMsg);
+        }
+
+        if (contentType && contentType.includes("application/json")) {
+            return await resp.json();
+        }
+        
+        return null;
+    } catch (e) {
+        if (e.name === 'SyntaxError') {
+            throw new Error("Malformatted response from server. Please try again.");
+        }
+        throw e;
+    }
+};
+
 // Helper: Calculate Premium based on Actuarial Logic (Fallback for UI)
 const calculateActuarialData = (rider) => {
   const efficiency = parseFloat(rider.earning_efficiency) || 0.8;
@@ -349,22 +381,20 @@ export const dataService = {
   // 7. Advanced Rider Management
   async registerRider(riderData) {
     const headers = await getAuthHeaders();
-    const resp = await fetch(`${API_URL}/api/rider/register`, {
+    return await safeFetch(`${API_URL}/api/rider/register`, {
         method: 'POST',
         headers,
         body: JSON.stringify(riderData)
     });
-    return await resp.json();
   },
 
   async updateRiderProfile(id, updates) {
     const headers = await getAuthHeaders();
-    const resp = await fetch(`${API_URL}/api/rider/profile/${id}`, {
+    return await safeFetch(`${API_URL}/api/rider/profile/${id}`, {
         method: 'PATCH',
         headers,
         body: JSON.stringify(updates)
     });
-    return await resp.json();
   },
 
   // 8. Fraud Intelligence
