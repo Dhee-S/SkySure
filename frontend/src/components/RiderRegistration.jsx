@@ -58,7 +58,7 @@ export default function RiderRegistration() {
         name: user.displayName || '',
       }));
       setIsEmailVerified(true);
-      setCurrentStep(2); // Skip Step 1 verification for Google
+      setCurrentStep(3); // Skip Step 1 & 2 for Google (goes straight to Profile)
     } catch (error) {
       console.error("Login Error:", error);
       alert("Authentication failed.");

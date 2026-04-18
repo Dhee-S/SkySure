@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
     ShieldCheck, CreditCard, Lock, CheckCircle, 
-    ChevronRight, Info, AlertCircle 
+    ChevronRight, Info, AlertCircle, Zap
 } from 'lucide-react';
 
 export default function RiderPayment() {
