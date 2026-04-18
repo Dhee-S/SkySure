@@ -153,7 +153,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={user ? <Navigate to={userRole === 'admin' ? '/client/overview' : '/rider'} replace /> : <Login onLoginProp={handleAuthUpdate} />} />
-        <Route path="/admin/login" element={<Navigate to="/client/overview" replace />} />
+        <Route path="/admin/login" element={<AdminLogin onLoginProp={handleAuthUpdate} />} />
+        <Route path="/admin" element={<Navigate to="/admin/login" replace />} />
         <Route path="/register" element={<RiderRegistration />} />
         <Route path="/payment" element={<RiderPayment />} />
 

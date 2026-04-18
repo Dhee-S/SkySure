@@ -91,9 +91,15 @@ export default function Overview() {
     };
     fetchSpotlight();
 
+    // 4. Loading Safeguard: Don't stay stuck forever
+    const timer = setTimeout(() => {
+        setLoading(false);
+    }, 2000);
+
     return () => {
       unsubscribeStats();
       unsubscribePayouts();
+      clearTimeout(timer);
     };
   }, []);
 

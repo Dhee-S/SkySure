@@ -458,7 +458,6 @@ export const dataService = {
         const activeRiders = riders.filter(r => r.is_active).length;
         const highRiskRiders = riders.filter(r => (parseFloat(r.fraud_probability) || 0) >= 0.5).length;
         
-        // Calculate dynamic avg trust score
         const avgTrust = totalRiders > 0 
             ? (riders.reduce((acc, r) => acc + (parseFloat(r.trust_score) || 0), 0) / totalRiders).toFixed(1)
             : 0;
@@ -469,8 +468,15 @@ export const dataService = {
             highRiskRiders,
             avgTrustScore: avgTrust,
             totalPremium: riders.reduce((acc, r) => acc + (parseFloat(r.weekly_premium) || 0), 0),
-            riskTrend: [4, 6, 8, 5, 9, 12, 10] // Sample trend
+            riskTrend: [4, 6, 8, 5, 9, 12, 10]
         });
+    }, (error) => {
+        console.error("[DS] Stats Subscription failed, using mock interval", error);
+        // Fallback: Immediate mock call
+        this.getDashboardStats().then(callback);
+        // And interval
+        const intv = setInterval(() => this.getDashboardStats().then(callback), 10000);
+        return () => clearInterval(intv);
     });
   },
 
@@ -484,7 +490,6 @@ export const dataService = {
         const logs = snapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data(),
-            // Map forensic names to UI names if needed
             riderId: doc.data().rider_id,
             amount: doc.data().payout_amount,
             status: doc.data().payout_status?.toLowerCase(),
@@ -492,6 +497,9 @@ export const dataService = {
             reason: doc.data().payout_status === 'MITIGATED' ? 'Clustered Heuristic Anomaly' : 'Parametric Trigger'
         }));
         callback(logs);
+    }, (error) => {
+        console.error("[DS] Payouts Subscription failed, using mock", error);
+        this.getPayouts().then(callback);
     });
-  }
+}
 };
