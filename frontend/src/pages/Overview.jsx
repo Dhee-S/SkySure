@@ -59,13 +59,42 @@ export default function Overview() {
   };
 
   useEffect(() => {
-    fetchStats();
-    
-    const interval = setInterval(() => {
-      fetchStats(true);
-    }, 15000); // 15s refresh for oversight
-    
-    return () => clearInterval(interval);
+    // 1. Subscribe to Global Stats (Active Riders, Risk Pool, Trust Index)
+    const unsubscribeStats = dataService.subscribeToStats((stats) => {
+      setData(stats);
+      
+      // Update chart baseline when real data arrives
+      const baseTrust = parseFloat(stats.avgTrustScore || 75);
+      const baseRisk = parseFloat(stats.highRiskRiders || 0);
+      const trend = Array.from({length: 12}).map((_, i) => ({
+          time: `${i*2}h ago`,
+          Trust: Math.max(0, Math.min(100, baseTrust + (Math.random() * 6 - 3))),
+          RiskProfile: Math.max(0, baseRisk + (Math.random() * 2 - 1))
+      })).reverse();
+      setChartData(trend);
+      setLoading(false);
+    });
+
+    // 2. Subscribe to Live Payout Feed
+    const unsubscribePayouts = dataService.subscribeToPayouts((logs) => {
+        setPayouts(logs.slice(0, 5));
+    }, 5);
+
+    // 3. One-time fetch for Spotlight (Static high risk actors for now)
+    const fetchSpotlight = async () => {
+        const riders = await dataService.getRiders();
+        const highRisk = riders.filter(r => 
+            (r.risk?.level === 'High') || 
+            (r.status === 'BLOCKED')
+        );
+        setSpotlightRiders(highRisk.slice(0, 5));
+    };
+    fetchSpotlight();
+
+    return () => {
+      unsubscribeStats();
+      unsubscribePayouts();
+    };
   }, []);
 
   if (loading) return (

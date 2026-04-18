@@ -54,6 +54,18 @@ export default function Login({ onLoginProp }) {
           tier: 'Basic',
           is_active: true
         });
+
+        // Initialize production rider profile via Backend API
+        try {
+            await dataService.registerRider({
+                uid: user.uid,
+                email: user.email,
+                name: user.displayName || 'New Partner',
+                phone: user.phoneNumber || ''
+            });
+        } catch (regErr) {
+            console.error("Backend profile initialization failed:", regErr);
+        }
         
         showToast("Welcome! Your Partner Hub has been initialized.", "success");
       }

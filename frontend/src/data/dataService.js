@@ -3,7 +3,10 @@ import ridersData from './ridersData.json';
 // Global singleton to persist simulation results across the session
 let simulationPool = [];
 
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
+import { 
+    collection, query, orderBy, limit, onSnapshot, getDocs
+} from 'firebase/firestore';
 
 // Vercel / Local Toggle: In production, API calls use relative paths (rewrites)
 const useBackend = true;
@@ -413,5 +416,52 @@ export const dataService = {
     } catch (e) {
         return null;
     }
+  },
+
+  // 12. Real-time Subscriptions (NEW)
+  subscribeToStats(callback) {
+    // Listen to rider_profiles for global stats
+    const q = query(collection(db, 'rider_profiles'));
+    return onSnapshot(q, (snapshot) => {
+        const riders = snapshot.docs.map(doc => doc.data());
+        const totalRiders = riders.length;
+        const activeRiders = riders.filter(r => r.is_active).length;
+        const highRiskRiders = riders.filter(r => (parseFloat(r.fraud_probability) || 0) >= 0.5).length;
+        
+        // Calculate dynamic avg trust score
+        const avgTrust = totalRiders > 0 
+            ? (riders.reduce((acc, r) => acc + (parseFloat(r.trust_score) || 0), 0) / totalRiders).toFixed(1)
+            : 0;
+
+        callback({
+            totalRiders,
+            activeRiders,
+            highRiskRiders,
+            avgTrustScore: avgTrust,
+            totalPremium: riders.reduce((acc, r) => acc + (parseFloat(r.weekly_premium) || 0), 0),
+            riskTrend: [4, 6, 8, 5, 9, 12, 10] // Sample trend
+        });
+    });
+  },
+
+  subscribeToPayouts(callback, limitCount = 50) {
+    const q = query(
+        collection(db, 'payout_events'), 
+        orderBy('feed_timestamp', 'desc'),
+        limit(limitCount)
+    );
+    return onSnapshot(q, (snapshot) => {
+        const logs = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+            // Map forensic names to UI names if needed
+            riderId: doc.data().rider_id,
+            amount: doc.data().payout_amount,
+            status: doc.data().payout_status?.toLowerCase(),
+            timestamp: doc.data().feed_timestamp,
+            reason: doc.data().payout_status === 'MITIGATED' ? 'Clustered Heuristic Anomaly' : 'Parametric Trigger'
+        }));
+        callback(logs);
+    });
   }
 };

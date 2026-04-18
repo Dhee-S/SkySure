@@ -26,6 +26,8 @@ router.post('/register', async (req, res) => {
             is_active: true,
             trust_score: 85, 
             fraud_probability: 0.05,
+            ring_score: 0, // Per user: Start from 0
+            kyc_status: 'PENDING',
             joined_at: new Date().toISOString()
         };
 

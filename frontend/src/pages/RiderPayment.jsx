@@ -13,6 +13,8 @@ export default function RiderPayment() {
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
 
+    const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:8000' : '';
+
     useEffect(() => {
         if (!formData) {
             navigate('/register');
@@ -35,10 +37,11 @@ export default function RiderPayment() {
         setLoading(true);
         try {
             // 1. Create order on backend
-            const orderRes = await fetch('/api/payment/create-order', {
+            const orderRes = await fetch(`${API_BASE}/api/payment/razorpay/order`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
+                    rider_id: formData.uid,
                     amount: premium,
                     currency: 'INR',
                     receipt: `rcpt_${formData.uid.slice(-6)}`
@@ -58,14 +61,14 @@ export default function RiderPayment() {
                 order_id: orderData.id,
                 handler: async (response) => {
                     // 3. Verify payment
-                    const verifyRes = await fetch('/api/payment/verify', {
+                    const verifyRes = await fetch(`${API_BASE}/api/payment/razorpay/verify`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            ...response,
-                            riderId: formData.uid,
-                            plan: formData.persona,
-                            amount: premium
+                            order_id: response.razorpay_order_id,
+                            payment_id: response.razorpay_payment_id,
+                            signature: response.razorpay_signature,
+                            rider_id: formData.uid
                         })
                     });
                     const verifyData = await verifyRes.json();

@@ -57,13 +57,15 @@ async def verify_razorpay_payment(verify: PaymentVerify):
         })
         
         # Update rider policy status in Firestore
-        # Assuming policies are tracked within the rider document or a sub-collection
         rider_ref = db.collection("rider_profiles").document(verify.rider_id)
-        rider_ref.update({
+        rider_ref.set({
+            "is_active": True,
+            "kyc_status": "VERIFIED",
+            "ring_score": 0,
             "premium_payment_status": "paid",
             "policy_active": True,
             "last_payment_date": datetime.now().isoformat()
-        })
+        }, merge=True)
         
         return {"status": "success", "message": "Payment verified and policy activated"}
     except Exception as e:

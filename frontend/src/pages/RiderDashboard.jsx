@@ -235,20 +235,33 @@ export default function RiderDashboard() {
                     </div>
                 </motion.div>
 
-                {/* ACCOUNT INTEGRITY */}
-                <motion.div variants={itemVariants} style={{ background: '#ffffff', borderRadius: '28px', border: '1px solid #e2e8f0', padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
-                    <motion.div 
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ type: 'spring', damping: 12, delay: 0.5 }}
-                        style={{ width: '80px', height: '80px', borderRadius: '50%', background: '#d1fae5', color: '#059669', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}
-                    >
-                        <CheckCircle2 size={40} />
-                    </motion.div>
-                    <h3 style={{ fontSize: '1.2rem', fontWeight: 900, color: '#0f172a', marginBottom: '10px' }}>Integrity: Verified</h3>
-                    <p style={{ fontSize: '0.9rem', color: '#64748b', margin: 0, lineHeight: 1.6, maxWidth: '280px' }}>
-                        Your account is synced with the network. All parametric triggers will result in <strong style={{ color: '#059669' }}>instant disbursement</strong>.
-                    </p>
+                {/* ACCOUNT INTEGRITY & RING SCORE */}
+                <motion.div variants={itemVariants} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                    <div style={{ background: '#ffffff', borderRadius: '28px', border: '1px solid #e2e8f0', padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
+                        <motion.div 
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: 'spring', damping: 12, delay: 0.5 }}
+                            style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#d1fae5', color: '#059669', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}
+                        >
+                            <CheckCircle2 size={32} />
+                        </motion.div>
+                        <h3 style={{ fontSize: '1rem', fontWeight: 900, color: '#0f172a', marginBottom: '4px' }}>Integrity</h3>
+                        <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#059669', background: 'rgba(5, 150, 105, 0.1)', padding: '2px 8px', borderRadius: '6px' }}>VERIFIED</span>
+                    </div>
+
+                    <div style={{ background: '#ffffff', borderRadius: '28px', border: '1px solid #e2e8f0', padding: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
+                        <motion.div 
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: 'spring', damping: 12, delay: 0.6 }}
+                            style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(37, 99, 235, 0.1)', color: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}
+                        >
+                            <TrendingUp size={32} />
+                        </motion.div>
+                        <h3 style={{ fontSize: '1rem', fontWeight: 900, color: '#0f172a', marginBottom: '4px' }}>Ring Score</h3>
+                        <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#2563eb' }}>{displayRider.ring_score || 0}</div>
+                    </div>
                 </motion.div>
             </div>
 

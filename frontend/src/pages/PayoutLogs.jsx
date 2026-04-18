@@ -36,17 +36,20 @@ export default function PayoutLogs() {
   }
 
   useEffect(() => {
-    loadData();
-  }, []);
-
-  useEffect(() => {
-    let interval;
+    let unsubscribe;
     if (isLive) {
-      interval = setInterval(() => {
-        loadData(true);
-      }, 5000); 
+      setLoading(true);
+      unsubscribe = dataService.subscribeToPayouts((data) => {
+        setPayouts(Array.isArray(data) ? data : []);
+        setSyncCount(prev => prev + 1);
+        setLoading(false);
+      }, 50); 
+    } else {
+      loadData();
     }
-    return () => clearInterval(interval);
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, [isLive]);
 
   const filteredLogs = useMemo(() => {
