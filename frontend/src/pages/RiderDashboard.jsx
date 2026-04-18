@@ -197,8 +197,9 @@ export default function RiderDashboard() {
                 <div>
                     <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>Active Actuarial Policy</div>
                     <div style={{ fontSize: '1.5rem', fontWeight: 900, color: config.color, marginBottom: '4px' }}>{config.label}</div>
-                    <div style={{ fontSize: '1rem', fontWeight: 700, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <ShieldCheck size={18} color="#10b981" /> {config.coverage} Protected
+                    <div style={{ fontSize: '1rem', fontWeight: 700, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Zap size={18} color="#2563eb" fill="#2563eb" />
+                        <span style={{ color: '#10b981' }}>{config.coverage} Protected</span>
                     </div>
                 </div>
                 <div style={{ textAlign: 'right', paddingLeft: '32px', borderLeft: '1px solid #f1f5f9' }}>

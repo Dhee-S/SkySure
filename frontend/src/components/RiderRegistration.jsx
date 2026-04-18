@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  User, Shield, MapPin, CreditCard, 
+  User, Zap, MapPin, CreditCard, 
   CheckCircle, ArrowRight, ArrowLeft, 
-  Zap, Mail, Phone, Map, Briefcase,
+  Mail, Phone, Map, Briefcase,
   Smartphone, Truck, Navigation, DollarSign, Bike, Fuel,
   Globe, Fingerprint
 } from 'lucide-react';
@@ -13,8 +13,9 @@ import { signInWithPopup } from 'firebase/auth';
 
 const steps = [
   { id: 1, title: 'Identity', desc: 'Secure OAuth Sync' },
-  { id: 2, title: 'Profile', desc: 'Hustle Configuration' },
-  { id: 3, title: 'Payouts', desc: 'Wallet Integration' }
+  { id: 2, title: 'Verify', desc: 'Email Validation' },
+  { id: 3, title: 'Profile', desc: 'Hustle Configuration' },
+  { id: 4, title: 'Payouts', desc: 'Wallet Integration' }
 ];
 
 export default function RiderRegistration() {
@@ -32,14 +33,21 @@ export default function RiderRegistration() {
     vehicle: 'bike',
     partnerApp: 'Zomato',
     targetEarnings: 5000,
-    upi: ''
+    upi: '',
+    tier: 'Standard',
+    password: ''
   });
 
-  const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 3));
+  const [enrollmentMethod, setEnrollmentMethod] = useState(null); // 'google' | 'email'
+  const [verificationCode, setVerificationCode] = useState('');
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+
+  const nextStep = () => setCurrentStep(prev => Math.min(prev + 1, 4)); // Increased to 4 steps
   const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 1));
 
   const handleGoogleLogin = async () => {
     setLoading(true);
+    setEnrollmentMethod('google');
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
@@ -49,31 +57,77 @@ export default function RiderRegistration() {
         email: user.email,
         name: user.displayName || '',
       }));
-      nextStep();
+      setIsEmailVerified(true);
+      setCurrentStep(2); // Skip Step 1 verification for Google
     } catch (error) {
       console.error("Login Error:", error);
-      alert("Authentication failed. Please ensure Firebase Authorized Domains are configured.");
+      alert("Authentication failed.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEmailSignup = async () => {
+    if (!formData.email || !formData.password) return alert("Email and Password required");
+    setEnrollmentMethod('email');
+    setLoading(true);
+    try {
+      // Simulate account creation & OTP dispatch
+      await new Promise(r => setTimeout(r, 1500));
+      nextStep();
+    } catch (error) {
+        alert(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const verifyEmailCode = async () => {
+    if (verificationCode.length < 4) return;
+    setLoading(true);
+    try {
+      // Simulation: Accept any 4+ digit code
+      await new Promise(r => setTimeout(r, 1000));
+      setIsEmailVerified(true);
+      nextStep();
     } finally {
       setLoading(false);
     }
   };
 
   const handleRegister = async () => {
+    const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:8000' : '';
     setLoading(true);
     try {
-      const response = await fetch('/api/rider/register', {
+      // In a real app we'd call createUserWithEmailAndPassword here if enrollmentMethod === 'email'
+      // For showcase, we sync the provided profile to backend
+      const response = await fetch(`${API_BASE}/api/riders/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
 
       if (response.ok) {
-        localStorage.removeItem('skysure_profile_incomplete');
-        navigate('/rider');
+        const data = await response.json();
+        // Store for payment page and session
+        localStorage.setItem('skysure_mock_user', JSON.stringify({
+            uid: data.uid || formData.uid || `user_${Math.random().toString(36).slice(2, 9)}`,
+            email: formData.email,
+            name: formData.name,
+            role: 'rider',
+            city: formData.city,
+            persona: formData.persona,
+            vehicle: formData.vehicle
+        }));
+        
+        // Push state to payment
+        navigate('/payment', { state: { formData: { ...formData, uid: data.uid || formData.uid }, premium: calculatePremium() } });
       } else {
-        throw new Error("Registration synchronization failed.");
+        const err = await response.json();
+        throw new Error(err.error || "Registration synchronization failed.");
       }
     } catch (error) {
+      console.error("Registration error:", error);
       alert(error.message);
     } finally {
       setLoading(false);
@@ -104,7 +158,7 @@ export default function RiderRegistration() {
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} style={{ textAlign: 'center', marginBottom: '40px', zIndex: 1 }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', background: 'white', padding: '8px 16px', borderRadius: '40px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', marginBottom: '16px' }}>
-          <Shield size={18} color="#3B82F6" fill="#3B82F6" />
+          <Zap size={18} color="#3B82F6" fill="#3B82F6" />
           <span style={{ fontSize: '0.75rem', fontWeight: 900, color: '#1E293B', letterSpacing: '0.05em', textTransform: 'uppercase' }}>SkySure Onboarding</span>
         </div>
         <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#1E293B', letterSpacing: '-0.04em', margin: 0 }}>Join the Resilience Network</h1>
@@ -148,12 +202,12 @@ export default function RiderRegistration() {
         </div>
 
         <AnimatePresence mode="wait">
-          {currentStep === 1 && (
+           {currentStep === 1 && (
             <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-               <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '40px', alignItems: 'center' }}>
+               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px', alignItems: 'center' }}>
                   <div>
                     <h2 style={{ fontSize: '1.75rem', fontWeight: 900, color: '#1E293B', marginBottom: '16px' }}>Verify Identity</h2>
-                    <p style={{ color: '#64748B', lineHeight: 1.6, marginBottom: '32px' }}>We use Secure OAuth 2.0 to link your rider profile. This ensure instant parametric payouts can be routed to your wallet without manual claims.</p>
+                    <p style={{ color: '#64748B', lineHeight: 1.6, marginBottom: '24px' }}>Choose your preferred verification method to link your rider profile.</p>
                     
                     <button 
                       onClick={handleGoogleLogin}
@@ -166,18 +220,43 @@ export default function RiderRegistration() {
                         color: '#1E293B', 
                         border: '2px solid #E2E8F0', 
                         fontWeight: 800, 
-                        fontSize: '1rem',
+                        fontSize: '0.9rem',
                         display: 'flex', 
                         alignItems: 'center', 
                         justifyContent: 'center', 
                         gap: '12px',
                         cursor: 'pointer',
-                        transition: 'all 0.2s ease'
+                        marginBottom: '16px'
                       }}
                     >
-                      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20" alt="Google" />
-                      {loading ? 'Authenticating...' : 'Continue with Google'}
+                      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" alt="Google" />
+                      Google Integration
                     </button>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', margin: '20px 0', opacity: 0.5 }}>
+                      <div style={{ flex: 1, height: '1px', background: '#E2E8F0' }} />
+                      <span style={{ fontSize: '0.65rem', fontWeight: 800 }}>OR CLASSIC STYLE</span>
+                      <div style={{ flex: 1, height: '1px', background: '#E2E8F0' }} />
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <input 
+                        type="email" placeholder="Email Address" 
+                        value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})}
+                        style={{ padding: '14px', borderRadius: '12px', border: '1px solid #E2E8F0', background: '#F8FAFC', outline: 'none', fontWeight: 700 }} 
+                      />
+                      <input 
+                        type="password" placeholder="Password" 
+                        value={formData.password || ''} onChange={e => setFormData({...formData, password: e.target.value})}
+                        style={{ padding: '14px', borderRadius: '12px', border: '1px solid #E2E8F0', background: '#F8FAFC', outline: 'none', fontWeight: 700 }} 
+                      />
+                      <button 
+                        onClick={handleEmailSignup}
+                        style={{ width: '100%', padding: '14px', borderRadius: '12px', background: '#1E293B', color: 'white', fontWeight: 800, border: 'none', cursor: 'pointer' }}
+                      >
+                        {loading ? "Initializing..." : "Enroll with Email"}
+                      </button>
+                    </div>
                   </div>
                   <div style={{ background: '#F8FAFC', padding: '32px', borderRadius: '24px', border: '1px dashed #CBD5E1', textAlign: 'center' }}>
                     <Fingerprint size={48} color="#3B82F6" style={{ marginBottom: '16px' }} />
@@ -188,8 +267,38 @@ export default function RiderRegistration() {
             </motion.div>
           )}
 
-          {currentStep === 2 && (
-            <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+          {currentStep === 2 && !isEmailVerified && (
+            <motion.div key="stepVerify" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+               <div style={{ textAlign: 'center', padding: '20px' }}>
+                  <div style={{ width: '64px', height: '64px', background: '#DBEAFE', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
+                    <Mail size={32} color="#3B82F6" />
+                  </div>
+                  <h2 style={{ fontSize: '1.75rem', fontWeight: 900, color: '#1E293B', marginBottom: '8px' }}>One Last Step</h2>
+                  <p style={{ color: '#64748B', marginBottom: '32px' }}>We've sent a 4-digit code to <strong>{formData.email}</strong></p>
+                  
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginBottom: '40px' }}>
+                     <input 
+                        maxLength={4}
+                        placeholder="0000"
+                        value={verificationCode}
+                        onChange={e => setVerificationCode(e.target.value)}
+                        style={{ width: '120px', textAlign: 'center', fontSize: '2rem', letterSpacing: '8px', padding: '12px', borderRadius: '12px', border: '2px solid #3B82F6', fontWeight: 900, outline: 'none' }}
+                     />
+                  </div>
+
+                  <button 
+                    onClick={verifyEmailCode}
+                    disabled={loading || verificationCode.length < 4}
+                    style={{ width: '200px', padding: '16px', borderRadius: '12px', background: '#3B82F6', color: 'white', fontWeight: 800, border: 'none', cursor: 'pointer', opacity: verificationCode.length < 4 ? 0.5 : 1 }}
+                  >
+                    {loading ? "Verifying..." : "Verify Code"}
+                  </button>
+               </div>
+            </motion.div>
+          )}
+
+          {currentStep === 3 && (
+            <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
               <div style={{ marginBottom: '32px' }}>
                 <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#1E293B', marginBottom: '8px' }}>Hustle Configuration</h2>
                 <p style={{ color: '#64748B', fontSize: '0.9rem' }}>Configure your operational profile for accurate risk assessment.</p>
@@ -202,7 +311,21 @@ export default function RiderRegistration() {
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '32px' }}>
-                <Input label="Operating City" icon={Globe} value={formData.city} onChange={v => setFormData({...formData, city: v})} placeholder="e.g. Chennai" />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <label style={{ fontSize: '0.65rem', fontWeight: 800, color: '#94A3B8', textTransform: 'uppercase' }}>Operating City</label>
+                  <select 
+                    value={formData.city} 
+                    onChange={e => setFormData({...formData, city: e.target.value})}
+                    style={{ 
+                      padding: '14px 16px', borderRadius: '12px', background: '#F8FAFC', 
+                      border: '1px solid #E2E8F0', outline: 'none', fontWeight: 700, color: '#1E293B' 
+                    }}
+                  >
+                    {['Chennai', 'Bengaluru', 'Mumbai', 'Delhi', 'Hyderabad', 'Pune', 'Kolkata'].map(c => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                </div>
                 <Input label="Partner Application" icon={Briefcase} value={formData.partnerApp} onChange={v => setFormData({...formData, partnerApp: v})} placeholder="e.g. Zomato" />
               </div>
 
@@ -221,8 +344,8 @@ export default function RiderRegistration() {
             </motion.div>
           )}
 
-          {currentStep === 3 && (
-            <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+          {currentStep === 4 && (
+            <motion.div key="step4" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
                <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#1E293B', marginBottom: '24px' }}>Payout Settlement</h2>
                
                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
@@ -262,7 +385,7 @@ export default function RiderRegistration() {
             </button>
             {currentStep > 1 && (
               <button 
-                onClick={currentStep === 3 ? handleRegister : nextStep}
+                onClick={currentStep === 4 ? handleRegister : nextStep}
                 disabled={loading}
                 style={{ 
                   padding: '12px 32px', 
@@ -278,7 +401,7 @@ export default function RiderRegistration() {
                   gap: '10px'
                 }}
               >
-                {currentStep === 3 ? 'Finalize Account' : 'Continue'} <ArrowRight size={18} />
+                {currentStep === 4 ? 'Finalize Account' : 'Continue'} <ArrowRight size={18} />
               </button>
             )}
           </div>

@@ -36,65 +36,15 @@ export default function RiderPayment() {
     const handlePayment = async () => {
         setLoading(true);
         try {
-            // 1. Create order on backend
-            const orderRes = await fetch(`${API_BASE}/api/payment/razorpay/order`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    rider_id: formData.uid,
-                    amount: premium,
-                    currency: 'INR',
-                    receipt: `rcpt_${formData.uid.slice(-6)}`
-                })
-            });
-            const orderData = await orderRes.json();
-
-            if (!orderData.id) throw new Error("Failed to create order");
-
-            // 2. Open Razorpay Checkout
-            const options = {
-                key: 'rzp_test_Sdnfivn0EXOo2q',
-                amount: orderData.amount,
-                currency: orderData.currency,
-                name: 'SkySure AI',
-                description: `${formData.persona} - Weekly Protection`,
-                order_id: orderData.id,
-                handler: async (response) => {
-                    // 3. Verify payment
-                    const verifyRes = await fetch(`${API_BASE}/api/payment/razorpay/verify`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            order_id: response.razorpay_order_id,
-                            payment_id: response.razorpay_payment_id,
-                            signature: response.razorpay_signature,
-                            rider_id: formData.uid
-                        })
-                    });
-                    const verifyData = await verifyRes.json();
-                    
-                    if (verifyData.success) {
-                        setSuccess(true);
-                        setTimeout(() => navigate('/login'), 4000);
-                    } else {
-                        throw new Error(verifyData.error || "Verification failed");
-                    }
-                },
-                prefill: {
-                    name: formData.name,
-                    email: formData.email,
-                    contact: formData.phone
-                },
-                theme: {
-                    color: '#2563eb'
-                }
-            };
-
-            const rzp = new window.Razorpay(options);
-            rzp.open();
+            // Showcase Mode: Skip real Razorpay gateway
+            // Simulate architectural handshake
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            setSuccess(true);
+            setTimeout(() => navigate('/rider'), 2500); // Directly to Dashboard
         } catch (error) {
-            console.error("Payment error:", error);
-            alert("Payment failed: " + error.message);
+            console.error("Activation error:", error);
+            alert("Activation failed: " + error.message);
         } finally {
             setLoading(false);
         }
@@ -109,11 +59,11 @@ export default function RiderPayment() {
                     style={{ textAlign: 'center', background: 'rgba(255,255,255,0.02)', padding: '60px', borderRadius: '40px', border: '1px solid rgba(255,255,255,0.1)' }}
                 >
                     <div style={{ width: '100px', height: '100px', background: 'rgba(37, 99, 235, 0.2)', color: '#3b82f6', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 32px' }}>
-                        <CheckCircle size={60} />
+                        <Zap size={60} fill="#3b82f6" />
                     </div>
                     <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: 'white', marginBottom: '16px' }}>Policy Activated!</h1>
                     <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '1.1rem', marginBottom: '32px' }}>Welcome to the SkySure network. Your parametric protection is now live.</p>
-                    <div style={{ color: '#2563eb', fontWeight: 800 }}>Redirecting to sign-in...</div>
+                    <div style={{ color: '#2563eb', fontWeight: 800 }}>Initializing Partner Dashboard...</div>
                 </motion.div>
             </div>
         );
@@ -124,12 +74,12 @@ export default function RiderPayment() {
             <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                style={{ width: '100%', maxWidth: '800px', display: 'grid', gridTemplateColumns: 'minmax(300px, 1.2fr) minmax(280px, 1fr)', gap: '32px' }}
+                style={{ width: '100%', maxWidth: '900px', display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '32px' }}
             >
                 {/* Left Side: Summary */}
                 <div style={{ background: 'rgba(255,255,255,0.02)', padding: '40px', borderRadius: '32px', border: '1px solid rgba(255,255,255,0.05)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '32px' }}>
-                        <ShieldCheck color="#2563eb" size={24} />
+                        <Zap color="#2563eb" size={24} fill="#2563eb" />
                         <h2 style={{ fontSize: '1.5rem', fontWeight: 900, margin: 0 }}>Review Your Plan</h2>
                     </div>
 
@@ -155,12 +105,26 @@ export default function RiderPayment() {
 
                 {/* Right Side: Payment Action */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                    <div style={{ background: '#2563eb', padding: '40px', borderRadius: '32px', position: 'relative', overflow: 'hidden' }}>
-                        <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '100px', height: '100px', background: 'white', opacity: 0.1, borderRadius: '50%' }} />
-                        <CreditCard size={32} style={{ marginBottom: '24px' }} />
-                        <h3 style={{ fontSize: '1.4rem', fontWeight: 900, marginBottom: '8px' }}>Secure Checkout</h3>
-                        <p style={{ fontSize: '0.9rem', opacity: 0.8, marginBottom: '32px', fontWeight: 500 }}>Payments are encrypted and processed via Razorpay secured network.</p>
+                    <div style={{ background: '#111', padding: '40px', borderRadius: '32px', border: '1px solid #222' }}>
+                        <h3 style={{ fontSize: '1.4rem', fontWeight: 900, marginBottom: '24px' }}>Payout Configuration</h3>
                         
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '32px' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                <label style={{ fontSize: '0.65rem', fontWeight: 800, color: '#64748B', textTransform: 'uppercase' }}>UPI ID for Payouts</label>
+                                <input 
+                                    type="text" placeholder="yourname@upi" 
+                                    style={{ padding: '14px', borderRadius: '12px', background: '#000', border: '1px solid #333', color: 'white', fontWeight: 700, outline: 'none' }}
+                                />
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                <label style={{ fontSize: '0.65rem', fontWeight: 800, color: '#64748B', textTransform: 'uppercase' }}>Phone Number</label>
+                                <input 
+                                    type="text" placeholder="+91 XXXXX XXXXX" 
+                                    style={{ padding: '14px', borderRadius: '12px', background: '#000', border: '1px solid #333', color: 'white', fontWeight: 700, outline: 'none' }}
+                                />
+                            </div>
+                        </div>
+
                         <button 
                             onClick={handlePayment}
                             disabled={loading}
@@ -168,8 +132,8 @@ export default function RiderPayment() {
                                 width: '100%', 
                                 padding: '18px', 
                                 borderRadius: '16px', 
-                                background: 'white', 
-                                color: '#2563eb', 
+                                background: '#2563eb', 
+                                color: 'white', 
                                 border: 'none', 
                                 fontWeight: 900, 
                                 fontSize: '16px', 
@@ -177,10 +141,11 @@ export default function RiderPayment() {
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                gap: '10px'
+                                gap: '10px',
+                                boxShadow: '0 10px 15px -3px rgba(37, 99, 235, 0.4)'
                             }}
                         >
-                            {loading ? 'Initializing...' : 'Pay with Razorpay'} <ChevronRight size={18} />
+                            {loading ? 'Processing...' : 'Activate Coverage'} <ChevronRight size={18} />
                         </button>
                     </div>
 

@@ -121,7 +121,7 @@ export default function AdminLogin({ onLoginProp }) {
             <div className="login-branding" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)' }}>
               <div className="branding-header">
                 <div style={{ padding: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px' }}>
-                    <Shield size={20} color="#3b82f6" fill="#3b82f6" />
+                    <Zap size={20} color="#3b82f6" fill="#3b82f6" />
                 </div>
                 <span className="branding-title">Admin Hub</span>
               </div>
@@ -132,8 +132,8 @@ export default function AdminLogin({ onLoginProp }) {
                 
                 <div className="branding-features">
                   <div className="feature-item"><Zap size={16} fill="#3b82f6" color="#3b82f6" /> <span>Real-time Risk Ingestion</span></div>
-                  <div className="feature-item"><Briefcase size={16} /> <span>Portfolio Resilience MGMT</span></div>
-                  <div className="feature-item"><ShieldCheck size={16} /> <span>Algorithmic Fraud Mitigation</span></div>
+                  <div className="feature-item"><CheckCircle size={16} color="#10B981" /> <span>Portfolio Resilience MGMT</span></div>
+                  <div className="feature-item"><Fingerprint size={16} /> <span>Algorithmic Fraud Mitigation</span></div>
                 </div>
               </div>
 
@@ -161,10 +161,10 @@ export default function AdminLogin({ onLoginProp }) {
                   </div>
 
                   <div className="input-group">
-                    <label>Encryption Key</label>
+                    <label>Password</label>
                     <div className="input-wrapper">
                       <Lock size={18} className="input-icon" />
-                      <input type={showPassword ? "text" : "password"} placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                      <input type={showPassword ? "text" : "password"} placeholder="Enter encryption key" value={password} onChange={(e) => setPassword(e.target.value)} required />
                       <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
                         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
@@ -209,7 +209,7 @@ export default function AdminLogin({ onLoginProp }) {
           >
             <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'center' }}>
               <div style={{ padding: '15px', background: '#3b82f6', borderRadius: '50%' }}>
-                <ShieldCheck size={32} color="white" />
+                <Zap size={32} color="white" fill="white" />
               </div>
             </div>
             <h2>Verify Admin Identity</h2>

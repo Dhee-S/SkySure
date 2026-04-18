@@ -195,7 +195,7 @@ export default function Login({ onLoginProp }) {
                 <span>Global Risk Telemetry</span>
               </div>
               <div className="feature-item">
-                <ShieldCheck size={18} />
+                <CheckCircle size={18} color="#10B981" />
                 <span>Autonomous Fraud Mitigation</span>
               </div>
             </motion.div>
@@ -228,12 +228,12 @@ export default function Login({ onLoginProp }) {
 
             <form onSubmit={handleLogin} className="login-form">
               <div className="input-group">
-                <label>Email Terminal</label>
+                <label>Email ID</label>
                 <div className="input-wrapper">
                   <Mail size={18} className="input-icon" />
                   <input 
                     type="email" 
-                    placeholder="name@provider.com" 
+                    placeholder="Enter your email" 
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -242,12 +242,12 @@ export default function Login({ onLoginProp }) {
               </div>
 
               <div className="input-group">
-                <label>Encryption Key</label>
+                <label>Password</label>
                 <div className="input-wrapper">
                   <Lock size={18} className="input-icon" />
                   <input 
                     type={showPassword ? "text" : "password"} 
-                    placeholder="••••••••" 
+                    placeholder="Enter your password" 
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -276,7 +276,7 @@ export default function Login({ onLoginProp }) {
                   </div>
                 ) : (
                   <>
-                    <span>Initialize {role === 'admin' ? 'Enterprise Terminal' : 'Partner Sync'}</span>
+                    <span>Sign In to {role === 'admin' ? 'Terminal' : 'Partner Hub'}</span>
                     <ArrowRight size={18} />
                   </>
                 )}
@@ -285,7 +285,7 @@ export default function Login({ onLoginProp }) {
 
             <div style={{ display: 'flex', alignItems: 'center', margin: '20px 0' }}>
               <div style={{ flex: 1, height: '1px', background: '#e2e8f0' }}></div>
-              <span style={{ padding: '0 10px', fontSize: '12px', color: '#94a3b8', fontWeight: 'bold' }}>OR</span>
+              <span style={{ padding: '0 10px', fontSize: '12px', color: '#94a3b8', fontWeight: 'bold' }}>OR SIGN IN WITH</span>
               <div style={{ flex: 1, height: '1px', background: '#e2e8f0' }}></div>
             </div>
 
@@ -305,7 +305,7 @@ export default function Login({ onLoginProp }) {
                   <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
                   <path fill="none" d="M0 0h48v48H0z"/>
               </svg>
-              Sign In with Google
+              Google Integration
             </motion.button>
 
             {role === 'rider' && (
@@ -315,13 +315,13 @@ export default function Login({ onLoginProp }) {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5 }}
               >
-                <span style={{ color: '#94a3b8' }}>Don't have an account? </span>
+                <span style={{ color: '#94a3b8' }}>New to SkySure? </span>
                 <button 
                   type="button" 
                   onClick={() => navigate('/register')}
-                  style={{ background: 'none', border: 'none', color: '#2563eb', fontWeight: 800, cursor: 'pointer', padding: 0 }}
+                  style={{ background: 'none', border: 'none', color: '#3b82f6', fontWeight: 800, cursor: 'pointer', padding: 0 }}
                 >
-                  Sign Up for Coverage
+                  Join the Network
                 </button>
               </motion.div>
             )}
@@ -334,7 +334,7 @@ export default function Login({ onLoginProp }) {
               </div>
               <div className="demo-credentials">
                 <p style={{ fontSize: '11px', color: '#64748b', textAlign: 'center' }}>
-                  Enterprise accounts require manual provisioning. Partners can self-register via Google Auth.
+                  Enterprise accounts require manual provisioning. Partners can self-register via Google or Classic Auth.
                 </p>
               </div>
             </div>
@@ -352,7 +352,7 @@ export default function Login({ onLoginProp }) {
           >
             <div className="branding-header" style={{ marginBottom: '32px' }}>
               <div style={{ padding: '12px', background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)', borderRadius: '16px', boxShadow: '0 10px 15px -3px rgba(59, 130, 246, 0.3)' }}>
-                  <ShieldCheck size={28} color="white" />
+                  <Zap size={28} color="white" fill="white" />
               </div>
             </div>
 
