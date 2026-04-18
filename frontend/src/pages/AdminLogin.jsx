@@ -5,7 +5,8 @@ import {
   Shield, Mail, Lock, 
   ArrowRight, Briefcase, 
   ShieldCheck, Zap,
-  Eye, EyeOff, Info, CheckCircle
+  Eye, EyeOff, Info, CheckCircle,
+  Fingerprint
 } from 'lucide-react';
 import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
